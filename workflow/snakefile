@@ -67,9 +67,9 @@ rule all:
 	    #expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys[0]),
 	    
 	    # fgbio fq2cons
-	    expand("{runid}/results/fq2cons/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
+	    expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
 	    #expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
-	    expand("{runid}/results/fq2cons/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys),
+	    expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys),
 	    # star 
 	    #expand("{runid}/results/star/{sample}/aligned.out.bam", runid= runid, sample= idkeys),
 	    #expand("{runid}/results/samtools/flagstat/{sample}.bam.flagstat", runid= runid, sample= idkeys),	

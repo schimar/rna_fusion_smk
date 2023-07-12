@@ -40,22 +40,6 @@ rule fastqc_bbmerged:
         "v2.1.1/bio/fastqc"
 
 
-rule fastqc_umifq:
-    input:
-        "{runid}/results/reads/umifq/{sample}.fq"
-    output:
-        html="{runid}/results/reads/umifq/qc/fastqc/{sample}.html",
-        zip="{runid}/results/reads/umifq/qc/fastqc/{sample}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
-    params:
-        extra = "--quiet"
-    log:
-        "{runid}/logs/qc/fastqc_umifq/{sample}.log"
-    threads: 1
-    resources:
-        mem_mb = 1024
-    wrapper:
-        "v2.1.1/bio/fastqc"
-
 
 rule fastqc_cons:
     input:
@@ -84,16 +68,6 @@ rule multiqc_bbmerged:
     wrapper:
         "v2.1.1/bio/multiqc"
 
-
-rule multiqc_umifq:
-    input:
-        expand("{runid}/results/reads/umifq/qc/fastqc/{sample}.html", runid= runid, sample= idkeys)
-    output:
-        "{runid}/results/reads/umifq/qc/multiqc_report.html"
-    log:
-        "{runid}/logs/qc/multiqc_umi.log"
-    wrapper:
-        "v2.1.1/bio/multiqc"
 
 
 rule multiqc_cons:
@@ -131,7 +105,7 @@ rule rseqc_gtf2bed:
 
 rule rseqc_junction_annotation:
     input:
-        bam="{runid}/results/star/{sample}/aligned.out.bam",
+        bam="{runid}/results/fq2cons/reads/mapped/{sample}.bam",
         bed="{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.junctionanno.junction.bed",
@@ -144,8 +118,7 @@ rule rseqc_junction_annotation:
     #conda:
     #    "../envs/rseqc.yaml"
     shell:
-        "junction_annotation.py {params.extra} -i {input.bam} -r {input.bed} -o {params.prefix} "
-        "> {log[0]} 2>&1"
+        "junction_annotation.py {params.extra} -i {input.bam} -r {input.bed} -o {params.prefix} > {log[0]} 2>&1"
 
 
 rule rseqc_junction_saturation:
@@ -163,8 +136,7 @@ rule rseqc_junction_saturation:
     #conda:
     #    "../envs/rseqc.yaml"
     shell:
-        "junction_saturation.py {params.extra} -i {input.bam} -r {input.bed} -o {params.prefix} "
-        "> {log} 2>&1"
+        "junction_saturation.py {params.extra} -i {input.bam} -r {input.bed} -o {params.prefix} > {log} 2>&1"
 
 
 rule rseqc_stat:
