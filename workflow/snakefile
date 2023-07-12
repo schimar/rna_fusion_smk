@@ -1,0 +1,96 @@
+from snakemake.utils import min_version
+
+##### set minimum snakemake version #####
+min_version("7.0.0")
+
+
+##### setup report #####
+configfile: "../config/config.yaml"
+
+
+report: "report/workflow.rst"
+
+
+##### setup singularity #####
+
+
+# this container defines the underlying OS for each job when using the workflow
+# with --use-conda --use-singularity
+# container: "docker://continuumio/miniconda3"
+
+
+##### load rules #####
+
+
+include: "rules/common.smk"
+include: "rules/bcl2fastq.smk"
+include: "rules/ref.smk"
+#include: "rules/umi.smk"
+#include: "rules/trim.smk"
+include: "rules/qc.smk"
+include: "rules/fgbio_fq2cons.smk"
+#include: "rules/fusion.smk"
+#include: "rules/quant.smk"
+######
+##include: "rules/diffexp.smk"
+#include: "rules/star_2pass.smk"
+#include: "rules/star_2pass_singleLane.smk"
+
+##### target rules #####
+
+rule all:
+    input:
+	    "resources/genome.fa",
+	    #"{runid}/results/qc/multiqc_report.html"
+	    "resources/genome.gtf",
+	    multiext("resources/genome.fa", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai"),	
+	    directory("resources/star_genome"),
+	    expand("resources/{bed}_file_UMI_demo_data_hg38.interval_list", bed= ['target', 'probe']),
+	    	    ### bcl2fq
+	    #expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
+	    #expand("{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz", runid= runid, sample= idkeys),
+	    #expand("{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz", runid= runid, sample= idkeys),    
+	    #expand("{runid}/results/bbmerge/{sample}.fq.gz", runid= runid, sample= idkeys),
+	    # qc
+	    #expand("{runid}/results/bbmerge/qc/fastqc/{sample}.html", runid= runid, sample= idkeys),
+	    #expand("{runid}/results/bbmerge/qc/multiqc_report.html", runid= runid),
+	    ##expand("{runid}/results/reads/umifq/qc/multiqc_report.html", runid= runid),
+	    #expand("{runid}/results/reads/consensus/qc/multiqc_report.html", runid= runid),
+	    ## umi   
+	    #expand("{runid}/results/reads/ubam/{sample}.bam", runid= runid, sample= idkeys),
+	    #expand("{runid}/results/reads/mapped/{sample}.bam", runid= runid, sample= idkeys, lane= ['L001', 'L002']),
+	    #expand("{runid}/results/reads/mpd_cons_merged/{sample}.bam", runid= runid, sample= idkeys[0]),
+	    #expand("{runid}/results/reads/mpd_cons_merged/bed/{sample}.bam", runid= runid, sample= idkeys[0]),
+	    #expand("{runid}/results/picard/metrics/{temp}/{sample}.metrics.tsv", runid= runid, temp= ['prior', 'post'], sample= idkeys[0]),
+	    #expand("{runid}/results/picard/metrics/{temp}/{sample}.metricsFrmt.tsv", runid= runid, temp= ['prior', 'post'], sample= idkeys[0]),
+	    ##expand("{runid}/results/reads/consensus/qc/multiqc_report.html", runid= runid),
+	    #expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys[0]),
+	    
+	    # fgbio fq2cons
+	    expand("{runid}/results/fq2cons/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
+	    #expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
+	    expand("{runid}/results/fq2cons/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys),
+	    # star 
+	    #expand("{runid}/results/star/{sample}/aligned.out.bam", runid= runid, sample= idkeys),
+	    #expand("{runid}/results/samtools/flagstat/{sample}.bam.flagstat", runid= runid, sample= idkeys),	
+	    #expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys), 
+	    #expand("{runid}/results/fq_cats/{sample}_{read}_catL.fq.gz", sample= idkeys, read= ["R1", "R2"]),
+	    ##expand("{runid}/results/salmon/{sample}/quant.sf", sample= idkeys),	#['Z22007658_20ng_BR_S7', 'K562-100ng-1plex-Rep2_S10', 'K562-100ng-1plex-Rep1_S4']),
+	    ##expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']),
+
+
+
+
+
+# -----------------
+
+ ##expand("results/htseq/{sample}_HTSeq.csv", sample= list(samples_dict.keys())),
+
+#### intermittant files (consolidate later)
+	    ##expand("results/trimmed/{sample}_{unit}_{read}.fastq.gz", sample=['Z22007658_20ng_BR_S7'], read= ['R1', 'R2'], unit= ['L001', 'L002']),
+	    	    ##### star_2pass_singleLane
+				#expand("results/samtools/flagstat/{sample}_p2/alnd.srtd.bam.flagstat", sample= list(samples_dict.keys())[2]),	#['H22053532_50ng_BR_S12']),
+	    	    #expand("results/star/{sample}_p1/sj.out.tab", sample= list(samples_dict.keys())[6:8]),
+				#expand("results/star/sj/{sample}_p1/sj.filtered.tab", sample= list(samples_dict.keys())[6:8]),
+				#expand("results/star/{sample}_p2/aligned.sortedByCoord.out.bam", sample= list(samples_dict.keys())[6:8]),
+
