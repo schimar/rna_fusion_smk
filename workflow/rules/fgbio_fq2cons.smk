@@ -1,15 +1,6 @@
 ################################################################################
-# Example snakemake file that implements the R&D Best Practices for fgbio's
-# Fastq -> Filtered Consensus Pipeline
-#
-# Required software:
-#   snakemake (!)
-#   bwa
-#   samtools v1.14 or higher
-#   fgbio v2.0.0 of higher
-################################################################################
 
-# Adjust these parameters to match your dataset
+# Adjust these parameters
 r1_read_structure = "5M2S+T"  #"8M+T"
 r2_read_structure = "5M2S+T"  #"8M+T"
 
