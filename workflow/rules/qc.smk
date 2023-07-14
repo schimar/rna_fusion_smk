@@ -97,8 +97,6 @@ rule rseqc_gtf2bed:
         db=temp("{runid}/results/qc/rseqc/annotation.db"),
     log:
         "{runid}/logs/rseqc_gtf2bed.log",
-    #conda:
-    #    "../envs/gffutils.yaml"
     script:
         "../scripts/gtf2bed.py"
 
