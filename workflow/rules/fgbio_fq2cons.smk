@@ -228,9 +228,39 @@ rule map_star:
         STAR --runThreadN {threads} --genomeDir {input.idx} --readFilesIn {input.fq1} {input.fq2} {params.extra} --outFileNamePrefix {runid}/results/reads/star/{wildcards.sample}/ --outStd BAM_SortedByCoordinate --outSAMattrRGline ID:{rgid} SM:{params.smpl} LB:{params.pl} PU:{params.pu} > {output.aln} 
         """
 
+rule star_markdup:
+    input:
+        "{runid}/results/reads/star/{sample}.bam"
+    output:
+        "{runid}/results/reads/star/mrkdup/{sample}.bam",
+    wildcard_constraints:
+        sample = common_constraint
+    priority: 20
+    params:
+        extra=""  #"-r"  # optional parameters
+    log: "{runid}/logs/star_markdup/{sample}.log"
+    threads: 8
+    wrapper:
+        "v2.2.1/bio/sambamba/markdup"
+
+
+rule filter_bam:
+    input:
+        "{runid}/results/reads/star/{sample}.bam",
+    output:
+        "{runid}/results/reads/star_fltrd/{sample}.bam",
+    wildcard_constraints:
+        sample = common_constraint
+    log:
+        "{runid}/logs/fltr_bam/{sample}.log"
+    shell:"""
+        samtools view -h {input} | awk 'length($10) > 40 || $1 ~ /^@/' | samtools view -bS - > {output}
+        """
+
+
 rule arriba:
     input:
-        bam="{runid}/results/reads/star/{sample}.bam",
+        bam="{runid}/results/reads/star_fltrd/{sample}.bam",
         genome="resources/genome.fa",
         annotation="resources/genome.gtf",
         # optional: # A custom tsv containing identified artifacts, such as read-through fusions of neighbouring genes.
@@ -248,18 +278,30 @@ rule arriba:
         genome_build="GRCh38",
         default_blacklist=True,
         default_known_fusions=True,
-        extra="",   #alignIntronMax",
+        extra=""  #"-u",   #alignIntronMax",
     log:
         "{runid}/logs/arriba/{sample}.log",
     threads: 1
     wrapper:
         "v1.23.4/bio/arriba"
 
+rule filter_arriba:
+    input:
+        "{runid}/results/arriba/{sample}/fusions.tsv",
+    output:
+        "{runid}/results/arriba/{sample}/fusions.fltrd.tsv",
+    #wildcard_constraints:
+    #    sample = common_constraint
+    log:
+        "{runid}/logs/fltr_arriba/{sample}/log"
+    shell:"""
+        scripts/fusionfltr.py -i {input} > {output} 2> {log}
+        """
 
 
 rule collectHs_star:
     input:
-        bam = "{runid}/results/reads/star/{sample}.bam",
+        bam = "{runid}/results/reads/star_fltrd/{sample}.bam",
         bed = "resources/twist_rna_exome_target_regions_hg38_annotated.bed",
         # target_file_UMI_demo_data_hg38.bed",
         ref = "resources/genome.fa",

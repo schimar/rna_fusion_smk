@@ -44,10 +44,10 @@ rule all:
 	    "resources/genome.fa",
 	    #"{runid}/results/qc/multiqc_report.html"
 	    "resources/genome.gtf",
-	    multiext("resources/genome.fa", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai"),	
+	    multiext("resources/genome.fa", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai"),
 	    directory("resources/star_genome"),
 	    expand("resources/{bed}_file_UMI_demo_data_hg38.interval_list", bed= ['target', 'probe']),
-	    	    ### bcl2fq
+	    ### bcl2fq
 	    #expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
 	    #expand("{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz", runid= runid, sample= idkeys),
 	    #expand("{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz", runid= runid, sample= idkeys),    
@@ -70,10 +70,10 @@ rule all:
 	    # fgbio fq2cons
 	    expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
 	    #expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
-	    expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys),
+	    expand("{runid}/results/arriba/{sample}/fusions.fltrd.tsv", runid= runid, sample= idkeys),
 	    expand("{runid}/results/qc/multiqc_report.html", runid= runid),
 	    # rMats 
-	    expand("{runid}/results/reads/star/{sample}/bam.list", runid= runid, sample= idkeys),
+	    #expand("{runid}/results/reads/star_fltrd/{sample}/bam.list", runid= runid, sample= idkeys),
 	    
 
 	    # star 
