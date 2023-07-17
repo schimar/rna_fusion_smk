@@ -209,15 +209,11 @@ rule map_star:
         idx="resources/star_genome",
         gtf = "resources/genome.gtf",
     output:
-        #directory("{runid}/results/star/{sample}"),
         aln = "{runid}/results/reads/star/{sample}.bam",
         sj = "{runid}/results/reads/star/{sample}/SJ.out.tab",
-        #aln="{runid}/results/star/{sample}_{unit}/Aligned.out.bam",
-        #sj="{runid}/results/star/{sample}_{unit}/ReadsPerGene.out.tab",
     wildcard_constraints:
         sample = common_constraint
     params:
-        #index=lambda wc, input: input.index,
         smpl = "{sample}",
         #rg = "{rgid}",
         lib = "Library1",
@@ -228,8 +224,6 @@ rule map_star:
         #),
     log: "{runid}/logs/star/{sample}.log"
     threads: 24
-    #wrapper:
-    #    "v1.23.4/bio/star/align"
     shell:"""
         STAR --runThreadN {threads} --genomeDir {input.idx} --readFilesIn {input.fq1} {input.fq2} {params.extra} --outFileNamePrefix {runid}/results/reads/star/{wildcards.sample}/ --outStd BAM_SortedByCoordinate --outSAMattrRGline ID:{rgid} SM:{params.smpl} LB:{params.pl} PU:{params.pu} > {output.aln} 
         """
