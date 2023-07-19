@@ -73,7 +73,8 @@ rule all:
 	    expand("{runid}/results/arriba/{sample}/fusions.fltrd.tsv", runid= runid, sample= idkeys),
 	    expand("{runid}/results/qc/multiqc_report.html", runid= runid),
 	    # rMats 
-	    #expand("{runid}/results/reads/star_fltrd/{sample}/bam.list", runid= runid, sample= idkeys),
+	    #expand("{runid}/results/reads/star/{sample}/bam.list", runid= runid, sample= idkeys),
+	    expand("{runid}/results/rmats/{sample}/seMET.txt", runid= runid, sample= idkeys),
 	    
 
 	    # star 

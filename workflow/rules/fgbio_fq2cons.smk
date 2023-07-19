@@ -244,23 +244,23 @@ rule star_markdup:
         "v2.2.1/bio/sambamba/markdup"
 
 
-rule filter_bam:
-    input:
-        "{runid}/results/reads/star/{sample}.bam",
-    output:
-        "{runid}/results/reads/star_fltrd/{sample}.bam",
-    wildcard_constraints:
-        sample = common_constraint
-    log:
-        "{runid}/logs/fltr_bam/{sample}.log"
-    shell:"""
-        samtools view -h {input} | awk 'length($10) > 40 || $1 ~ /^@/' | samtools view -bS - > {output}
-        """
+#rule filter_bam:
+#    input:
+#        "{runid}/results/reads/star/{sample}.bam",
+#    output:
+#        "{runid}/results/reads/star_fltrd/{sample}.bam",
+#    wildcard_constraints:
+#        sample = common_constraint
+#    log:
+#        "{runid}/logs/fltr_bam/{sample}.log"
+#    shell:"""
+#        samtools view -h {input} | awk 'length($10) > 40 || $1 ~ /^@/' | samtools view -bS - > {output}
+#        """
 
 
 rule arriba:
     input:
-        bam="{runid}/results/reads/star_fltrd/{sample}.bam",
+        bam="{runid}/results/reads/star/{sample}.bam",
         genome="resources/genome.fa",
         annotation="resources/genome.gtf",
         # optional: # A custom tsv containing identified artifacts, such as read-through fusions of neighbouring genes.
@@ -278,7 +278,7 @@ rule arriba:
         genome_build="GRCh38",
         default_blacklist=True,
         default_known_fusions=True,
-        extra=""  #"-u",   #alignIntronMax",
+        extra="-u",   #alignIntronMax",
     log:
         "{runid}/logs/arriba/{sample}.log",
     threads: 1
@@ -301,7 +301,7 @@ rule filter_arriba:
 
 rule collectHs_star:
     input:
-        bam = "{runid}/results/reads/star_fltrd/{sample}.bam",
+        bam = "{runid}/results/reads/star/{sample}.bam",
         bed = "resources/twist_rna_exome_target_regions_hg38_annotated.bed",
         # target_file_UMI_demo_data_hg38.bed",
         ref = "resources/genome.fa",

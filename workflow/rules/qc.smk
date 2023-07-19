@@ -240,18 +240,18 @@ rule multiqcRSeQC:
             "{runid}/results/qc/rseqc/{unit.sample_name}.junctionanno.junction.bed",
             unit=units.itertuples(), runid= runid,
         ),
-        expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.junctionsat.junctionSaturation_plot.pdf",
-            unit=units.itertuples(), runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.infer_experiment.txt",
-            unit=units.itertuples(), runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.stats.txt",
-            unit=units.itertuples(), runid= runid,
-        ),
+        #expand(
+        #    "{runid}/results/qc/rseqc/{unit.sample_name}.junctionsat.junctionSaturation_plot.pdf",
+        #    unit=units.itertuples(), runid= runid,
+        #),
+        #expand(
+        #    "{runid}/results/qc/rseqc/{unit.sample_name}.infer_experiment.txt",
+        #    unit=units.itertuples(), runid= runid,
+        #),
+        #expand(
+        #    "{runid}/results/qc/rseqc/{unit.sample_name}.stats.txt",
+        #    unit=units.itertuples(), runid= runid,
+        #),
         expand(
             "{runid}/results/qc/rseqc/{unit.sample_name}.inner_distance_freq.inner_distance.txt",
             unit=units.itertuples(), runid= runid,
@@ -264,10 +264,10 @@ rule multiqcRSeQC:
             "{runid}/results/qc/rseqc/{unit.sample_name}.readdup.DupRate_plot.pdf",
             unit=units.itertuples(), runid= runid,
         ),
-        expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.readgc.GC_plot.pdf",
-            unit=units.itertuples(), runid= runid,
-        ),
+        #expand(
+        #    "{runid}/results/qc/rseqc/{unit.sample_name}.readgc.GC_plot.pdf",
+        #    unit=units.itertuples(), runid= runid,
+        #),
         expand(
             "{runid}/logs/rseqc/rseqc_junction_annotation/{unit.sample_name}.log",
             unit=units.itertuples(), runid= runid,
