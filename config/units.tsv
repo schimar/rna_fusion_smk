@@ -1,33 +1,65 @@
 sample_name	unit_name	fq	adapters
-H22032902-25ng-rep1_S13	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	GTTAATCGCT GAGCATTGAG
-H22032902-25ng-rep1_S13	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	GTTAATCGCT GAGCATTGAG
-H22032902-25ng-rep2_S14	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TGTAACTCCA CTGACAACAA
-H22032902-25ng-rep2_S14	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TGTAACTCCA CTGACAACAA
-H22032902-50ng-rep1_S5	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TACACCATTG CAACGACTGA
-H22032902-50ng-rep1_S5	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TACACCATTG CAACGACTGA
-H22032902-50ng-rep2_S6	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	GTAACGTCAA AGAGTTGTTG
-H22032902-50ng-rep2_S6	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	GTAACGTCAA AGAGTTGTTG
-H22033539-25ng-rep1_S15	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	CCAGTATCTA ACCGCGGATA
-H22033539-25ng-rep1_S15	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	CCAGTATCTA ACCGCGGATA
-H22033539-25ng-rep2_S16	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	GTTCTCATAG TCTTGCTGTG
-H22033539-25ng-rep2_S16	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	GTTCTCATAG TCTTGCTGTG
-H22033539-50ng-rep1_S7	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TAGGTTGGAA TGTTCCTAGA
-H22033539-50ng-rep1_S7	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TAGGTTGGAA TGTTCCTAGA
-H22033539-50ng-rep2_S8	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	AAGTGCACCT TAGCATATCG
-H22033539-50ng-rep2_S8	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	AAGTGCACCT TAGCATATCG
-SeraSeqCell-line-25ng-rep1_S11	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	CCGAGAAGGT CAGTGGAGCT
-SeraSeqCell-line-25ng-rep1_S11	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	CCGAGAAGGT CAGTGGAGCT
-SeraSeqCell-line-25ng-rep2_S12	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	GAAGCAATAG GAATCGCACA
-SeraSeqCell-line-25ng-rep2_S12	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	GAAGCAATAG GAATCGCACA
-SeraSeqCell-line-50ng-rep1_S3	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	ACTGAGGTAA GTATAACCTG
-SeraSeqCell-line-50ng-rep1_S3	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	ACTGAGGTAA GTATAACCTG
-SeraSeqCell-line-50ng-rep2_S4	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	CTTATCTAGC CATGATGAGA
-SeraSeqCell-line-50ng-rep2_S4	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	CTTATCTAGC CATGATGAGA
-SeraSeqFFPE-25ng-rep1_S9	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TGCTCGACAG ACCAAGCCAA
-SeraSeqFFPE-25ng-rep1_S9	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TGCTCGACAG ACCAAGCCAA
-SeraSeqFFPE-25ng-rep2_S10	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	AGGTGTTCTA CTACGTTCTT
-SeraSeqFFPE-25ng-rep2_S10	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	AGGTGTTCTA CTACGTTCTT
-SeraSeqFFPE-50ng-rep1_S1	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	AGACGAAGTT AACGTGCTCG
-SeraSeqFFPE-50ng-rep1_S1	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	AGACGAAGTT AACGTGCTCG
-SeraSeqFFPE-50ng-rep2_S2	L001	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TCACTACTAG GTCCTATGAA
-SeraSeqFFPE-50ng-rep2_S2	L002	mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/placeholder	TCACTACTAG GTCCTATGAA
+H22032902_25ng_r1_S13	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22032902_25ng_r1_S13_L001_R1_001.fastq.gz
+H22032902_25ng_r1_S13	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22032902_25ng_r1_S13_L002_R1_001.fastq.gz
+H22032902_25ng_r2_S14	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22032902_25ng_r2_S14_L001_R1_001.fastq.gz
+H22032902_25ng_r2_S14	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22032902_25ng_r2_S14_L002_R1_001.fastq.gz
+H22032902_50ng_r1_S15	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22032902_50ng_r1_S15_L001_R1_001.fastq.gz
+H22032902_50ng_r1_S15	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22032902_50ng_r1_S15_L002_R1_001.fastq.gz
+H22032902_50ng_r2_S16	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22032902_50ng_r2_S16_L001_R1_001.fastq.gz
+H22032902_50ng_r2_S16	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22032902_50ng_r2_S16_L002_R1_001.fastq.gz
+H22033539_25ng_r1_S17	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22033539_25ng_r1_S17_L001_R1_001.fastq.gz
+H22033539_25ng_r1_S17	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22033539_25ng_r1_S17_L002_R1_001.fastq.gz
+H22033539_25ng_r2_S18	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22033539_25ng_r2_S18_L001_R1_001.fastq.gz
+H22033539_25ng_r2_S18	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22033539_25ng_r2_S18_L002_R1_001.fastq.gz
+H22033539_50ng_r1_S19	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22033539_50ng_r1_S19_L001_R1_001.fastq.gz
+H22033539_50ng_r1_S19	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22033539_50ng_r1_S19_L002_R1_001.fastq.gz
+H22033539_50ng_r2_S20	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22033539_50ng_r2_S20_L001_R1_001.fastq.gz
+H22033539_50ng_r2_S20	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H22033539_50ng_r2_S20_L002_R1_001.fastq.gz
+H23015262_100ng_S29	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23015262_100ng_S29_L001_R1_001.fastq.gz
+H23015262_100ng_S29	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23015262_100ng_S29_L002_R1_001.fastq.gz
+H23018804_25ng_r1_S21	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_25ng_r1_S21_L001_R1_001.fastq.gz
+H23018804_25ng_r1_S21	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_25ng_r1_S21_L002_R1_001.fastq.gz
+H23018804_25ng_r2_S22	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_25ng_r2_S22_L001_R1_001.fastq.gz
+H23018804_25ng_r2_S22	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_25ng_r2_S22_L002_R1_001.fastq.gz
+H23018804_25ng_r3_S23	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_25ng_r3_S23_L001_R1_001.fastq.gz
+H23018804_25ng_r3_S23	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_25ng_r3_S23_L002_R1_001.fastq.gz
+H23018804_50ng_r1_S24	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_50ng_r1_S24_L001_R1_001.fastq.gz
+H23018804_50ng_r1_S24	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_50ng_r1_S24_L002_R1_001.fastq.gz
+H23018804_50ng_r2_S25	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_50ng_r2_S25_L001_R1_001.fastq.gz
+H23018804_50ng_r2_S25	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_50ng_r2_S25_L002_R1_001.fastq.gz
+H23018804_50ng_r3_S26	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_50ng_r3_S26_L001_R1_001.fastq.gz
+H23018804_50ng_r3_S26	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23018804_50ng_r3_S26_L002_R1_001.fastq.gz
+H23030376_100ng_S32	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23030376_100ng_S32_L001_R1_001.fastq.gz
+H23030376_100ng_S32	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23030376_100ng_S32_L002_R1_001.fastq.gz
+H23032050_100ng_S30	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23032050_100ng_S30_L001_R1_001.fastq.gz
+H23032050_100ng_S30	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23032050_100ng_S30_L002_R1_001.fastq.gz
+H23032749_100ng_S31	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23032749_100ng_S31_L001_R1_001.fastq.gz
+H23032749_100ng_S31	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23032749_100ng_S31_L002_R1_001.fastq.gz
+H23044887_100ng_r1_S27	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23044887_100ng_r1_S27_L001_R1_001.fastq.gz
+H23044887_100ng_r1_S27	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23044887_100ng_r1_S27_L002_R1_001.fastq.gz
+H23044887_100ng_r2_S28	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23044887_100ng_r2_S28_L001_R1_001.fastq.gz
+H23044887_100ng_r2_S28	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/H23044887_100ng_r2_S28_L002_R1_001.fastq.gz
+SeraSeq0Cell-line_25ng_r1_S7	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_25ng_r1_S7_L001_R1_001.fastq.gz
+SeraSeq0Cell-line_25ng_r1_S7	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_25ng_r1_S7_L002_R1_001.fastq.gz
+SeraSeq0Cell-line_25ng_r2_S8	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_25ng_r2_S8_L001_R1_001.fastq.gz
+SeraSeq0Cell-line_25ng_r2_S8	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_25ng_r2_S8_L002_R1_001.fastq.gz
+SeraSeq0Cell-line_25ng_r3_S9	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_25ng_r3_S9_L001_R1_001.fastq.gz
+SeraSeq0Cell-line_25ng_r3_S9	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_25ng_r3_S9_L002_R1_001.fastq.gz
+SeraSeq0Cell-line_50ng_r1_S10	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_50ng_r1_S10_L001_R1_001.fastq.gz
+SeraSeq0Cell-line_50ng_r1_S10	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_50ng_r1_S10_L002_R1_001.fastq.gz
+SeraSeq0Cell-line_50ng_r2_S11	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_50ng_r2_S11_L001_R1_001.fastq.gz
+SeraSeq0Cell-line_50ng_r2_S11	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_50ng_r2_S11_L002_R1_001.fastq.gz
+SeraSeq0Cell-line_50ng_r3_S12	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_50ng_r3_S12_L001_R1_001.fastq.gz
+SeraSeq0Cell-line_50ng_r3_S12	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0Cell-line_50ng_r3_S12_L002_R1_001.fastq.gz
+SeraSeq0FFPE_25ng_r1_S1	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_25ng_r1_S1_L001_R1_001.fastq.gz
+SeraSeq0FFPE_25ng_r1_S1	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_25ng_r1_S1_L002_R1_001.fastq.gz
+SeraSeq0FFPE_25ng_r2_S2	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_25ng_r2_S2_L001_R1_001.fastq.gz
+SeraSeq0FFPE_25ng_r2_S2	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_25ng_r2_S2_L002_R1_001.fastq.gz
+SeraSeq0FFPE_25ng_r3_S3	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_25ng_r3_S3_L001_R1_001.fastq.gz
+SeraSeq0FFPE_25ng_r3_S3	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_25ng_r3_S3_L002_R1_001.fastq.gz
+SeraSeq0FFPE_50ng_r1_S4	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_50ng_r1_S4_L001_R1_001.fastq.gz
+SeraSeq0FFPE_50ng_r1_S4	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_50ng_r1_S4_L002_R1_001.fastq.gz
+SeraSeq0FFPE_50ng_r2_S5	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_50ng_r2_S5_L001_R1_001.fastq.gz
+SeraSeq0FFPE_50ng_r2_S5	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_50ng_r2_S5_L002_R1_001.fastq.gz
+SeraSeq0FFPE_50ng_r3_S6	L001	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_50ng_r3_S6_L001_R1_001.fastq.gz
+SeraSeq0FFPE_50ng_r3_S6	L002	/mnt/sda/rnaSeq/runs/230720/results/bcl2fq/SeraSeq0FFPE_50ng_r3_S6_L002_R1_001.fastq.gz

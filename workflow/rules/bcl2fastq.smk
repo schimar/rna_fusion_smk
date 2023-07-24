@@ -23,22 +23,22 @@ rule bcl2fq:
     
 #   "{sample}_{read}_001.fastq.gz"
 
-#rule cat_fq1:
-#    output: 
-#        #fq = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-#        fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R1.fq.gz",
-#        done = touch("{runid}/results/bcl2fq/cat/{sample}.cat.1.done")
-#    log: "{runid}/logs/cat_fq/{sample}_1.log"
-#    shell: """
-#        cat {runid}/results/bcl2fq/{wildcards.sample}_L*_R1_001.fastq.gz > {output.fq} 2> {log}
-#        """
-#
-#rule cat_fq2:
-#    output: 
-#        #fq = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
-#        fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R2.fq.gz",
-#        done = touch("{runid}/results/bcl2fq/cat/{sample}.cat.2.done")
-#    log: "{runid}/logs/cat_fq/{sample}_2.log"
-#    shell: """
-#        cat {runid}/results/bcl2fq/{runid}/{wildcards.sample}_L*_R2_001.fastq.gz > {output.fq} 2> {log}
-#        """
+rule cat_fq1:
+    output: 
+        fq = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        #fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R1.fq.gz",
+        done = touch("{runid}/results/bcl2fq/cat/{sample}.cat.1.done")
+    log: "{runid}/logs/cat_fq/{sample}_1.log"
+    shell: """
+        cat {runid}/results/bcl2fq/{wildcards.sample}_L*_R1_001.fastq.gz > {output.fq} 2> {log}
+        """
+
+rule cat_fq2:
+    output: 
+        fq = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        #fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R2.fq.gz",
+        done = touch("{runid}/results/bcl2fq/cat/{sample}.cat.2.done")
+    log: "{runid}/logs/cat_fq/{sample}_2.log"
+    shell: """
+        cat {runid}/results/bcl2fq/{wildcards.sample}_L*_R2_001.fastq.gz > {output.fq} 2> {log}
+        """
