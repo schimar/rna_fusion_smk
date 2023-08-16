@@ -57,13 +57,13 @@ rule all:
 	    #expand("{runid}/results/bbmerge/qc/multiqc_report.html", runid= runid),
 	    	    
 	    # fgbio fq2cons
-	    expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
+	    #expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
 	    #expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
-	    expand("{runid}/results/arriba/{sample}/fusions.fltrd.tsv", runid= runid, sample= idkeys),
+	    expand("{runid}/results/arriba/{sample}/fusions.fltrd.tsv", runid= runid, sample= idkeys[0]),
 	    #expand("{runid}/results/qc/multiqc_report.html", runid= runid),
 	    # rMats 
 	    #expand("{runid}/results/reads/star/{sample}/bam.list", runid= runid, sample= idkeys),
-	    expand("{runid}/results/rmats/{sample}/seMET.txt", runid= runid, sample= idkeys),
+	    expand("{runid}/results/rmats/{sample}/seMET.txt", runid= runid, sample= idkeys[0]),
 	    
 
 

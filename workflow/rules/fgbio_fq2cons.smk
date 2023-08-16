@@ -5,8 +5,10 @@ ruleorder: call_consensus_reads > fastq_to_ubam
 rule fastq_to_ubam:
     """Generates a uBam from R1 and R2 fastq files."""
     input:
-        fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        #fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        #fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        fq1 = "/mnt/routine/validation/novaSeq_RNAseq/230627/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        fq2 = "/mnt/routine/validation/novaSeq_RNAseq/230627/results/bcl2fq/cat/{sample}_R2.fq.gz",
     params:
         rs1 = r1_read_structure,
         rs2 = r2_read_structure,
@@ -260,7 +262,7 @@ rule star_markdup:
 
 rule arriba:
     input:
-        bam="{runid}/results/reads/star/{sample}.bam",
+        bam="{runid}/results/reads/star/mrkdup/{sample}.bam",
         genome="resources/genome.fa",
         annotation="resources/genome.gtf",
         # optional: # A custom tsv containing identified artifacts, such as read-through fusions of neighbouring genes.
