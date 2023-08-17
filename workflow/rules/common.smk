@@ -39,5 +39,13 @@ r1_read_structure = "5M2S+T"  #"8M+T"
 r2_read_structure = "5M2S+T"  #"8M+T"
 
 
+onstart:
+    shell("gitrev=$(git rev-parse HEAD) && echo  \"--------------------------------------------- \n Starting RNAseq fusion workflow, with \n git branch $gitrev \n log file in \n {log} \n & run data in \n {runid} \n  ---------------------------------------------\" 2>&1 | tee {log}") 
+
+onsuccess:
+    shell("cp -v {log} {runid}/logs/")
+
+onerror:
+    shell("cp -v {log} {runid}/logs/")
 
 
