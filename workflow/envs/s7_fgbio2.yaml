@@ -36,3 +36,4 @@ dependencies:
   - gatk4 =4.2.6.1
   - fgbio-minimal #=1.5.1
   - rmats
+  - pybiomart

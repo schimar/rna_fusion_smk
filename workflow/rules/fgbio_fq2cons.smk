@@ -45,7 +45,7 @@ rule align_bam:
         " ( "
         " samtools fastq {input.bam} "
         "   | bwa mem -t {threads} -p -K 150000000 -Y {input.ref} - "
-        "   | fgbio -Xmx4g --compression 1 --async-io ZipperBams "
+        "   | fgbio -Xmx8g --compression 1 --async-io ZipperBams "
         "       --unmapped {input.bam} "
         "       --ref {input.ref} "
         "       --output {output.bam} "
