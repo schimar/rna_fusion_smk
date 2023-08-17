@@ -313,13 +313,13 @@ rule get_clinFuse:
 
 rule filter_arriba:
     input:
-        "{runid}/results/arriba/{sample}/fusions.tsv",
+        "{runid}/results/arriba/{sample}/fusions.{clin_nonclin}.tsv",
     output:
-        "{runid}/results/arriba/{sample}/fusions.fltrd.tsv",
+        "{runid}/results/arriba/{sample}/fusions.{clin_nonclin}.fltrd.tsv",
     #wildcard_constraints:
     #    sample = common_constraint
     log:
-        "{runid}/logs/fltr_arriba/{sample}/log"
+        "{runid}/logs/fltr_arriba/{sample}/{clin_nonclin}.log"
     shell:"""
         scripts/fusionfltr.py -i {input} > {output} 2> {log}
         """
