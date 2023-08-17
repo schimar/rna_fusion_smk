@@ -182,6 +182,7 @@ rule formatHs_cons:
         scripts/formatHs.sh {input} {runid} > {output} 2> {log}
         """
 
+# for now, we'll omit removing duplicates at this stage, since it'll be done after star alignment
 rule sambamba_markdup:
     input:
         "{runid}/results/reads/{sample}.cons.mapped.bam"
@@ -197,7 +198,7 @@ rule sambamba_markdup:
 
 rule bam2fq:
     input:
-        "{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam",
+        "{runid}/results/reads/{sample}.cons.mapped.bam",
     output:
         fastq1 = "{runid}/results/reads/cons/{sample}.cons.1.fq",
         fastq2 = "{runid}/results/reads/cons/{sample}.cons.2.fq",       
