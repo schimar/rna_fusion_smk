@@ -298,6 +298,19 @@ rule arriba:
     wrapper:
         "v1.23.4/bio/arriba"
 
+
+rule get_clinFuse:
+    input:
+        fus = "{runid}/results/arriba/{sample}/fusions.tsv",
+        clinTab = "resources/s2_winters2018.tsv",
+    output:
+        clinout = "{runid}/results/arriba/{sample}/fusions.clinout.tsv",
+        nonclinout = "{runid}/results/arriba/{sample}/fusions.nonclinout.tsv",
+    shell:"""
+        scripts/clinFuse.py -f {input.fus} -c {input.clinTab}
+        """
+
+
 rule filter_arriba:
     input:
         "{runid}/results/arriba/{sample}/fusions.tsv",
