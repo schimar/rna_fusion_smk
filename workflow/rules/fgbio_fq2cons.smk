@@ -53,6 +53,16 @@ rule align_bam:
         "       --tags-to-revcomp Consensus "
         " ) &> {log}"
         
+          
+rule flagstat_mapped:
+    input:
+        "{runid}/results/reads/{sample}.mapped.bam",
+    output:
+        "{runid}/results/reads/fstat/{sample}.mapped.fstat",
+    shell:"""
+        samtools flagstat {input} > {output}
+        """
+      
 
 rule group_reads:
     """Group the raw reads by UMI and position ready for consensus calling."""
