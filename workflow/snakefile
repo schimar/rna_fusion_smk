@@ -54,7 +54,7 @@ rule all:
 	    #expand("{runid}/results/bbmerge/{sample}.fq.gz", runid= runid, sample= idkeys),
 	    # qc
 	    #expand("{runid}/results/bbmerge/qc/fastqc/{sample}.html", runid= runid, sample= idkeys),
-	    expand("{runid}/results/bbmerge/qc/multiqc_report.html", runid= runid),
+	    #expand("{runid}/results/bbmerge/qc/multiqc_report.html", runid= runid),
 	    	    
 	    # fgbio fq2cons
 	    expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
