@@ -82,8 +82,9 @@ if __name__ == "__main__":
                # if gene1 == 'SLC45A3' and gene2 == 'BRAF':
                     # this one doesn't show up as in-frame nor out-of-frame (5'UTR/splice-site)
                #     print(line)
-                if reading_frame == 'in-frame' or reading_frame == '.':
-                    print(line)
+                if confidence != 'low':
+                    if reading_frame == 'in-frame' or reading_frame == '.':
+                        print(line)
                     #continue
                 #else:
                 #    print(split_reads1, split_reads2, disco_mates, cov1, cov2, expr_by_cov, confidence)#expr_by_cov, confidence)
