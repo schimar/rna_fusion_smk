@@ -137,8 +137,8 @@ if __name__ == "__main__":
 
     nl = '\n'
     print(f"targets found in arriba output: {nl}{nl.join(ainb)}", '\n')
-    print(f"fusions not in target file: {nl}{nl.join(anotb)}", '\n')
-    print(f"targets not in arriba output: {nl}{nl.join(bnota)}", '\n')
+    print(f"fusions not in target file: {nl}{nl.join(bnota)}", '\n')
+    print(f"targets not in arriba output: {nl}{nl.join(anotb)}", '\n')
 
 
     fus.close()
