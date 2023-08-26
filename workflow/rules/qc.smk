@@ -13,10 +13,10 @@ rule bbmerge_fqs:
         sample = common_constraint
     log: "{runid}/logs/bbmerge/{sample}.log"
     resources:
-        mem_gb=20
+        mem_gb=28
     threads: 8
     shell:"""
-        bbmerge-auto.sh in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
+        bbmerge-auto.sh -Xmx28g in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
         """
 
 # bbmerge.sh in1=/mnt/sda/rnaSeq/runs/230627/results/bcl2fq/cat/H22032902-25ng-rep1_S13_R1.fq.gz in2=/mnt/sda/rnaSeq/runs/230627/results/bcl2fq/cat/H22032902-25ng-rep1_S13_R2.fq.gz out=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/H22032902-25ng-rep1_S13.fq.gz outu1=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/outu/H22032902-25ng-rep1_S13_1.fq.gz outu2=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/outu/H22032902-25ng-rep1_S13_2.fq.gz       

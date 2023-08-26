@@ -1,12 +1,15 @@
-rule samtoo_index:
+rule samtools_index:
     input:
-      "{runid}/results/reads/star/{sample}.bam", 
+        "{runid}/results/reads/star/{sample}.bam", 
     output:
       "{runid}/results/reads/star/{sample}.bam.bai",
-    shell:
-      """
-      samtools index {input} 
-      """
+    log:
+      "{runid}/logs/samtools_index/{sample}.log",
+    params:
+        extra="",  # optional params string
+    threads: 4  # This value - 1 will be sent to -@
+    wrapper:
+        "v2.6.0/bio/samtools/index"
 
 
 rule sub_chr7:
