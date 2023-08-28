@@ -7,7 +7,7 @@ rule samtools_index:
       "{runid}/logs/samtools_index/{sample}.log",
     params:
         extra="",  # optional params string
-    threads: 4  # This value - 1 will be sent to -@
+    threads: 9  # This value - 1 will be sent to -@
     wrapper:
         "v2.6.0/bio/samtools/index"
 
