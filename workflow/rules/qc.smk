@@ -104,6 +104,7 @@ rule rseqc_gtf2bed:
 rule rseqc_junction_annotation:
     input:
         bam="{runid}/results/reads/star/{sample}.bam",
+        bai="{runid}/results/reads/star/{sample}.bam.bai",
         bed="{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.junctionanno.junction.bed",
