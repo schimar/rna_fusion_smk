@@ -96,7 +96,7 @@ rule rseqc_gtf2bed:
         bed="{runid}/results/qc/rseqc/annotation.bed",
         db=temp("{runid}/results/qc/rseqc/annotation.db"),
     log:
-        "{runid}/logs/rseqc_gtf2bed.log",
+        "{runid}/logs/rseqc/rseqc_gtf2bed.log",
     script:
         "../scripts/gtf2bed.py"
 
@@ -265,10 +265,10 @@ rule multiqcRSeQC:
             "{runid}/results/qc/rseqc/{unit.sample_name}.readdup.DupRate_plot.pdf",
             unit=units.itertuples(), runid= runid,
         ),
-        #expand(
-        #    "{runid}/results/qc/rseqc/{unit.sample_name}.readgc.GC_plot.pdf",
-        #    unit=units.itertuples(), runid= runid,
-        #),
+        expand(
+            "{runid}/results/qc/rseqc/{unit.sample_name}.readgc.GC_plot.pdf",
+            unit=units.itertuples(), runid= runid,
+        ),
         expand(
             "{runid}/logs/rseqc/rseqc_junction_annotation/{unit.sample_name}.log",
             unit=units.itertuples(), runid= runid,
@@ -277,10 +277,10 @@ rule multiqcRSeQC:
         "{runid}/results/qc/multiqc_report.html",
     params:
         extra= "",
-        use_input_files_only= True,
+        #use_input_files_only= True,
     log:
         "{runid}/logs/multiqc.log",
     wrapper:
-        "v2.6.0/bio/multiqc"
+        "v1.23.1/bio/multiqc"
 
 
