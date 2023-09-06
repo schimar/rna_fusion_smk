@@ -17,21 +17,6 @@ import pandas as pd
 
 # Usage: scripts/fusionfltr.py -i fusions.tsv
 
-#import warnings
-#warnings.filterwarnings('ignore')
-
-
-#if len(sys.argv) == 2:
-#    if os.path.exists(sys.argv[1]):
-#        with open(sys.argv[1]) as file:
-#            print(file.read())
-#    else:
-#        print('No such file')
-#elif len(sys.argv) < 2:
-#    print('Too few arguments')
-#else:
-#    print('Too many arguments')
-
 # -----------------------------------------------------------------------------
 
 # filter definitions
@@ -46,25 +31,24 @@ import pandas as pd
 #hdrline = '\t'.join(lshdr)
 
 
-parser = ArgumentParser()
-parser.add_argument("-i", "--input", dest="infus",
-                    help="input fusion file name", metavar="<input>")
-#parser.add_argument("-q", "--quiet",
-#                    action="store_false", dest="verbose", default=True,
-#                    help="don't print status messages to stdout")
-
-args = parser.parse_args()
-
-fusion_file = args.infus
-
-if not fusion_file: #.exists():
-    print("Please specify a valid fusion file")
-    raise SystemExit(1)
-
 # NOTE: move the argparser below if name == main
 # ---------------------------------- #
 
 if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("-i", "--input", dest="infus",
+                        help="input fusion file name", metavar="<input>")
+    #parser.add_argument("-q", "--quiet",
+    #                    action="store_false", dest="verbose", default=True,
+    #                    help="don't print status messages to stdout")
+
+    args = parser.parse_args()
+    fusion_file = args.infus
+
+    if not fusion_file: #.exists():
+        print("Please specify a valid fusion file")
+        raise SystemExit(1)
+
 
     with open(fusion_file, 'rt') as fus:
         for line in fus:
@@ -83,8 +67,8 @@ if __name__ == "__main__":
                     # this one doesn't show up as in-frame nor out-of-frame (5'UTR/splice-site)
                #     print(line)
                 if confidence != 'low':
-                    if reading_frame == 'in-frame' or reading_frame == '.':
-                        print(line)
+                    #if reading_frame == 'in-frame' or reading_frame == '.':
+                    print(line)
                     #continue
                 #else:
                 #    print(split_reads1, split_reads2, disco_mates, cov1, cov2, expr_by_cov, confidence)#expr_by_cov, confidence)
