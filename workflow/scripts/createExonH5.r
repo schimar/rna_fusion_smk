@@ -23,14 +23,14 @@ for(i in 1:length(s2)){
 
 # ---------------
 
-h5createFile("exons_ensmbl_winters2018_Aug30_23.h5")
+h5createFile("exons_ensembl_winters2018_Aug30_23.h5")
 
 
 for(i in 1:length(exls)){
 	#h5createGroup("tst.h5", names(exls)[i])
 	if (length(exls[[i]]) != 0){
-		for(j in length(exls[[i]])){
-			h5write(exls[[i]][[j]], "exons_ensmbl_winters2018_Aug30_23.h5", names(exls[[i]][j]))
+		for(j in 1:length(exls[[i]])){
+			h5write(exls[[i]][[j]], "exons_ensembl_winters2018_Aug30_23.h5", names(exls[[i]])[j])
 		}
 	}
 }
