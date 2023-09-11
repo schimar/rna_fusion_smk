@@ -15,59 +15,34 @@ import numpy as np
 #np.random.seed(42)
 import pandas as pd
 
-# Usage: scripts/fusionfltr.py -i fusions.tsv
-
-#import warnings
-#warnings.filterwarnings('ignore')
-
-
-#if len(sys.argv) == 2:
-#    if os.path.exists(sys.argv[1]):
-#        with open(sys.argv[1]) as file:
-#            print(file.read())
-#    else:
-#        print('No such file')
-#elif len(sys.argv) < 2:
-#    print('Too few arguments')
-#else:
-#    print('Too many arguments')
+# Usage: scripts/get_fusion_targets.py -i fusions.tsv -t targets.tsv
 
 # -----------------------------------------------------------------------------
 
-# filter definitions
-#spl_read_thresh = 0
-#cov_thresh = 0.01
-
-
-# -----------------------------------------------------------------------------
-
-
-#lshdr = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO']
-#hdrline = '\t'.join(lshdr)
-
-
-parser = ArgumentParser()
-parser.add_argument("-i", "--input", dest="infus",
-                    help="input fusion file name", metavar="<input>")
-parser.add_argument("-t", "--targets", dest="intargets",
-                    help="input target file name", metavar="<input>")
-
-#parser.add_argument("-q", "--quiet",
-#                    action="store_false", dest="verbose", default=True,
-#                    help="don't print status messages to stdout")
-
-args = parser.parse_args()
-
-fusion_file = args.infus
-target_file = args.intargets
-
-if not fusion_file: #.exists():
-    print("Please specify a valid fusion file")
-    raise SystemExit(1)
 
 # ---------------------------------- #
 
 if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument("-i", "--input", dest="infus",
+                        help="input fusion file name", metavar="<input>")
+    parser.add_argument("-t", "--targets", dest="intargets",
+                        help="input target file name", metavar="<input>")
+
+    #parser.add_argument("-q", "--quiet",
+    #                    action="store_false", dest="verbose", default=True,
+    #                    help="don't print status messages to stdout")
+
+    args = parser.parse_args()
+
+    fusion_file = args.infus
+    target_file = args.intargets
+
+    if not fusion_file: #.exists():
+        print("Please specify a valid fusion file")
+        raise SystemExit(1)
+
+
     targetfusdict = dict()
     with open(target_file, 'rt') as targs:
         for line in targs:
