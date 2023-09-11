@@ -60,15 +60,23 @@ if __name__ == "__main__":
                 lspl = line.split()
                 reading_frame = lspl[15]
                 gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, confidence, reading_frame, tags, retained_protein_domains, closest_genomic_breakpoint1, closest_genomic_breakpoint2, gene_id1, gene_id2, transcript_id1, transcript_id2, direction1, direction2, filters, fusion_transcript, peptide_sequence, read_id = lspl[0:30]
-                #split_reads1, split_reads2, disco_mates, cov1, cov2 = list(map(int, [split_reads1, split_reads2, disco_mates, cov1, cov2]))
-                #expr_by_cov = int(split_reads1+split_reads2+disco_mates) / int(cov1+cov2)
-                #if expr_by_cov >= 0.01 and confidence != "low":
-               # if gene1 == 'SLC45A3' and gene2 == 'BRAF':
+                split_reads1, split_reads2, disco_mates, cov1, cov2 = list(map(int, [split_reads1, split_reads2, disco_mates, cov1, cov2]))
+                expr_by_cov = int(split_reads1+split_reads2+disco_mates) / int(cov1+cov2)
+                               # if gene1 == 'SLC45A3' and gene2 == 'BRAF':
                     # this one doesn't show up as in-frame nor out-of-frame (5'UTR/splice-site)
                #     print(line)
                 if confidence != 'low':
+                    if expr_by_cov > 0.01:
+                        if split_reads1 == 0 or split_reads2 == 0:
+                            if disco_mates == 0:
+                                continue
+                            else:
+                                print(line)
+                        else:
+                            print(line)
                     #if reading_frame == 'in-frame' or reading_frame == '.':
-                    print(line)
+                    #if expr_by_cov >= 0.01 and confidence != "low":
+
                     #continue
                 #else:
                 #    print(split_reads1, split_reads2, disco_mates, cov1, cov2, expr_by_cov, confidence)#expr_by_cov, confidence)
