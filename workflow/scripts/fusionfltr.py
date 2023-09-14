@@ -54,44 +54,41 @@ if __name__ == "__main__":
         for line in fus:
             line = line.strip('\n')
             if line[0:2] == '#g':
-                #continue
-                print(line)
+                header = '\t'.join(["gene1", "gene2", "strand1", "strand2", "breakpoint1", "breakpoint2", "site1", "site2", "typ", "split_reads1", "split_reads2", "disco_mates", "cov1", "cov2", "warning", "confidence", "reading_frame", "gene_id1", "gene_id2", "transcript_id1", "transcript_id2", "filters", "s2_gene", "s2_descr"])
+                print(header)
             else:
                 lspl = line.split()
                 reading_frame = lspl[15]
-                gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, confidence, reading_frame, tags, retained_protein_domains, closest_genomic_breakpoint1, closest_genomic_breakpoint2, gene_id1, gene_id2, transcript_id1, transcript_id2, direction1, direction2, filters, fusion_transcript, peptide_sequence, read_id = lspl[0:30]
+                if len(lspl) > 30:
+                    gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, confidence, reading_frame, tags, retained_protein_domains, closest_genomic_breakpoint1, closest_genomic_breakpoint2, gene_id1, gene_id2, transcript_id1, transcript_id2, direction1, direction2, filters, fusion_transcript, peptide_sequence, read_id, s2_gene, s2_descr = lspl[0:32]
+                else:
+                    gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, confidence, reading_frame, tags, retained_protein_domains, closest_genomic_breakpoint1, closest_genomic_breakpoint2, gene_id1, gene_id2, transcript_id1, transcript_id2, direction1, direction2, filters, fusion_transcript, peptide_sequence, read_id = lspl[0:30]
                 split_reads1, split_reads2, disco_mates, cov1, cov2 = list(map(int, [split_reads1, split_reads2, disco_mates, cov1, cov2]))
-                expr_by_cov = int(split_reads1+split_reads2+disco_mates) / int(cov1+cov2)
-                               # if gene1 == 'SLC45A3' and gene2 == 'BRAF':
-                    # this one doesn't show up as in-frame nor out-of-frame (5'UTR/splice-site)
-               #     print(line)
+                cov = int(cov1+cov2)
+                supp_reads = int(split_reads1 + split_reads2 + disco_mates)
+                warn = ""
+                if len(lspl) > 30:
+                    newlist = [gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, warn, confidence, reading_frame, gene_id1, gene_id2, transcript_id1, transcript_id2, filters, s2_gene, s2_descr]
+                    newline = '\t'.join(map(str, newlist))
+                else:
+                    newlist = [gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, warn, confidence, reading_frame, gene_id1, gene_id2, transcript_id1, transcript_id2, filters]
+                    newline = '\t'.join(map(str, newlist))
                 if confidence != 'low':
-                    if expr_by_cov > 0.01:
-                        if split_reads1 == 0 or split_reads2 == 0:
-                            if disco_mates == 0:
-                                continue
-                            else:
-                                print(line)
+                    if split_reads1 == 0 or split_reads2 == 0:
+                        if disco_mates == 0:
+                            continue
                         else:
-                            print(line)
-                    #if reading_frame == 'in-frame' or reading_frame == '.':
-                    #if expr_by_cov >= 0.01 and confidence != "low":
-
-                    #continue
-                #else:
-                #    print(split_reads1, split_reads2, disco_mates, cov1, cov2, expr_by_cov, confidence)#expr_by_cov, confidence)
-
-
-                #if (int(split_reads1) >= spl_read_thresh and int(split_reads2) >= spl_read_thresh and int(cov1) >= cov_thresh and int(cov2) >= cov_thresh):
-                    # get chroms for both from breakpoints
-
-                    #info =
-                    #newline = '\t'.join(
-
-
-
-                    #print(breakpoint1, breakpoint2, split_reads1, split_reads2, cov1, cov2, gene1, gene2, filters)
-
+                            print(newline)
+                    else:
+                        if supp_reads < 5 and supp_reads >=3:
+                            warn = "low supp. reads"
+                            newlist[14] = warn
+                            newline = '\t'.join(map(str, newlist))
+                            print(newline)
+                        elif supp_reads < 3:
+                            continue
+                        else:
+                            print(newline)
 
     fus.close()
 
