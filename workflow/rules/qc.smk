@@ -94,7 +94,7 @@ rule rseqc_gtf2bed:
         "resources/genome.gtf",
     output:
         bed="{runid}/results/qc/rseqc/annotation.bed",
-        db=temp("{runid}/results/qc/rseqc/annotation.db"),
+        db="{runid}/results/qc/rseqc/annotation.db",
     log:
         "{runid}/logs/rseqc/rseqc_gtf2bed.log",
     script:
