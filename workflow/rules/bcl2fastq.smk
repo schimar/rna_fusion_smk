@@ -1,7 +1,8 @@
 rule bcl2fq:
     input:
         #rundir = "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2/",
-        rundir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
+        #rundir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
+        rundir = "/mnt/routine/230915_A01358_0066_AHJWHKDRX3/",
         #230426_A01272_0045_AH5CT5DRX3/",
     output:
         #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
@@ -20,7 +21,7 @@ rule bcl2fq:
 
 ## expand("../fq/{{runid}}_S0_L001_{readid}_001.fastq.gz", readid=config['readids'])
 ## I will probably have to use the expand in the output, so I can name the files in rule all! 
-    
+   
 #   "{sample}_{read}_001.fastq.gz"
 
 rule cat_fq1:
