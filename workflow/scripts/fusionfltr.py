@@ -27,12 +27,6 @@ import pandas as pd
 # -----------------------------------------------------------------------------
 
 
-#lshdr = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO']
-#hdrline = '\t'.join(lshdr)
-
-
-# NOTE: move the argparser below if name == main
-# ---------------------------------- #
 
 if __name__ == "__main__":
     parser = ArgumentParser()

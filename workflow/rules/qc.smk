@@ -249,10 +249,10 @@ rule multiqcRSeQC:
         #    "{runid}/results/qc/rseqc/{unit.sample_name}.infer_experiment.txt",
         #    unit=units.itertuples(), runid= runid,
         #),
-        #expand(
-        #    "{runid}/results/qc/rseqc/{unit.sample_name}.stats.txt",
-        #    unit=units.itertuples(), runid= runid,
-        #),
+        expand(
+            "{runid}/results/qc/rseqc/{unit.sample_name}.stats.txt",
+            unit=units.itertuples(), runid= runid,
+        ),
         expand(
             "{runid}/results/qc/rseqc/{unit.sample_name}.inner_distance_freq.inner_distance.txt",
             unit=units.itertuples(), runid= runid,
