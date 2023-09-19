@@ -123,7 +123,7 @@ rule rseqc_junction_annotation:
 rule rseqc_junction_saturation:
     input:
         bam="{runid}/results/reads/star/{sample}.bam",
-        bed="{runid}/results/qc/rseqc/annotation.bed",
+        bed="resources/annotation.bed",  #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.junctionsat.junctionSaturation_plot.pdf",
     priority: 1
@@ -155,7 +155,7 @@ rule rseqc_stat:
 rule rseqc_infer:
     input:
         bam="{runid}/results/reads/star/{sample}.bam",
-        bed="{runid}/results/qc/rseqc/annotation.bed",
+        bed="resources/annotation.bed",   #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.infer_experiment.txt",
     priority: 1
@@ -170,7 +170,7 @@ rule rseqc_infer:
 rule rseqc_innerdis:
     input:
         bam="{runid}/results/reads/star/{sample}.bam",
-        bed="{runid}/results/qc/rseqc/annotation.bed",
+        bed="resources/annotation.bed",   #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.inner_distance_freq.inner_distance.txt",
     priority: 1
@@ -187,7 +187,7 @@ rule rseqc_innerdis:
 rule rseqc_readdis:
     input:
         bam="{runid}/results/reads/star/{sample}.bam",
-        bed="{runid}/results/qc/rseqc/annotation.bed",
+        bed="resources/annotation.bed",     #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.readdistribution.txt",
     priority: 1
