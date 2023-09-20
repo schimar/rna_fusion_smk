@@ -72,7 +72,13 @@ if __name__ == "__main__":
                         if disco_mates == 0:
                             continue
                         else:
-                            print(newline)
+                            if supp_reads < 5 and supp_reads >=3:
+                                warn = "low supp. reads"
+                                newlist[14] = warn
+                                newline = '\t'.join(map(str, newlist))
+                                print(newline)
+                            elif supp_reads < 3:
+                                continue
                     else:
                         if supp_reads < 5 and supp_reads >=3:
                             warn = "low supp. reads"
