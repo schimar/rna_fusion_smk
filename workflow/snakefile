@@ -48,7 +48,7 @@ rule all:
 	    directory("resources/star_genome"),
 	    expand("resources/{bed}_file_UMI_demo_data_hg38.interval_list", bed= ['target', 'probe']),
 	    ### bcl2fq
-	    expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
+	    #expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
 	    #expand("{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz", runid= runid, sample= idkeys),
 	    #expand("{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz", runid= runid, sample= idkeys),    
 	    #expand("{runid}/results/bbmerge/{sample}.fq.gz", runid= runid, sample= idkeys),

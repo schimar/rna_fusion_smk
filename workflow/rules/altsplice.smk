@@ -29,8 +29,8 @@ rule sub_chr7:
 
 rule rmats_createin:
     input:
-        #bam = "{runid}/results/reads/star/{sample}.bam",
-        chr7 = "{runid}/results/reads/star/{sample}/chr7.bam",
+        bam = "{runid}/results/reads/star/{sample}.bam",
+        #bam = "{runid}/results/reads/star/{sample}/chr7.bam",
     output:
         bamls="{runid}/results/reads/star/{sample}/bam.list",
         medRL="{runid}/results/reads/star/{sample}/medianRL.txt",
@@ -40,9 +40,9 @@ rule rmats_createin:
     shell:
         """
         # get the median read length from bam 
-        samtools view -F 4 {input.chr7} | awk '{{print length($10)}}' | sort -u | awk '{{ a[i++]=$1; }} END {{ print a[int(i/2)]; }}' > {output.medRL}   &&
+        samtools view -F 4 {input.bam} | awk '{{print length($10)}}' | sort -u | awk '{{ a[i++]=$1; }} END {{ print a[int(i/2)]; }}' > {output.medRL}   &&
         # 
-        ls {input.chr7} > {output.bamls}
+        ls {input.bam} > {output.bamls}
         """
 
 
