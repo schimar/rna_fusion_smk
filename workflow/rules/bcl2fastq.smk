@@ -1,8 +1,8 @@
 rule bcl2fq:
     input:
-        #rundir = "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2/",
-        #rundir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
-        rundir = "/mnt/routine/230915_A01358_0066_AHJWHKDRX3/",
+        #bcldir = "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2/",
+        #bcldir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
+        bcldir = "/mnt/routine/230915_A01358_0066_AHJWHKDRX3/",
         #230426_A01272_0045_AH5CT5DRX3/",
     output:
         #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
@@ -14,7 +14,7 @@ rule bcl2fq:
     threads: 32
     shell:
         """
-        nohup bcl2fastq --runfolder-dir {input.rundir} --output-dir {params.outdir} -p 18 -r 3 -w 3 > {runid}/logs/bcl2fastq.log 2>&1
+        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} -p 18 -r 3 -w 3 > {runid}/logs/bcl2fastq.log 2>&1
         """
 
 
