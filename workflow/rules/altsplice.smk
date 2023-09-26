@@ -52,19 +52,19 @@ rule rMats:
         medRL="{runid}/results/reads/star/{sample}/medianRL.txt",
         gtf = "resources/genome.gtf",
     output:
-        direc = directory("{runid}/results/rmats/{sample}/"),
         se = "{runid}/results/rmats/{sample}/SE.MATS.JC.txt",
     wildcard_constraints:
         sample = common_constraint
     params:
-        extra = "--variable-read-length --statoff"
+        extra = "--variable-read-length --statoff",
+        direc = directory("{runid}/results/rmats/{sample}/")
     log:
         "{runid}/logs/rmats/{sample}.log",
     threads: 12
     shell:  
         """
         readLen=$(cat {input.medRL} ) &&
-        rmats.py --b1 {input.bamls} --readLength ${{readLen}} --nthread {threads} --od {output.direc} --gtf {input.gtf} --tmp {output.direc} {params.extra} > {log} 2>&1
+        rmats.py --b1 {input.bamls} --readLength ${{readLen}} --nthread {threads} --od {output.direc} --gtf {input.gtf} --tmp {params.direc} {params.extra} > {log} 2>&1
         """
 
 

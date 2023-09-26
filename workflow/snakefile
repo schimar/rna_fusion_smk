@@ -65,7 +65,8 @@ rule all:
 	    # rMats 
 	    #expand("{runid}/results/reads/star/{sample}/bam.list", runid= runid, sample= idkeys),
 	    expand("{runid}/results/rmats/{sample}/seMET.txt", runid= runid, sample= idkeys),
-	    
+	    expand("{runid}/results/rmats/{sample}/SE.MATS.JC.clinout.tsv", runid= runid, sample= idkeys),
+
 
 #
 
