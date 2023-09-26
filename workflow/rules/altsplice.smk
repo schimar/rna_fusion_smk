@@ -83,3 +83,14 @@ rule grepMETse:
         done
         """
 
+rule clinEx:
+    input: 
+        se = "{runid}/results/rmats/{sample}/SE.MATS.JC.txt",
+        db = "resources/Exon_skipping_inducing_mutations_all_info.txt"
+    output:
+        clinout = "{runid}/results/rmats/{sample}/SE.MATS.JC.clinout.tsv",
+        nonclinout = "{runid}/results/rmats/{sample}/SE.MATS.JC.nonclinout.tsv",
+    shell:"""
+        scripts/clinExSkip.py -e {input.se} -c {input.db}
+        """
+
