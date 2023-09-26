@@ -91,7 +91,7 @@ if __name__ == "__main__":
                 #print(gene)
                 if gene in clindict:
                     cdg = clindict[gene]
-                    newline = line + f"{cdg}"
+                    newline = line + f"\t{cdg}"
                     clinout.write(newline + '\n')
                 else:
                     #cdg = clindict[gene]
