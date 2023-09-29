@@ -12,7 +12,7 @@ nsmbl <- useDataset("hsapiens_gene_ensembl", mart)
 
 # -------------------------------
 
-s2 <- read.table("s2_genes.txt", header= F)$V1
+s2 <- read.table("winters_exonSkipDB.genes.txt", header= F)$V1
 
 exls <- list()
 for(i in 1:length(s2)){
@@ -23,14 +23,14 @@ for(i in 1:length(s2)){
 
 # ---------------
 
-h5createFile("exons_ensembl_winters2018_Aug30_23.h5")
+h5createFile("exons23.h5")
 
 
 for(i in 1:length(exls)){
 	#h5createGroup("tst.h5", names(exls)[i])
 	if (length(exls[[i]]) != 0){
 		for(j in 1:length(exls[[i]])){
-			h5write(exls[[i]][[j]], "exons_ensembl_winters2018_Aug30_23.h5", names(exls[[i]])[j])
+			h5write(exls[[i]][[j]], "exons23.h5", names(exls[[i]])[j])
 		}
 	}
 }
