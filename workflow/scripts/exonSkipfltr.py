@@ -57,10 +57,6 @@ if __name__ == "__main__":
 
 
     def getENSTdf(f, enst):
-        #if enst not in f:
-            #continue
-        #    print('')#ENST not in database')
-        #else:
         df = pd.DataFrame(f[enst][()])
         for col, dtype in df.dtypes.items():
             if dtype == object:  # only process bytes object columns
