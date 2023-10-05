@@ -325,6 +325,21 @@ rule filter_arriba:
         """
 
 
+rule getExons_arriba:
+    input:
+        tsv = "{runid}/results/arriba/{sample}/fusions.clinout.fltrd.tsv",
+        h5 = "resources/exons23.h5",
+    output:
+        "{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv",
+    #wildcard_constraints:
+    #    sample = common_constraint
+    log:
+        "{runid}/logs/getExons_arriba/{sample}.log"
+    shell:"""
+        scripts/fusGetExons.py -i {input.tsv} -d {input.h5} > {output} 2> {log}
+        """
+
+
 rule collectHs_star:
     input:
         bam = "{runid}/results/reads/star/{sample}.bam",

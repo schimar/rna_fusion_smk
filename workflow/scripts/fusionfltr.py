@@ -48,12 +48,16 @@ if __name__ == "__main__":
         for line in fus:
             line = line.strip('\n')
             if line[0:2] == '#g':
-                header = '\t'.join(["gene1", "gene2", "strand1", "strand2", "breakpoint1", "breakpoint2", "site1", "site2", "typ", "split_reads1", "split_reads2", "disco_mates", "cov1", "cov2", "warning", "confidence", "reading_frame", "gene_id1", "gene_id2", "transcript_id1", "transcript_id2", "filters", "s2_gene", "s2_descr"])
+                if len(line.split()) <= 33:
+                    header = '\t'.join(["gene1", "gene2", "strand1", "strand2", "breakpoint1", "breakpoint2", "site1", "site2", "typ", "split_reads1", "split_reads2", "disco_mates", "cov1", "cov2", "confidence", "reading_frame", "gene_id1", "gene_id2", "transcript_id1", "transcript_id2", "filters", "s2_gene", "s2_descr"])
+                else:
+                    header = '\t'.join(["gene1", "gene2", "strand1", "strand2", "breakpoint1", "breakpoint2", "site1", "site2", "typ", "split_reads1", "split_reads2", "disco_mates", "cov1", "cov2", "warning", "confidence", "reading_frame", "gene_id1", "gene_id2", "transcript_id1", "transcript_id2", "filters", "s2_gene", "s2_descr"])
                 print(header)
             else:
                 lspl = line.split()
                 reading_frame = lspl[15]
-                if len(lspl) > 30:
+                if len(lspl) > 33:
+                    warn = ""
                     gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, confidence, reading_frame, tags, retained_protein_domains, closest_genomic_breakpoint1, closest_genomic_breakpoint2, gene_id1, gene_id2, transcript_id1, transcript_id2, direction1, direction2, filters, fusion_transcript, peptide_sequence, read_id, s2_gene, s2_descr = lspl[0:32]
                 else:
                     gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, confidence, reading_frame, tags, retained_protein_domains, closest_genomic_breakpoint1, closest_genomic_breakpoint2, gene_id1, gene_id2, transcript_id1, transcript_id2, direction1, direction2, filters, fusion_transcript, peptide_sequence, read_id = lspl[0:30]
@@ -61,7 +65,7 @@ if __name__ == "__main__":
                 cov = int(cov1+cov2)
                 supp_reads = int(split_reads1 + split_reads2 + disco_mates)
                 warn = ""
-                if len(lspl) > 30:
+                if len(lspl) > 33:
                     newlist = [gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, warn, confidence, reading_frame, gene_id1, gene_id2, transcript_id1, transcript_id2, filters, s2_gene, s2_descr]
                     newline = '\t'.join(map(str, newlist))
                 else:
