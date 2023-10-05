@@ -64,7 +64,7 @@ rule rMats:
     shell:  
         """
         readLen=$(cat {input.medRL} ) &&
-        rmats.py --b1 {input.bamls} --readLength ${{readLen}} --nthread {threads} --od {output.direc} --gtf {input.gtf} --tmp {params.direc} {params.extra} > {log} 2>&1
+        rmats.py --b1 {input.bamls} --readLength ${{readLen}} --nthread {threads} --od {params.direc} --gtf {input.gtf} --tmp {params.direc} {params.extra} > {log} 2>&1
         """
 
 
