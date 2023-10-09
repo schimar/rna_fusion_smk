@@ -33,6 +33,7 @@ idkeys = list(samples_dict.keys())
 
 # NOTE: add a quick info about regex below!!!
 common_constraint = "[0-9A-Za-z\-\_]+[^\/L][^\/umi][^\/chr7][^\/SE]"
+#[^\/mrkdup]
 
 # read structure of our UMIs 
 r1_read_structure = "5M2S+T"  #"8M+T"
