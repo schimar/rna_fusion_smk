@@ -17,7 +17,7 @@ import numpy as np
 #np.random.seed(42)
 import pandas as pd
 
-# Usage: scripts/fusionfltr.py -e SE.MATS.JC.clinout.tsv
+# Usage: scripts/exonSkipfltr.py -e SE.MATS.JC.clinout.tsv -d resources/exons23.h5
 
 # -----------------------------------------------------------------------------
 

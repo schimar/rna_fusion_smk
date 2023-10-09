@@ -1,8 +1,8 @@
 rule samtools_index:
     input:
-        "{runid}/results/reads/star/{sample}.bam", 
+        "{runid}/results/reads/star/mrkdup/{sample}.bam", 
     output:
-      "{runid}/results/reads/star/{sample}.bam.bai",
+      "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
     log:
       "{runid}/logs/samtools_index/{sample}.log",
     params:
@@ -12,31 +12,31 @@ rule samtools_index:
         "v2.6.0/bio/samtools/index"
 
 
-rule sub_chr7:
+rule sub_chr:
     input:
-      bam="{runid}/results/reads/star/{sample}.bam", 
-      bai="{runid}/results/reads/star/{sample}.bam.bai",
+      bam = "{runid}/results/reads/star/mrkdup/{sample}.bam", 
+      bai = "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
     output:
-      chr7="{runid}/results/reads/star/{sample}/chr7.bam",
-    wildcard_constraints:
-        sample = common_constraint
-    log: "{runid}/logs/sub_chr7/{sample}.log"
+      sub = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam",
+    #wildcard_constraints:
+    #    sample = common_constraint
+    log: "{runid}/logs/sub_{chrom}/{sample}.log",
     shell:
       """
-      samtools view -F4 {input.bam} -b chr7 > {output.chr7}
+      samtools view -F4 {input.bam} -b {wildcards.chrom} > {output.sub}
       """
 
 
 rule rmats_createin:
     input:
-        bam = "{runid}/results/reads/star/{sample}.bam",
+        bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam",
         #bam = "{runid}/results/reads/star/{sample}/chr7.bam",
     output:
-        bamls="{runid}/results/reads/star/{sample}/bam.list",
-        medRL="{runid}/results/reads/star/{sample}/medianRL.txt",
-    wildcard_constraints:
-        sample = common_constraint
-    log: "{runid}/logs/rmats_createin/{sample}.log"
+        bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
+        medRL = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
+    #wildcard_constraints:
+    #    sample = common_constraint
+    log: "{runid}/logs/rmats_createin/{sample}.{chrom}.log"
     shell:
         """
         # get the median read length from bam 
@@ -48,18 +48,18 @@ rule rmats_createin:
 
 rule rMats:
     input:
-        bamls = "{runid}/results/reads/star/{sample}/bam.list",
-        medRL="{runid}/results/reads/star/{sample}/medianRL.txt",
+        bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
+        medRL="{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
         gtf = "resources/genome.gtf",
     output:
-        se = "{runid}/results/rmats/{sample}/SE.MATS.JC.txt",
+        se = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.txt",
     wildcard_constraints:
         sample = common_constraint
     params:
         extra = "--variable-read-length --statoff",
-        direc = directory("{runid}/results/rmats/{sample}/")
+        direc = directory("{runid}/results/rmats/{sample}/{chrom}/")
     log:
-        "{runid}/logs/rmats/{sample}.log",
+        "{runid}/logs/rmats/{sample}.{chrom}.log",
     threads: 12
     shell:  
         """
@@ -68,29 +68,58 @@ rule rMats:
         """
 
 
-rule grepMETse:
-    input:
-      se = "{runid}/results/rmats/{sample}/SE.MATS.JC.txt",
-      targets = config['splicingTargets']
-    output:
-      "{runid}/results/rmats/{sample}/seMET.txt",    
-    shell:
-        """
-        head -1 {input.se} > {output} &&
-        readarray -t < <(cat {input.targets})
-        for i in ${{MAPFILE[@]}}; do 
-          egrep -f {input.targets} {input.se} >> {output};
-        done
-        """
+#rule grepMETse:
+#    input:
+#      se = "{runid}/results/rmats/{sample}/SE.MATS.JC.txt",
+#      targets = config['splicingTargets']
+#    output:
+#      "{runid}/results/rmats/{sample}/seMET.txt",    
+#    shell:
+#        """
+#        head -1 {input.se} > {output} &&
+#        readarray -t < <(cat {input.targets})
+#        for i in ${{MAPFILE[@]}}; do 
+#          egrep -f {input.targets} {input.se} >> {output};
+#        done
+#        """
 
 rule clinEx:
     input: 
-        se = "{runid}/results/rmats/{sample}/SE.MATS.JC.txt",
-        db = "resources/Exon_skipping_inducing_mutations_all_info.txt"
+        se = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.txt",
+        #db = "resources/Exon_skipping_inducing_mutations_all_info.txt"
+        db = "resources/exon_targets.tsv",
     output:
-        clinout = "{runid}/results/rmats/{sample}/SE.MATS.JC.clinout.tsv",
-        nonclinout = "{runid}/results/rmats/{sample}/SE.MATS.JC.nonclinout.tsv",
+        clinout = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.tsv",
+        nonclinout = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.nonclinout.tsv",
+    wildcard_constraints:
+        sample = common_constraint
     shell:"""
-        scripts/clinExSkip.py -e {input.se} -c {input.db}
+        scripts/clinExSkip.py -e {input.se} -c {input.db} 
+        """
+
+
+rule exonfltr:
+    input:
+        co = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.tsv",
+        h5 = "resources/exons23.h5",
+    output:
+        "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv",
+#    wildcard_constraints:
+#        sample = common_constraint
+    log: "{runid}/logs/exonfltr/{sample}/{chrom}.log"
+    shell:"""
+        scripts/exonSkipfltr.py -e {input.co} -d {input.h5} > {output}
+        """
+
+rule cat_exonSkippers:
+    input:
+        #expand("{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv")
+    output:
+        "{runid}/results/rmats/{sample}.exonSkip.tsv"
+    params:
+        direc = "{runid}/results/rmats/{sample}"
+    log: "{runid}/logs/cat_exonSkippers/{sample}.log"
+    shell:"""
+        cat {runid}/results/rmats/{wildcards.sample}/chr*/SE.MATS.JC.clinout.fltrd.tsv > {output}
         """
 
