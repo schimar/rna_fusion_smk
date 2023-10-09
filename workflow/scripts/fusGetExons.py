@@ -68,7 +68,7 @@ if __name__ == "__main__":
                 line = line.strip('\n')
                 if line[0:2] == 'ge':
                     print(line)
-                    header = '\t'.join(["gene1", "gene2", "strand1", "strand2", "breakpoint1", "breakpoint2", "site1", "site2", "typ", "split_reads1", "split_reads2", "disco_mates", "cov1", "cov2", "warning", "confidence", "reading_frame", "gene_id1", "gene_id2", "transcript_id1", "transcript_id2", "filters", "s2_gene", "s2_descr"])
+                    header = '\t'.join(["gene1", "gene2", "strand1", "strand2", "breakpoint1", "breakpoint2", "exonNo1", "exonNo2", "site1", "site2", "typ", "split_reads1", "split_reads2", "disco_mates", "cov1", "cov2", "warning", "confidence", "reading_frame", "gene_id1", "gene_id2", "transcript_id1", "transcript_id2", "filters", "s2_gene", "s2_descr"])
                     #print(len(header.split('\t')))
                 else:
                     lspl = line.split('\t')
