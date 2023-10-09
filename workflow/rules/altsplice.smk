@@ -93,8 +93,9 @@ rule clinEx:
         nonclinout = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.nonclinout.tsv",
     wildcard_constraints:
         sample = common_constraint
+    log: "{runid}/logs/clinEx/{sample}.{chrom}.log"
     shell:"""
-        scripts/clinExSkip.py -e {input.se} -c {input.db} 
+        scripts/clinExSkip.py -e {input.se} -c {input.db}  2> {log}
         """
 
 
@@ -108,18 +109,31 @@ rule exonfltr:
 #        sample = common_constraint
     log: "{runid}/logs/exonfltr/{sample}/{chrom}.log"
     shell:"""
-        scripts/exonSkipfltr.py -e {input.co} -d {input.h5} > {output}
+        scripts/exonSkipfltr.py -e {input.co} -d {input.h5} > {output} 2> {log}
         """
 
 rule cat_exonSkippers:
     input:
-        #expand("{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv")
+        expand("{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX'])
     output:
         "{runid}/results/rmats/{sample}.exonSkip.tsv"
     params:
         direc = "{runid}/results/rmats/{sample}"
     log: "{runid}/logs/cat_exonSkippers/{sample}.log"
     shell:"""
-        cat {runid}/results/rmats/{wildcards.sample}/chr*/SE.MATS.JC.clinout.fltrd.tsv > {output}
+        cat {runid}/results/rmats/{wildcards.sample}/chr*/SE.MATS.JC.clinout.fltrd.tsv > {output} 2> {log}
         """
+
+
+rule egfr_v3:
+    input:
+        "{runid}/results/reads/star/mrkdup/{sample}.bam",
+    output:
+        "{runid}/results/rmats/{sample}.egfr_v3.out"
+    log: "{runid}/logs/egfr_v3/{sample}.log"
+    shell: """
+        egfr-v3-determiner -r hg38 {input} -w all -v all > {output} 2> {log}
+        """
+
+
 

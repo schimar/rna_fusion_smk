@@ -66,8 +66,9 @@ rule all:
 	    # rMats 
 	    #expand("{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
 	    #expand("{runid}/results/rmats/{sample}/seMET.txt", runid= runid, sample= idkeys),
-	    expand("{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
-	    #expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
+	    #expand("{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
+	    expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
+	    expand("{runid}/results/rmats/{sample}.egfr_v3.out", runid= runid, sample= idkeys),
 
 #
 
