@@ -34,12 +34,16 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-e", "--ex_file", dest="inex",
                         help="input exon skipping file name", metavar="<input>")
+    parser.add_argument("-g", "--egfr_file", dest="inegfr",
+                        help="input exon skipping file name", metavar="<input>")
+
     #parser.add_argument("-q", "--quiet",
     #                    action="store_false", dest="verbose", default=True,
     #                    help="don't print status messages to stdout")
 
     args = parser.parse_args()
     exon_file = args.inex
+    egfr_file = args.inegfr
 
     if not exon_file: #.exists():
         print("Please specify a valid exon skipping file")
@@ -86,7 +90,7 @@ if __name__ == "__main__":
 
     with open(exon_file, 'rt') as exskip:
         # print new header line
-        header = '\t'.join(["rmatsID", "geneID", "geneSymbol", "chrom", "strand", "exonStart_0base", "exonEnd", "exonNo", "IJC", "SJC", "IncLevel", "tcga_code", "tcga_sample", "enstMatch", "enseMatch"])
+        header = '\t'.join(["rmatsID", "geneSymbol", "chrom", "strand", "exonStart_0base", "exonEnd", "exonNo", "IJC", "SJC", "IncLevel", "geneID", "enstMatch", "enseMatch", "tcga_code", "tcga_sample"])
         print(header)
         for line in exskip:
             line = line.strip('\n')
@@ -95,7 +99,20 @@ if __name__ == "__main__":
             ID, geneID, geneSymbol, chrom, strand, exonStart_0base, exonEnd, upstreamES, upstreamEE, downstreamES, downstreamEE, ID, IJC_SAMPLE_1, SJC_SAMPLE_1, IJC_SAMPLE_2, SJC_SAMPLE_2, IncFormLen, SkipFormLen, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, tcga_code, tcga_sample, g1, exonSkipDB_ensts, chrom2, exPos, d1, d2, d3, d4, site, enst_ense_no = lspl[0:35]
             geneSymbol = geneSymbol.split('"')[1]
             exonNo, enstMatch, enseMatch = getExonNo(enst_ense_no)
-            outline = [ID, geneID, geneSymbol, chrom, strand, exonStart_0base, exonEnd, exonNo, IJC_SAMPLE_1, SJC_SAMPLE_1, IncLevel1, tcga_code, tcga_sample, enstMatch, enseMatch]
+            geneID = geneID.strip('"')
+            outline = [ID, geneSymbol, chrom, strand, exonStart_0base, exonEnd, exonNo, IJC_SAMPLE_1, SJC_SAMPLE_1, IncLevel1, geneID, enstMatch, enseMatch, tcga_code, tcga_sample]
             print('\t'.join(outline))
 
 
+    with open(egfr_file, 'rt') as egfr:
+        for line in egfr:
+            line = line.strip('\n')
+            if line[0:4] == 'samp':
+                print('\n\n# -----------\n\n' + 'EGFR vIII:\n' + line)
+            else:
+                lspl = line.split('\t')
+                sample_pathls = lspl[0].split('/')
+                sample = sample_pathls[len(sample_pathls)-1]
+                n_wt = lspl[1]
+                n_egfr = lspl[2]
+                print('\t'.join([sample, n_wt, n_egfr]))

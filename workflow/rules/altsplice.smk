@@ -116,7 +116,7 @@ rule cat_exonSkippers:
     input:
         expand("{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX'])
     output:
-        "{runid}/results/rmats/{sample}.exonSkip.tsv"
+        "{runid}/results/rmats/{sample}.exonSkipFull.tsv"
     params:
         direc = "{runid}/results/rmats/{sample}"
     log: "{runid}/logs/cat_exonSkippers/{sample}.log"
@@ -133,6 +133,19 @@ rule egfr_v3:
     log: "{runid}/logs/egfr_v3/{sample}.log"
     shell: """
         egfr-v3-determiner -r hg38 {input} -w all -v all > {output} 2> {log}
+        """
+
+
+rule exonFinalOut:
+    input:
+        es = "{runid}/results/rmats/{sample}.exonSkipFull.tsv",
+        egfr = "{runid}/results/rmats/{sample}.egfr_v3.out"
+    output:
+        "{runid}/results/rmats/{sample}.exonSkip.tsv"
+    log:
+        "{runid}/logs/exonFinalOut/{sample}.log"
+    shell: """
+        scripts/exonFinalOut.py -e {input.es} -g {input.egfr} > {output} 2> {log}
         """
 
 
