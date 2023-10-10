@@ -65,44 +65,5 @@ rule all:
 	    #expand("{runid}/results/qc/multiqc_report.html", runid= runid),
 	    # rMats 
 	    expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
-	    #expand("{runid}/results/rmats/{sample}.egfr_v3.out", runid= runid, sample= idkeys),
 
-#
-
-	    # star 
-	    #expand("{runid}/results/star/{sample}/aligned.out.bam", runid= runid, sample= idkeys),
-	    #expand("{runid}/results/samtools/flagstat/{sample}.bam.flagstat", runid= runid, sample= idkeys),	
-	    #expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys), 
-	    #expand("{runid}/results/fq_cats/{sample}_{read}_catL.fq.gz", sample= idkeys, read= ["R1", "R2"]),
-	    ##expand("{runid}/results/salmon/{sample}/quant.sf", sample= idkeys),	#['Z22007658_20ng_BR_S7', 'K562-100ng-1plex-Rep2_S10', 'K562-100ng-1plex-Rep1_S4']),
-	    ##expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']),
-
-
-
-		# umi
-		##expand("{runid}/results/reads/umifq/qc/multiqc_report.html", runid= runid),
-	    #expand("{runid}/results/reads/consensus/qc/multiqc_report.html", runid= runid),
-	    ## umi   
-	    #expand("{runid}/results/reads/ubam/{sample}.bam", runid= runid, sample= idkeys),
-	    #expand("{runid}/results/reads/mapped/{sample}.bam", runid= runid, sample= idkeys, lane= ['L001', 'L002']),
-	    #expand("{runid}/results/reads/mpd_cons_merged/{sample}.bam", runid= runid, sample= idkeys[0]),
-	    #expand("{runid}/results/reads/mpd_cons_merged/bed/{sample}.bam", runid= runid, sample= idkeys[0]),
-	    #expand("{runid}/results/picard/metrics/{temp}/{sample}.metrics.tsv", runid= runid, temp= ['prior', 'post'], sample= idkeys[0]),
-	    #expand("{runid}/results/picard/metrics/{temp}/{sample}.metricsFrmt.tsv", runid= runid, temp= ['prior', 'post'], sample= idkeys[0]),
-	    ##expand("{runid}/results/reads/consensus/qc/multiqc_report.html", runid= runid),
-	    #expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= idkeys[0]),
-
-
-
-# -----------------
-
- ##expand("results/htseq/{sample}_HTSeq.csv", sample= list(samples_dict.keys())),
-
-#### intermittant files (consolidate later)
-	    ##expand("results/trimmed/{sample}_{unit}_{read}.fastq.gz", sample=['Z22007658_20ng_BR_S7'], read= ['R1', 'R2'], unit= ['L001', 'L002']),
-	    	    ##### star_2pass_singleLane
-				#expand("results/samtools/flagstat/{sample}_p2/alnd.srtd.bam.flagstat", sample= list(samples_dict.keys())[2]),	#['H22053532_50ng_BR_S12']),
-	    	    #expand("results/star/{sample}_p1/sj.out.tab", sample= list(samples_dict.keys())[6:8]),
-				#expand("results/star/sj/{sample}_p1/sj.filtered.tab", sample= list(samples_dict.keys())[6:8]),
-				#expand("results/star/{sample}_p2/aligned.sortedByCoord.out.bam", sample= list(samples_dict.keys())[6:8]),
 
