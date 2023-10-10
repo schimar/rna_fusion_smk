@@ -1,3 +1,6 @@
+ruleorder: samtools_index > egfr_v3
+
+
 rule samtools_index:
     input:
         "{runid}/results/reads/star/mrkdup/{sample}.bam", 
