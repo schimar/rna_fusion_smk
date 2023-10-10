@@ -130,12 +130,13 @@ rule cat_exonSkippers:
 
 rule egfr_v3:
     input:
-        "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        bai = "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
     output:
         "{runid}/results/rmats/{sample}.egfr_v3.out"
     log: "{runid}/logs/egfr_v3/{sample}.log"
     shell: """
-        egfr-v3-determiner -r hg38 {input} -w all -v all > {output} 2> {log}
+        egfr-v3-determiner -r hg38 {input.bam} -w all -v all > {output} 2> {log}
         """
 
 
