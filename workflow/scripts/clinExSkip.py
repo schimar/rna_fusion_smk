@@ -24,7 +24,7 @@ import pandas as pd
 
 parser = ArgumentParser()
 parser.add_argument("-e", "--ex_file", dest="inex", help="input exon skipping file name", metavar="<input>")
-parser.add_argument("-c", "--clinex", dest="clinex", help="list of known exon skipping genes", metavar="<clinex>")
+parser.add_argument("-c", "--clinex", dest="clinex", help="list of known exon skipping targets", metavar="<clinex>")
 
 
 #parser.add_argument("-q", "--quiet",
@@ -41,7 +41,10 @@ clinex = args.clinex
 #    raise SystemExit(1)
 
 if not clinex: #.exists():
-    print("Please specify a valid file with known exon skipping genes")
+    print("Please specify a valid file with known target exon skipping genes")
+    raise SystemExit(1)
+if not inex: #.exists():
+    print("Please specify a valid rMats file with known exon skipping genes (SE.MATS.JC.txt)")
     raise SystemExit(1)
 
 
