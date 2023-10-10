@@ -15,6 +15,7 @@ rule samtools_index:
         "v2.6.0/bio/samtools/index"
 
 
+
 rule sub_chr:
     input:
       bam = "{runid}/results/reads/star/mrkdup/{sample}.bam", 
@@ -52,6 +53,7 @@ rule rmats_createin:
 rule rMats:
     input:
         bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
+        bai = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.bai",
         medRL="{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
         gtf = "resources/genome.gtf",
     output:
@@ -60,7 +62,8 @@ rule rMats:
         sample = common_constraint
     params:
         extra = "--variable-read-length --statoff",
-        direc = directory("{runid}/results/rmats/{sample}/{chrom}/")
+        direc = directory("{runid}/results/rmats/{sample}/{chrom}/"),
+        #rl = 33
     log:
         "{runid}/logs/rmats/{sample}.{chrom}.log",
     threads: 12
@@ -69,6 +72,7 @@ rule rMats:
         readLen=$(cat {input.medRL} ) &&
         rmats.py --b1 {input.bamls} --readLength ${{readLen}} --nthread {threads} --od {params.direc} --gtf {input.gtf} --tmp {params.direc} {params.extra} > {log} 2>&1
         """
+# 
 
 
 #rule grepMETse:
