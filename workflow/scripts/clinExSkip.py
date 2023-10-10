@@ -43,7 +43,7 @@ clinex = args.clinex
 if not clinex: #.exists():
     print("Please specify a valid file with known target exon skipping genes")
     raise SystemExit(1)
-if not inex: #.exists():
+if not exon_file: #.exists():
     print("Please specify a valid rMats file with known exon skipping genes (SE.MATS.JC.txt)")
     raise SystemExit(1)
 
@@ -93,9 +93,7 @@ if __name__ == "__main__":
                     newline = line + f"\t{cdg}"
                     clinout.write(newline + '\n')
                 else:
-                    #cdg = clindict[gene]
-                    #newline = line + f"{cdg}"
-                    nonclinout.write(line + '\n')
+                    nonclinout.write(newline + '\n')
                 #gene1, line.split()[0:2]    #, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, confidence, reading_frame, tags, retained_protein_domains, closest_genomic_breakpoint1, closest_genomic_breakpoint2, gene_id1, gene_id2, transcript_id1, transcript_id2, direction1, direction2, filters, fusion_transcript, peptide_sequence, read_id = lspl
                 #reads = list(map(int, [split_reads1, split_reads2, disco_mates, cov1, cov2]))
 #                if gene1 in clindict and gene2 in clindict:
