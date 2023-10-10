@@ -86,41 +86,16 @@ if __name__ == "__main__":
 
     with open(exon_file, 'rt') as exskip:
         # print new header line
-        header = '\t'.join(["rmatsID", "geneID", "geneSymbol", "chrom", "strand", "exonStart_0base", "exonEnd", "exonNo", "IJC_SAMPLE_1", "SJC_SAMPLE_1", "IncLevel1", "tcga_code", "tcga_sample", "enstMatch", "enseMatch"])
+        header = '\t'.join(["rmatsID", "geneID", "geneSymbol", "chrom", "strand", "exonStart_0base", "exonEnd", "exonNo", "IJC", "SJC", "IncLevel", "tcga_code", "tcga_sample", "enstMatch", "enseMatch"])
         print(header)
         for line in exskip:
             line = line.strip('\n')
             lspl = line.split('\t')
             #print(lspl)
-            ID, geneID, geneSymbol, chrom, strand, exonStart_0base, exonEnd, upstreamES, upstreamEE, downstreamES, downstreamEE, ID, IJC_SAMPLE_1, SJC_SAMPLE_1, IJC_SAMPLE_2, SJC_SAMPLE_2, IncFormLen, SkipFormLen, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, tcga_code, tcga_sample, g1, exonSkipDB_ensts, chrom2, exPos, d1, d2, d3, d4, site, enst_ense_no    = lspl[0:35]
+            ID, geneID, geneSymbol, chrom, strand, exonStart_0base, exonEnd, upstreamES, upstreamEE, downstreamES, downstreamEE, ID, IJC_SAMPLE_1, SJC_SAMPLE_1, IJC_SAMPLE_2, SJC_SAMPLE_2, IncFormLen, SkipFormLen, PValue, FDR, IncLevel1, IncLevel2, IncLevelDifference, tcga_code, tcga_sample, g1, exonSkipDB_ensts, chrom2, exPos, d1, d2, d3, d4, site, enst_ense_no = lspl[0:35]
             geneSymbol = geneSymbol.split('"')[1]
             exonNo, enstMatch, enseMatch = getExonNo(enst_ense_no)
             outline = [ID, geneID, geneSymbol, chrom, strand, exonStart_0base, exonEnd, exonNo, IJC_SAMPLE_1, SJC_SAMPLE_1, IncLevel1, tcga_code, tcga_sample, enstMatch, enseMatch]
             print('\t'.join(outline))
-
-
-
-
-#else:
-            #    lspl = line.split('\t')
-            #    exon_id = lspl[0]
-            #    strand = lspl[4]
-            #    ijc = int(lspl[12])
-            #    sjc = int(lspl[13])
-            #    enstls = lspl[26].split(',')
-            #    start = int(lspl[5])
-            #    if lspl[20] == 'NA':
-            #        continue
-            #    else:
-            #        if strand in strandls:
-            #            norm_ratio = float(lspl[20])
-            #            if sjc == 0:
-            #                continue
-            #            else:
-            #                if norm_ratio < norm_ratio_th:
-            #                    if sjc >= sjc_th:
-            #                        exonPos = getExonPosLS(f, enstls, start)
-            #                        print(line, exonPos)
-
 
 
