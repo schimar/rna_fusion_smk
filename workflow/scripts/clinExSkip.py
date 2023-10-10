@@ -93,7 +93,7 @@ if __name__ == "__main__":
                     newline = line + f"\t{cdg}"
                     clinout.write(newline + '\n')
                 else:
-                    nonclinout.write(newline + '\n')
+                    nonclinout.write(line + '\n')
                 #gene1, line.split()[0:2]    #, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, confidence, reading_frame, tags, retained_protein_domains, closest_genomic_breakpoint1, closest_genomic_breakpoint2, gene_id1, gene_id2, transcript_id1, transcript_id2, direction1, direction2, filters, fusion_transcript, peptide_sequence, read_id = lspl
                 #reads = list(map(int, [split_reads1, split_reads2, disco_mates, cov1, cov2]))
 #                if gene1 in clindict and gene2 in clindict:
