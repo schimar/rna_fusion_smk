@@ -5,10 +5,10 @@ ruleorder: call_consensus_reads > fq2ubam
 rule fq2ubam:
     """Generates a uBam from R1 and R2 fastq files."""
     input:
-        #fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        #fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
-        fq1 = "/mnt/routine/validation/novaSeq_RNAseq/230822/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        fq2 = "/mnt/routine/validation/novaSeq_RNAseq/230822/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        #fq1 = "/mnt/routine/validation/novaSeq_RNAseq/230822_Aug24/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        #fq2 = "/mnt/routine/validation/novaSeq_RNAseq/230822_Aug24/results/bcl2fq/cat/{sample}_R2.fq.gz",
     params:
         rs1 = r1_read_structure,
         rs2 = r2_read_structure,
