@@ -241,6 +241,19 @@ rule map_star:
         STAR --runThreadN {threads} --genomeDir {input.idx} --readFilesIn {input.fq1} {input.fq2} {params.extra} --outFileNamePrefix {runid}/results/reads/star/{wildcards.sample}/ --outStd BAM_SortedByCoordinate --outSAMattrRGline ID:{rgid} SM:{params.smpl} LB:{params.pl} PU:{params.pu} > {output.aln} 
         """
 
+rule star_index_dup:
+    input:
+        "{runid}/results/reads/star/{sample}.bam",
+    output:
+        "{runid}/results/reads/star/{sample}.bam.bai",
+    wildcard_constraints:
+        sample = common_constraint
+    log: "{runid}/logs/star_index_dup/{sample}.log"
+    shell: """
+        samtools index {input}
+        """
+
+
 rule star_markdup:
     input:
         "{runid}/results/reads/star/{sample}.bam"

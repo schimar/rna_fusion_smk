@@ -241,10 +241,10 @@ rule multiqcRSeQC:
             "{runid}/results/qc/rseqc/{unit.sample_name}.junctionanno.junction.bed",
             unit=units.itertuples(), runid= runid,
         ),
-        #expand(
-        #    "{runid}/results/qc/rseqc/{unit.sample_name}.junctionsat.junctionSaturation_plot.pdf",
-        #    unit=units.itertuples(), runid= runid,
-        #),
+        expand(
+            "{runid}/results/qc/rseqc/{unit.sample_name}.junctionsat.junctionSaturation_plot.pdf",
+            unit=units.itertuples(), runid= runid,
+        ),
         #expand(
         #    "{runid}/results/qc/rseqc/{unit.sample_name}.infer_experiment.txt",
         #    unit=units.itertuples(), runid= runid,
