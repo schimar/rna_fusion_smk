@@ -34,7 +34,7 @@ rule align_bam:
         bam = "{runid}/results/reads/{prefix}.unmapped.bam",
         ref = "resources/genome.fa"
     output:
-        bam = "{runid}/results/reads/{prefix}.mapped.bam"
+        bam = temp("{runid}/results/reads/{prefix}.mapped.bam")
     threads:
         16
     resources:
@@ -69,7 +69,7 @@ rule group_reads:
     input:
         bam = "{runid}/results/reads/{sample}.mapped.bam",
     output:
-        bam = "{runid}/results/reads/{sample}.grouped.bam",
+        bam = temp("{runid}/results/reads/{sample}.grouped.bam"),
         stats = "{runid}/results/reads/{sample}.grouped-family-sizes.txt"
     params:
         allowed_edits = 1,
@@ -120,7 +120,7 @@ rule filter_consensus_reads:
         bam = "{runid}/results/reads/{sample}.cons.mapped.bam",
         ref = "resources/genome.fa",
     output:
-        bam = "{runid}/results/reads/{sample}.cons.filtered.bam",
+        bam = temp("{runid}/results/reads/{sample}.cons.filtered.bam"),
     params:
         min_reads = 3,
         min_base_qual = 40,
@@ -187,7 +187,7 @@ rule sambamba_markdup:
     input:
         "{runid}/results/reads/{sample}.cons.mapped.bam"
     output:
-        "{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam",
+        temp("{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam"),
     priority: 20
     params:
         extra="-r"  # optional parameters
@@ -200,8 +200,8 @@ rule bam2fq:
     input:
         "{runid}/results/reads/{sample}.cons.mapped.bam",
     output:
-        fastq1 = "{runid}/results/reads/cons/{sample}.cons.1.fq",
-        fastq2 = "{runid}/results/reads/cons/{sample}.cons.2.fq",       
+        fastq1 = temp("{runid}/results/reads/cons/{sample}.cons.1.fq"),
+        fastq2 = temp("{runid}/results/reads/cons/{sample}.cons.2.fq"),       
     wildcard_constraints:
         sample = common_constraint,
     log:
@@ -258,7 +258,7 @@ rule star_markdup:
     input:
         "{runid}/results/reads/star/{sample}.bam"
     output:
-        "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        temp("{runid}/results/reads/star/mrkdup/{sample}.bam"),
     wildcard_constraints:
         sample = common_constraint
     priority: 20

@@ -5,9 +5,9 @@ rule bbmerge_fqs:
         fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
         fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
     output:
-        out = "{runid}/results/bbmerge/{sample}.fq.gz",
-        outu1 = "{runid}/results/bbmerge/outu/{sample}.1.fq.gz",
-        outu2 = "{runid}/results/bbmerge/outu/{sample}.2.fq.gz",
+        out = temp("{runid}/results/bbmerge/{sample}.fq.gz"),
+        outu1 = temp("{runid}/results/bbmerge/outu/{sample}.1.fq.gz"),
+        outu2 = temp("{runid}/results/bbmerge/outu/{sample}.2.fq.gz"),
         hist = "{runid}/results/bbmerge/{sample}.hist.txt"
     wildcard_constraints:
         sample = common_constraint
