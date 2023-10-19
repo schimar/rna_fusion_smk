@@ -25,17 +25,11 @@ report: "report/workflow.rst"
 include: "rules/common.smk"
 include: "rules/bcl2fastq.smk"
 include: "rules/ref.smk"
-#include: "rules/umi.smk"
-#include: "rules/trim.smk"
 include: "rules/qc.smk"
-include: "rules/fgbio_fq2cons.smk"
+include: "rules/umi.smk"
+include: "rules/fusion.smk"
 include: "rules/altsplice.smk"
-#include: "rules/fusion.smk"
-#include: "rules/quant.smk"
 ######
-##include: "rules/diffexp.smk"
-#include: "rules/star_2pass.smk"
-#include: "rules/star_2pass_singleLane.smk"
 
 ##### target rules #####
 
