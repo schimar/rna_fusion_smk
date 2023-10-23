@@ -2,8 +2,10 @@
 
 rule bbmerge_fqs:
     input:
-        fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        #fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        #fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        fq1 = "/mnt/routine/validation/novaSeq_RNAseq/230720/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        fq2 = "/mnt/routine/validation/novaSeq_RNAseq/230720/results/bcl2fq/cat/{sample}_R2.fq.gz",
     output:
         out = temp("{runid}/results/bbmerge/{sample}.fq.gz"),
         outu1 = temp("{runid}/results/bbmerge/outu/{sample}.1.fq.gz"),
