@@ -7,6 +7,9 @@ from snakemake.utils import validate
 
 #ftp = FTP.RemoteProvider()
 
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+
 #fqDir = ""   #"/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 runid = config['runID']
 rgid =  config['rgID']
@@ -25,21 +28,23 @@ units = (
 )
 validate(units, schema="../../config/schemas/units.schema.yaml")
 
+
+
 samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))  #, units['fq2'])))
 
-
-
+# define working directory and samples for rule all:
 pth = Path(units['fq'][0])
-
 fqDir = str(pth.parent)
-
 idkeys = list(samples_dict.keys())
 
-# NOTE: add a quick info about regex below!!!
+
+# set wildcard constraints on {sample}
 common_constraint = "[0-9A-Za-z\-\_]+[^\/L][^\/umi][^\/chr7][^\/SE]"
+
 #[^\/mrkdup]
 
-
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 onstart:
     shell("gitrev=$(git rev-parse HEAD) && echo  \"--------------------------------------------- \n Running RNAseq fusion workflow, with \n git branch $gitrev \n log file in \n {log} \n & run data in \n {runid} \n  ---------------------------------------------\" 2>&1 | tee {log}") 
