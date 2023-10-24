@@ -1,4 +1,4 @@
-name: fgbio2 
+name: fgbio2_test 
 channels:
   - conda-forge
   - bioconda
@@ -10,7 +10,7 @@ dependencies:
   - snakemake-wrapper-utils
   - fastqc
   - multiqc
-  - cutadapt #  =4.2
+    #- cutadapt #  =4.2
   - bbmap
   - pigz
   - pandas 
@@ -28,7 +28,7 @@ dependencies:
   - bcl2fastq2
   - picard-slim
   - vcftools #=0.1.16
-  - htseq
+    #- htseq
   - bwa = 0.7.17
   - bwa-mem2
   - samtools =1.15.1
@@ -36,4 +36,5 @@ dependencies:
   - gatk4 =4.2.6.1
   - fgbio-minimal #=1.5.1
   - rmats
-  - pybiomart
+    #- pybiomart
+  - pytools
