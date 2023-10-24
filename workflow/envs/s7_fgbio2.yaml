@@ -1,4 +1,4 @@
-name: fgbio2_test 
+name: fgbio2 
 channels:
   - conda-forge
   - bioconda

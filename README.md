@@ -14,10 +14,18 @@ and install the dependencies for this workflow. For this, you need to have mamba
 ```
 mamba env create -f evs/s7_fgbio2.yaml
 ```
+this will create an environment called "fgbio2", activate it with the following:
+```
+mamba activate fgbio2
+```
 
-We also need this tool for the EGFR variant III detection:
+Further, we need this tool for the EGFR variant III detection (install it in a location of your choosing):
 ```
 git clone https://github.com/yhoogstrate/egfr-v3-determiner.git
+cd egfr-v3-determiner
+python setup.py install 
+# and test it with:
+nosetests tests/*.py
 ```
 
 ## prepare the ``units<tmp>.tsv`` file: 
