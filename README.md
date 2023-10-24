@@ -2,9 +2,29 @@
 
 
 # -----------------------------------------------------------------
+
+## install dependencies:
+go to the working directory with 
+```
+cd ~/smk/rna_fusion_quant/workflow/
+```
+
+and install the dependencies for this workflow. For this, you need to have mamba installed (see the [mamba documentation](https://mamba.readthedocs.io/en/latest/mamba-installation.html#mamba-install) and [this handy page](https://www.imranabdullah.com/2021-08-21/Conda-and-Mamba-Commands-for-Managing-Virtual-Environments)).
+
+```
+mamba env create -f evs/s7_fgbio2.yaml
+```
+
+We also need this tool for the EGFR variant III detection:
+```
+git clone https://github.com/yhoogstrate/egfr-v3-determiner.git
+```
+
 ## prepare the ``units<tmp>.tsv`` file: 
 
-
+# sashdir
+# bcldir
+# rundir (-> runid) 
 ## in the working directory:
 ```
 # e.g. 
@@ -38,6 +58,9 @@ smk -j50 --config runID=/mnt/sda/rnaSeq/runs/230720 units=../config/units_230720
 ### addtl notes:
 
 - if you had to cancel a run, append ``--rerun-incomplete`` to the respective smk command 
+
+
+
 
 
 
