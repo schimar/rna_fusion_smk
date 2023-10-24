@@ -16,6 +16,8 @@ units: "../config/units.tsv"
 # NOTE: eventually, get these values from one of the input files??
 runID: "230426_RNASeq"
 rgID: "A01358"
+r1_read_structure: "5M2S+T"  #"8M+T"
+r2_read_structure: "5M2S+T"  #"8M+T"
 
 
 ref:
@@ -27,11 +29,11 @@ ref:
   # Genome build
   build: GRCh38
 
-trimming:
-  activate: False
-          
-params:
-      cutadapt-pe: "--minimum-length 1 -q 20"
-      cutadapt-se: ""
+    #trimming:
+    #  activate: False
+    #          
+    #params:
+  #  cutadapt-pe: "--minimum-length 1 -q 20"
+  #   cutadapt-se: ""
     #  star: "--outSAMtype BAM SortedByCoordinate"
     # --outSAMtype BAM Unsorted"

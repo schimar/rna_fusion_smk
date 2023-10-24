@@ -6,14 +6,18 @@ import pandas as pd
 from snakemake.utils import validate
 
 #ftp = FTP.RemoteProvider()
-fqDir = ""   #"/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
-#fqDir = "/mnt/illumina/development/bench_data/rna/fq"
+
+#fqDir = ""   #"/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 runid = config['runID']
 rgid =  config['rgID']
+# read structure of our UMIs 
+r1_read_structure = config["r1_read_structure"]
+r2_read_structure = config["r2_read_structure"]
 
-validate(config, schema="../../config/schemas/config.schema.yaml")
+# 
+#validate(config, schema="../../config/schemas/config.schema.yaml")
 
-
+# change here when creating units_*.tsv in rule
 units = (
     pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "unit_name": str})
     .set_index(["sample_name", "unit_name"], drop=False)
@@ -35,9 +39,6 @@ idkeys = list(samples_dict.keys())
 common_constraint = "[0-9A-Za-z\-\_]+[^\/L][^\/umi][^\/chr7][^\/SE]"
 #[^\/mrkdup]
 
-# read structure of our UMIs 
-r1_read_structure = "5M2S+T"  #"8M+T"
-r2_read_structure = "5M2S+T"  #"8M+T"
 
 
 onstart:
