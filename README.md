@@ -2,11 +2,18 @@
 
 
 # -----------------------------------------------------------------
+## clone the workflow:
+```
+git clone tpgit:/home/admin_bio/projects/rna_fusion_quant.git
+```
+
 
 ## install dependencies:
-go to the working directory with 
+go to the working directory 
+(in my case, it was cloned into the folder smk/ in my home directory)
 ```
 cd ~/smk/rna_fusion_quant/workflow/
+git pull
 ```
 
 and install the dependencies for this workflow. For this, you need to have mamba installed (see the [mamba documentation](https://mamba.readthedocs.io/en/latest/mamba-installation.html#mamba-install) and [this handy page](https://www.imranabdullah.com/2021-08-21/Conda-and-Mamba-Commands-for-Managing-Virtual-Environments)).
@@ -14,7 +21,7 @@ and install the dependencies for this workflow. For this, you need to have mamba
 ```
 mamba env create -f evs/s7_fgbio2.yaml
 ```
-this will create an environment called "fgbio2", activate it with the following:
+this will create an environment called "fgbio2"; activate it with the following:
 ```
 mamba activate fgbio2
 ```
@@ -28,7 +35,8 @@ python setup.py install
 nosetests tests/*.py
 ```
 
-## prepare the ``units<tmp>.tsv`` file: 
+## Define the paths 
+(i.e. where is your raw data (the *.bcl files) and where do you want to write the data to?)
 
 # sashdir
 # bcldir
