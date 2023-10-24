@@ -44,7 +44,7 @@ rule all:
 	    # bcl2fq
 	    expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
 	    #expand("{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz", runid= runid, sample= idkeys),
-	    expand("{runid}/results/bcl2fq/cat/{sample}_{read}.fq.gz", runid= runid, sample= idkeys, read= ['R1', 'R2']),    
+	    #expand("{runid}/results/bcl2fq/cat/{sample}_{read}.fq.gz", runid= runid, sample= idkeys, read= ['R1', 'R2']),    
 	    #expand("{runid}/results/bbmerge/{sample}.fq.gz", runid= runid, sample= idkeys),
 	    #
 	    # qc
@@ -58,9 +58,9 @@ rule all:
 	    # 
 	    # fusions & exon skipping
 	    #expand("{runid}/results/arriba/{sample}/fusions.{prefix}.fltrd.tsv", runid= runid, sample= idkeys, prefix= ['clinout', 'nonclinout']),
-	    #expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),
-	    #expand("{runid}/results/qc/multiqc_report.html", runid= runid),
+	    expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),
+	    expand("{runid}/results/qc/multiqc_report.html", runid= runid),
 	    # rMats 
-	    #expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
+	    expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
 
 
