@@ -69,6 +69,8 @@ rsync -avzP /mnt/routine/pipelines/shared_resources/rna_v1/* resources/
 
 # -----------------------------------------------------------------------------
 
+NOTE: currently, we still have to run the bcl2fq rule separately, before running the rest of the workflow (I've made some progress on this, but not quite there yet). 
+For this, you need to comment out everything after the bcl2fq file in rule all (in the main snakefile, everything after line 45). Once bcl2fq is done, uncomment the same ones again and you're golden for the second run!
 
 
 ### 1) defne the paths:
