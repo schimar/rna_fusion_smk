@@ -1,8 +1,12 @@
+#ruleorder: bcl2fq > cat_fq1 
+#ruleorder: bcl2fq > cat_fq2
+
+
 rule bcl2fq:
     input:
         #bcldir = "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2/",
-        #bcldir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
-        bcldir = "/mnt/routine/230915_A01358_0066_AHJWHKDRX3/",
+        bcldir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
+        #bcldir = "/mnt/routine/230915_A01358_0066_AHJWHKDRX3/",
         #bcldir = "/mnt/illumina/231011_A01272_0061_AHK7N7DRX3/",
         #230426_A01272_0045_AH5CT5DRX3/",
     output:
@@ -26,6 +30,8 @@ rule bcl2fq:
 #   "{sample}_{read}_001.fastq.gz"
 
 rule cat_fq1:
+    input:
+        "{runid}/results/bcl2fq/Reports/html/tree.html"
     output: 
         fq = temp("{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz"),
         #fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R1.fq.gz",
@@ -36,6 +42,8 @@ rule cat_fq1:
         """
 
 rule cat_fq2:
+    input:
+        "{runid}/results/bcl2fq/Reports/html/tree.html"
     output: 
         fq = temp("{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz"),
         #fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R2.fq.gz",
