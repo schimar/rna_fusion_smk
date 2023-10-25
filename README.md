@@ -12,7 +12,7 @@
 # ----------------------
 ### clone the workflow:
 ```
-git clone tpgit:/home/admin_bio/projects/rna_fusion_quant.git
+git clone tpgit:/home/admin_bio/projects/rna_fusion.git
 ```
 
 # ----------------------
