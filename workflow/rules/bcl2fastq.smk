@@ -4,8 +4,8 @@
 
 rule bcl2fq:
     input:
-        #bcldir = "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2/",
-        bcldir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
+        bcldir = "/mnt/illumina/231025_A01272_0063_AHK5CGDRX3/",
+        #bcldir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
         #bcldir = "/mnt/routine/230915_A01358_0066_AHJWHKDRX3/",
         #bcldir = "/mnt/illumina/231011_A01272_0061_AHK7N7DRX3/",
         #230426_A01272_0045_AH5CT5DRX3/",
