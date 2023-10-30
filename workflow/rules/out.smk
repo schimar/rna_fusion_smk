@@ -14,7 +14,7 @@ rule mv_results:
         rsync -rDvz {input.rseqc} {bcldir}/analysis_rna_${{dt}}/qc/rseqc/ &&
         rsync -rDvz {input.fastqc} {bcldir}/analysis_rna_${{dt}}/qc/fastqc/ &&
         rsync -rDvz {runid}/logs/{log} {bcldir}/analysis_rna_${{dt}}/
-        rsync -rDvz {input.arriba} {bcldir}/analysis_rna_${{dt}}/
+        #rsync -rDvz {input.arriba} {bcldir}/analysis_rna_${{dt}}/
         """
 
 
