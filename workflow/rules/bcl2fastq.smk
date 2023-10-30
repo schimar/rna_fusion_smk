@@ -4,7 +4,7 @@
 
 rule bcl2fq:
     input:
-        bcldir = "/mnt/illumina/231025_A01272_0063_AHK5CGDRX3/",
+        bcldir = {bcldir} #"/mnt/illumina/231025_A01272_0063_AHK5CGDRX3/",
         #bcldir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
         #bcldir = "/mnt/routine/230915_A01358_0066_AHJWHKDRX3/",
         #bcldir = "/mnt/illumina/231011_A01272_0061_AHK7N7DRX3/",
@@ -12,6 +12,8 @@ rule bcl2fq:
     output:
         #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
         "{runid}/results/bcl2fq/Reports/html/tree.html",
+    wildcard_constraints:
+        runid = "[0-9A-Za-z\/]+[^routine]"
     params:
         outdir = "{runid}/results/bcl2fq/",
     #log:

@@ -12,6 +12,7 @@ from snakemake.utils import validate
 
 #fqDir = ""   #"/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 runid = config['runID']
+bcldir = config['bcldir']
 rgid =  config['rgID']
 # read structure of our UMIs 
 r1_read_structure = config["r1_read_structure"]
@@ -33,7 +34,7 @@ validate(units, schema="../../config/schemas/units.schema.yaml")
 samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))  #, units['fq2'])))
 
 # define working directory and samples for rule all:
-pth = Path(units['fq'][0])
+pth = Path(units['fq'].iloc[0])
 fqDir = str(pth.parent)
 idkeys = list(samples_dict.keys())
 

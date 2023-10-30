@@ -14,7 +14,8 @@ units: "../config/units.tsv"
 #fqDir: "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 
 # NOTE: eventually, get these values from one of the input files??
-runID: "230426_RNASeq"
+runID: "rnaSeq"
+bcldir: "dummy"
 rgID: "A01358"
 r1_read_structure: "5M2S+T"  #"8M+T"
 r2_read_structure: "5M2S+T"  #"8M+T"

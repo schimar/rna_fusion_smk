@@ -29,6 +29,7 @@ include: "rules/qc.smk"
 include: "rules/umi.smk"
 include: "rules/fusion.smk"
 include: "rules/altsplice.smk"
+include: "rules/out.smk"
 ######
 
 ##### target rules #####
@@ -62,5 +63,6 @@ rule all:
 	    expand("{runid}/results/qc/multiqc_report.html", runid= runid),
 	    # rMats 
 	    expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
+	    expand("{runid}/run.done", runid= runid),
 
 
