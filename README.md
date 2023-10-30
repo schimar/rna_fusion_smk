@@ -94,16 +94,16 @@ mamba activate fgbio2
 
 ### 4) perform dry-run 
 ```
-smk -npr --config runID= units=../config/units_<tmp>.tsv
+smk -npr --config runID=<output_path> units=../config/units_<tmp>.tsv bcldir=/mnt/{illumina,routine}/<run_folder>
 # e.g.
-smk -npr --config runID=/mnt/sda/rnaSeq/runs/230720 units=../config/units_230720.tsv
+smk -npr --config runID=/mnt/sda/rnaSeq/runs/231025_rerun units=/mnt/sda/rnaSeq/runs/231025/units_231025.tsv bcldir=/mnt/illumina/231025_A01272_0063_AHK5CGDRX3 
 ```
 
 ### 5) run workflow
 ```
 smk -j<nthreads> --config runID=<PATH/TO/runid> units=../config/units_<tmp>.tsv
 # e.g.
-smk -j50 --config runID=/mnt/sda/rnaSeq/runs/230720 units=../config/units_230720.tsv
+smk -j50 --config runID=/mnt/sda/rnaSeq/runs/231025_rerun units=/mnt/sda/rnaSeq/runs/231025/units_231025.tsv bcldir=/mnt/illumina/231025_A01272_0063_AHK5CGDRX3
 ```
 
 
