@@ -20,23 +20,26 @@ r2_read_structure = config["r2_read_structure"]
 
 # 
 #validate(config, schema="../../config/schemas/config.schema.yaml")
+if Path(config['units']).is_file():
+  units = (
+      pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "unit_name": str})
+      .set_index(["sample_name", "unit_name"], drop=False)
+      .sort_index()
+  )
+  validate(units, schema="../../config/schemas/units.schema.yaml")
+  samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))  #, units['fq2'])))
 
-# change here when creating units_*.tsv in rule
-units = (
-    pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "unit_name": str})
-    .set_index(["sample_name", "unit_name"], drop=False)
-    .sort_index()
-)
-validate(units, schema="../../config/schemas/units.schema.yaml")
+  idkeys = list(samples_dict.keys())
+else: 
+  lsda = os.listdir(paste0(runid, "/results/bcl2fq/"))
+  lsids = [word for word in lsda if word.endswith("L001_R1_001.fastq.gz") and 'Undetermined' not in word]
+  idkeys = ['_'.join(x.split('_')[0:2]) for x in lsids]
 
-
-
-samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))  #, units['fq2'])))
 
 # define working directory and samples for rule all:
-pth = Path(units['fq'].iloc[0])
-fqDir = str(pth.parent)
-idkeys = list(samples_dict.keys())
+#pth = Path(units['fq'].iloc[0])
+#fqDir = str(pth.parent)
+
 
 
 # set wildcard constraints on {sample}
