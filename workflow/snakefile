@@ -49,20 +49,20 @@ rule all:
 	    #expand("{runid}/results/bbmerge/{sample}.fq.gz", runid= runid, sample= idkeys),
 	    #
 	    # qc
-	    ##expand("{runid}/results/bbmerge/qc/fastqc/{sample}.html", runid= runid, sample= idkeys),
-	    #expand("{runid}/results/bbmerge/qc/multiqc_report.html", runid= runid),
-	    ##
-	    ## fgbio fq2cons
-	    ###expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
-	    ###expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
-	    ###expand("{runid}/results/reads/fstat/{sample}.mapped.fstat", runid= runid, sample= idkeys),
-	    ## 
-	    ## fusions & exon skipping
-	    ###expand("{runid}/results/arriba/{sample}/fusions.{prefix}.fltrd.tsv", runid= runid, sample= idkeys, prefix= ['clinout', 'nonclinout']),
-	    #expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),
-	    #expand("{runid}/results/qc/multiqc_report.html", runid= runid),
-	    ## rMats 
-	    #expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
-	    #expand("{runid}/run.done", runid= runid),
+	    #expand("{runid}/results/bbmerge/qc/fastqc/{sample}.html", runid= runid, sample= idkeys),
+	    expand("{runid}/results/bbmerge/qc/multiqc_report.html", runid= runid),
+	    #
+	    # fgbio fq2cons
+	    ##expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
+	    ##expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
+	    ##expand("{runid}/results/reads/fstat/{sample}.mapped.fstat", runid= runid, sample= idkeys),
+	    # 
+	    # fusions & exon skipping
+	    ##expand("{runid}/results/arriba/{sample}/fusions.{prefix}.fltrd.tsv", runid= runid, sample= idkeys, prefix= ['clinout', 'nonclinout']),
+	    expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),
+	    expand("{runid}/results/qc/multiqc_report.html", runid= runid),
+	    # rMats 
+	    expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
+	    expand("{runid}/run.done", runid= runid),
 
 

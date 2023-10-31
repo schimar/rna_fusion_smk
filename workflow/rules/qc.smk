@@ -1,25 +1,5 @@
 ## bb 
 
-rule bbmerge_fqs:
-    input:
-        fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
-        #fq1 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        #fq2 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R2.fq.gz",
-    output:
-        out = temp("{runid}/results/bbmerge/{sample}.fq.gz"),
-        outu1 = temp("{runid}/results/bbmerge/outu/{sample}.1.fq.gz"),
-        outu2 = temp("{runid}/results/bbmerge/outu/{sample}.2.fq.gz"),
-        hist = "{runid}/results/bbmerge/{sample}.hist.txt"
-    wildcard_constraints:
-        sample = common_constraint
-    log: "{runid}/logs/bbmerge/{sample}.log"
-    resources:
-        mem_gb=28
-    threads: 8
-    shell:"""
-        bbmerge-auto.sh -Xmx38g in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
-        """
 
 # bbmerge.sh in1=/mnt/sda/rnaSeq/runs/230627/results/bcl2fq/cat/H22032902-25ng-rep1_S13_R1.fq.gz in2=/mnt/sda/rnaSeq/runs/230627/results/bcl2fq/cat/H22032902-25ng-rep1_S13_R2.fq.gz out=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/H22032902-25ng-rep1_S13.fq.gz outu1=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/outu/H22032902-25ng-rep1_S13_1.fq.gz outu2=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/outu/H22032902-25ng-rep1_S13_2.fq.gz       
     

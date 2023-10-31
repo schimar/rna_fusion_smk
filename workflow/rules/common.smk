@@ -40,6 +40,10 @@ else:
 #pth = Path(units['fq'].iloc[0])
 #fqDir = str(pth.parent)
 
+pr = Path('/'.join([runid, 'results/']))
+pr.mkdir(parents= True, exist_ok= True)
+pl = Path('/'.join([runid, 'logs/']))
+pl.mkdir(parents= True, exist_ok= True)
 
 
 # set wildcard constraints on {sample}
