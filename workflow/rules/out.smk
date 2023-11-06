@@ -6,6 +6,8 @@ rule mv_results:
         rmats = expand("{runid}/results/rmats/{sample}/{sample}.exonSkip.tsv", runid= runid, sample= idkeys), #unit=units.itertuples()), #, sample= idkeys[0]), 
     output:
         touch("{runid}/run.done")
+    wildcard_constraints:
+        sample = common_constraint
     #params:
         #bcldir = "{bcldir}"
     shell:"""

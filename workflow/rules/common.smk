@@ -47,7 +47,7 @@ pl.mkdir(parents= True, exist_ok= True)
 
 
 # set wildcard constraints on {sample}
-common_constraint = "[0-9A-Za-z\-\_]+[^\/L][^\/umi][^\/chr7][^\/SE]"
+common_constraint = "[0-9A-Za-z\-\_]+[^\/L][^\/umi][^\/chr7][^\/SE]"  #[^/]"
 
 #[^\/mrkdup]
 

@@ -124,6 +124,8 @@ rule cat_exonSkippers:
         expand("{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX'])
     output:
         "{runid}/results/rmats/{sample}.exonSkipFull.tsv"
+    wildcard_constraints:
+        sample = common_constraint
     params:
         direc = "{runid}/results/rmats/{sample}"
     log: "{runid}/logs/cat_exonSkippers/{sample}.log"
@@ -150,6 +152,8 @@ rule exonFinalOut:
         egfr = "{runid}/results/rmats/{sample}.egfr_v3.out"
     output:
         "{runid}/results/rmats/{sample}.exonSkip.tsv"
+    wildcard_constraints:
+        sample = common_constraint
     log:
         "{runid}/logs/exonFinalOut/{sample}.log"
     shell: """

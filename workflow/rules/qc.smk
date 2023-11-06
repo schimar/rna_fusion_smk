@@ -9,8 +9,8 @@ rule fastqc_bbmerged:
     input:
         "{runid}/results/bbmerge/{sample}.fq.gz"
     output:
-        html="{runid}/results/bbmerge/qc/fastqc/{sample}.html",
-        zip="{runid}/results/bbmerge/qc/fastqc/{sample}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+        html="{runid}/results/qc/bbmerge/fastqc/{sample}.html",
+        zip="{runid}/results/qc/bbmerge/fastqc/{sample}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
     params:
         extra = "--quiet"
     log:
@@ -44,7 +44,7 @@ rule multiqc_bbmerged:
     input:
         expand("{runid}/results/bbmerge/qc/fastqc/{sample}.html", runid= runid, sample= idkeys)
     output:
-        "{runid}/results/bbmerge/qc/multiqc_report.html"
+        "{runid}/results/qc/bbmerge/multiqc_report.html"
     log:
         "{runid}/logs/qc/multiqc_bbmerged.log"
     wrapper:
