@@ -41,7 +41,8 @@ rule get_clinFuse:
 
 rule filter_arriba:
     input:
-        "{runid}/results/arriba/{sample}/fusions.{clin_nonclin}.tsv",
+        fus = "{runid}/results/arriba/{sample}/fusions.{clin_nonclin}.tsv",
+        bl = "resources/bl_exonSkip.tsv",
     output:
         "{runid}/results/arriba/{sample}/fusions.{clin_nonclin}.fltrd.tsv",
     #wildcard_constraints:
@@ -49,7 +50,7 @@ rule filter_arriba:
     log:
         "{runid}/logs/fltr_arriba/{sample}/{clin_nonclin}.log"
     shell:"""
-        scripts/fusionfltr.py -i {input} > {output} 2> {log}
+        scripts/fusionfltr.py -i {input.fus} -b {input.bl} > {output} 2> {log}
         """
 
 

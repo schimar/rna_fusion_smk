@@ -32,16 +32,35 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("-i", "--input", dest="infus",
                         help="input fusion file name", metavar="<input>")
+    parser.add_argument("-b", "--blacklist", dest="blackls",
+                        help="input blacklist file name", metavar="<blackls>")
+
     #parser.add_argument("-q", "--quiet",
     #                    action="store_false", dest="verbose", default=True,
     #                    help="don't print status messages to stdout")
 
     args = parser.parse_args()
     fusion_file = args.infus
+    bls = args.blackls
 
     if not fusion_file: #.exists():
         print("Please specify a valid fusion file")
         raise SystemExit(1)
+    if not bls: #.exists():
+        print("Please specify a valid blacklist file")
+        raise SystemExit(1)
+
+    with open(bls, 'rt') as bl:
+        bldict = dict()
+        for line in bl:
+            line = line.strip('\n')
+            gene1, gene2, strand1, strand2, bp1, bp2 = line.split('\t')
+            fusion = '::'.join([gene1, gene2])
+            if fusion not in bldict:
+                bldict[fusion] = '_'.join([bp1, bp2])
+
+#for key, val in bldict.items():
+#    print(key, val)
 
 
     with open(fusion_file, 'rt') as fus:
@@ -71,10 +90,21 @@ if __name__ == "__main__":
                 else:
                     newlist = [gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, warn, confidence, reading_frame, gene_id1, gene_id2, transcript_id1, transcript_id2, filters]
                     newline = '\t'.join(map(str, newlist))
-                if confidence != 'low':
-                    if split_reads1 == 0 or split_reads2 == 0:
-                        if disco_mates == 0:
-                            continue
+                if '::'.join([gene1, gene2]) in bldict:
+                    continue
+                else:
+                    if confidence != 'low':
+                        if split_reads1 == 0 or split_reads2 == 0:
+                            if disco_mates == 0:
+                                continue
+                            else:
+                                if supp_reads < 5 and supp_reads >=3:
+                                    warn = "low supp. reads"
+                                    newlist[14] = warn
+                                    newline = '\t'.join(map(str, newlist))
+                                    print(newline)
+                                elif supp_reads < 3:
+                                    continue
                         else:
                             if supp_reads < 5 and supp_reads >=3:
                                 warn = "low supp. reads"
@@ -83,18 +113,9 @@ if __name__ == "__main__":
                                 print(newline)
                             elif supp_reads < 3:
                                 continue
-                    else:
-                        if supp_reads < 5 and supp_reads >=3:
-                            warn = "low supp. reads"
-                            newlist[14] = warn
-                            newline = '\t'.join(map(str, newlist))
-                            print(newline)
-                        elif supp_reads < 3:
-                            continue
-                        else:
-                            print(newline)
+                            else:
+                                print(newline)
 
-    fus.close()
 
 # see https://arriba.readthedocs.io/en/latest/output-files/ for details on the output
 # see https://arriba.readthedocs.io/en/latest/internal-algorithm/ for details on filters
