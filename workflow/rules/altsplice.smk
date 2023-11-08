@@ -110,13 +110,14 @@ rule exonfltr:
     input:
         co = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.tsv",
         h5 = "resources/exons23.h5",
+        bl = "resources/bl_exonSkip.tsv"
     output:
         "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv",
 #    wildcard_constraints:
 #        sample = common_constraint
     log: "{runid}/logs/exonfltr/{sample}/{chrom}.log"
     shell:"""
-        scripts/exonSkipfltr.py -e {input.co} -d {input.h5} > {output} 2> {log}
+        scripts/exonSkipfltr.py -e {input.co} -d {input.h5} -b {input.bl} > {output} 2> {log}
         """
 
 rule cat_exonSkippers:
