@@ -16,7 +16,7 @@ units: "../config/units.tsv"
 # NOTE: eventually, get these values from one of the input files??
 runid: "rnaSeq"
 bcldir: "dummy"
-  #rgID: "A01358"
+rgID: "A01358"
 r1_read_structure: "5M2S+T"  #"8M+T"
 r2_read_structure: "5M2S+T"  #"8M+T"
 

@@ -54,7 +54,7 @@ if __name__ == "__main__":
         bldict = dict()
         for line in bl:
             line = line.strip('\n')
-            gene1, gene2, strand1, strand2, bp1, bp2 = line.split('\t')
+            gene1, gene2, strand1, strand2, bp1, bp2 = line.split('\t')[0:6]
             fusion = '::'.join([gene1, gene2])
             if fusion not in bldict:
                 bldict[fusion] = '_'.join([bp1, bp2])

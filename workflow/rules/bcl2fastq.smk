@@ -71,9 +71,9 @@ rule bbmerge_fqs:
         sample = common_constraint
     log: "{runid}/logs/bbmerge/{sample}.log"
     resources:
-        mem_gb=28
+        mem_gb=46
     threads: 8
     shell:"""
-        bbmerge-auto.sh -Xmx38g in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
+        bbmerge-auto.sh -Xmx46g in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
         """
 

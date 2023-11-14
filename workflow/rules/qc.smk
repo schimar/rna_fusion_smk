@@ -22,6 +22,19 @@ rule fastqc_bbmerged:
         "v2.1.1/bio/fastqc"
 
 
+rule multiqc_bbmerged:
+    input:
+        expand("{runid}/results/qc/bbmerge/fastqc/{sample}.html", runid= runid, sample= idkeys)
+    output:
+        "{runid}/results/qc/fastqc_multiqc_report.html"
+    params:
+        extra="--zip-data-dir"
+    log:
+        "{runid}/logs/qc/multiqc_bbmerged.log"
+    wrapper:
+        "v2.12.0/bio/multiqc"
+
+
 
 rule fastqc_cons:
     input:
@@ -40,16 +53,6 @@ rule fastqc_cons:
         "v2.1.1/bio/fastqc"
 
 
-rule multiqc_bbmerged:
-    input:
-        expand("{runid}/results/bbmerge/qc/fastqc/{sample}.html", runid= runid, sample= idkeys)
-    output:
-        "{runid}/results/qc/bbmerge/multiqc_report.html"
-    log:
-        "{runid}/logs/qc/multiqc_bbmerged.log"
-    wrapper:
-        "v2.1.1/bio/multiqc"
-
 
 
 rule multiqc_cons:
@@ -57,6 +60,8 @@ rule multiqc_cons:
         expand("{runid}/results/reads/consensus/qc/fastqc/{sample}.{read}.html", runid= runid, sample= idkeys, read= [1,2])
     output:
         "{runid}/results/reads/consensus/qc/multiqc_report.html"
+    params:
+        extra="--zip-data-dir"
     log:
         "{runid}/logs/qc/multiqc_umi.log"
     wrapper:
@@ -256,12 +261,12 @@ rule multiqcRSeQC:
             unit=units.itertuples(), runid= runid,
         ),
     output:
-        "{runid}/results/qc/multiqc_report.html",
+        "{runid}/results/qc/rseqc_multiqc_report.html",
     params:
         extra= "",
         #use_input_files_only= True,
     log:
-        "{runid}/logs/multiqc.log",
+        "{runid}/logs/rseqc_multiqc.log",
     wrapper:
         "v1.23.1/bio/multiqc"
 
