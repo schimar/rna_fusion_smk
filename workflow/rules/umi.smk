@@ -120,7 +120,7 @@ rule filter_consensus_reads:
         bam = "{runid}/results/reads/{sample}.cons.mapped.bam",
         ref = "resources/genome.fa",
     output:
-        bam = temp("{runid}/results/reads/{sample}.cons.filtered.bam"),
+        bam = "{runid}/results/reads/{sample}.cons.filtered.bam",
     params:
         min_reads = 3,
         min_base_qual = 40,
@@ -232,7 +232,7 @@ rule map_star:
         lib = "Library1",
         pu = "Unit1",
         pl = "Illumina",
-        extra="--chimSegmentMin 12 --chimOutType WithinBAM --readFilesSAMattrKeep All --quantMode GeneCounts --limitBAMsortRAM 68000000000 --outSAMtype BAM SortedByCoordinate --outBAMsortingThreadN 1 --chimJunctionOverhangMin 8 --chimOutJunctionFormat 1 --alignSJDBoverhangMin 10 --alignMatesGapMax 100000 --alignIntronMax 100000 --alignSJstitchMismatchNmax 5 -1 5 5 --chimMultimapScoreRange 3 --chimScoreJunctionNonGTAG -4 --chimMultimapNmax 20 --chimNonchimScoreDropMin 10 --peOverlapNbasesMin 12 --peOverlapMMp 0.1 --alignInsertionFlush Right --alignSplicedMateMapLminOverLmate 0 --alignSplicedMateMapLmin 30,  --sjdbGTFfile resources/genome.gtf"  # --outSAMattrRGline ID:{sample} --sjdbGTFfile {} {}".format(
+        extra="--chimSegmentMin 12 --chimOutType WithinBAM --readFilesSAMattrKeep All --quantMode GeneCounts --limitBAMsortRAM 84000000000 --outSAMtype BAM SortedByCoordinate --outBAMsortingThreadN 1 --chimJunctionOverhangMin 8 --chimOutJunctionFormat 1 --alignSJDBoverhangMin 10 --alignMatesGapMax 100000 --alignIntronMax 100000 --alignSJstitchMismatchNmax 5 -1 5 5 --chimMultimapScoreRange 3 --chimScoreJunctionNonGTAG -4 --chimMultimapNmax 20 --chimNonchimScoreDropMin 10 --peOverlapNbasesMin 12 --peOverlapMMp 0.1 --alignInsertionFlush Right --alignSplicedMateMapLminOverLmate 0 --alignSplicedMateMapLmin 30,  --sjdbGTFfile resources/genome.gtf"  # --outSAMattrRGline ID:{sample} --sjdbGTFfile {} {}".format(
         #"resources/genome.gtf", config["params"]["star"]
         #),
     log: "{runid}/logs/star/{sample}.log"

@@ -14,7 +14,7 @@ from snakemake.utils import validate
 #fqDir = ""   #"/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 runid = config['runid']
 bcldir = config['bcldir']
-#rgid =  config['rgID']
+rgid =  config['rgID']
 # read structure of our UMIs 
 r1_read_structure = config["r1_read_structure"]
 r2_read_structure = config["r2_read_structure"]
@@ -32,6 +32,8 @@ if Path(config['units']).is_file():
 
   idkeys = list(samples_dict.keys())
 else: 
+  #idkeys = list()
+  #units= str()
   lsda = os.listdir('/'.join([runid, "results/bcl2fq/"]))
   #lsids = [word for word in lsda if word.endswith("L001_R1_001.fastq.gz") and 'Undetermined' not in word]
   #idkeys = ['_'.join(x.split('_')[0:2]) for x in lsids]
@@ -41,7 +43,7 @@ else:
   lanes = [re.findall('L00[12]', x)[0] for x in lsidsL12]
   fq = ['/'.join([runid, 'results/bcl2fq/', fqgz]) for fqgz in lsidsL12]
   df = pd.DataFrame({'sample_name': idkeysL12, 'unit_name': lanes, 'fq': fq})
-  df.to_csv('/'.join([runid, 'units.tsv']))
+  df.to_csv('/'.join([runid, 'units.tsv']), sep= '\t')
   units = df
   validate(units, schema="../../config/schemas/units.schema.yaml")
   samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))  #, units['fq2'])))
