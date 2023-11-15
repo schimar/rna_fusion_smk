@@ -258,7 +258,7 @@ rule star_markdup:
     input:
         "{runid}/results/reads/star/{sample}.bam"
     output:
-        temp("{runid}/results/reads/star/mrkdup/{sample}.bam"),
+        "{runid}/results/reads/star/mrkdup/{sample}.bam",
     wildcard_constraints:
         sample = common_constraint
     priority: 20
