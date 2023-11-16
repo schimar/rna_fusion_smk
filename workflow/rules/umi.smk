@@ -187,7 +187,7 @@ rule sambamba_markdup:
     input:
         "{runid}/results/reads/{sample}.cons.mapped.bam"
     output:
-        temp("{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam"),
+        "{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam",
     priority: 20
     params:
         extra="-r"  # optional parameters
