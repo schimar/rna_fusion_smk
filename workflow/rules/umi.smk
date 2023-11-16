@@ -283,7 +283,18 @@ rule star_markdup:
 #        samtools view -h {input} | awk 'length($10) > 40 || $1 ~ /^@/' | samtools view -bS - > {output}
 #        """
 
-
+rule tpmCalc:
+    input:
+        bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        gtf = "resources/genome.gtf",
+    output:
+        "{runid}/results/reads/star/mrkdup/{sample}_genes.out",
+    log:
+        "{runid}/logs/TPMcalc/{sample}.log"
+    shell:"""
+        TPMcalculator -g {input.gtf} -b {input.bam} 2> {log}
+        """
+  
 
 rule collectHs_star:
     input:
