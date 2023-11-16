@@ -187,7 +187,7 @@ rule sambamba_markdup:
     input:
         "{runid}/results/reads/{sample}.cons.mapped.bam"
     output:
-        temp("{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam"),
+        "{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam",
     priority: 20
     params:
         extra="-r"  # optional parameters
@@ -258,7 +258,7 @@ rule star_markdup:
     input:
         "{runid}/results/reads/star/{sample}.bam"
     output:
-        temp("{runid}/results/reads/star/mrkdup/{sample}.bam"),
+        "{runid}/results/reads/star/mrkdup/{sample}.bam",
     wildcard_constraints:
         sample = common_constraint
     priority: 20
