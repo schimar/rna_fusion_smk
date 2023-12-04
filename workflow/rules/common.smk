@@ -19,17 +19,17 @@ rgid =  config['rgID']
 r1_read_structure = config["r1_read_structure"]
 r2_read_structure = config["r2_read_structure"]
 
+units_wd = '/'.join([runid, config["units"]])
+
 # 
 #validate(config, schema="../../config/schemas/config.schema.yaml")
-if Path(config['units']).is_file():
-  units = (
-      pd.read_csv(config["units"], sep="\t", dtype={"sample_name": str, "unit_name": str})
+if Path(units_wd).is_file():
+  units = (pd.read_csv(units_wd, sep="\t", dtype={"sample_name": str, "unit_name": str})
       .set_index(["sample_name", "unit_name"], drop=False)
       .sort_index()
   )
   validate(units, schema="../../config/schemas/units.schema.yaml")
   samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))  #, units['fq2'])))
-
   idkeys = list(samples_dict.keys())
 else: 
   #idkeys = list()
@@ -41,13 +41,12 @@ else:
   lsidsL12 = [word for word in lsda if word.endswith("R1_001.fastq.gz") and 'Undetermined' not in word]
   idkeysL12 = ['_'.join(x.split('_')[0:2]) for x in lsidsL12]
   lanes = [re.findall('L00[12]', x)[0] for x in lsidsL12]
-  fq = ['/'.join([runid, 'results/bcl2fq/', fqgz]) for fqgz in lsidsL12]
+  fq = ['/'.join([runid, 'results/bcl2fq', fqgz]) for fqgz in lsidsL12]
   df = pd.DataFrame({'sample_name': idkeysL12, 'unit_name': lanes, 'fq': fq})
   df.to_csv('/'.join([runid, 'units.tsv']), sep= '\t')
   units = df
   validate(units, schema="../../config/schemas/units.schema.yaml")
   samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))  #, units['fq2'])))
-
   idkeys = list(samples_dict.keys())
   
 

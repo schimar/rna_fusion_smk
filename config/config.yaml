@@ -9,7 +9,7 @@ splicingTargets: "../config/splicingTargets.tsv"
 
 #samples: "../config/samples.tsv"
 
-units: "../config/units.tsv"
+units: "units.tsv"
 
 #fqDir: "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 

@@ -292,9 +292,9 @@ rule tpmCalc:
     log:
         "{runid}/logs/TPMcalc/{sample}.log"
     shell:"""
-        TPMcalculator -g {input.gtf} -b {input.bam} 2> {log}
+        TPMCalculator -g {input.gtf} -b {input.bam} 2> {log}
         """
-  
+ 
 
 rule collectHs_star:
     input:
