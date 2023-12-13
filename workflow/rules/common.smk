@@ -14,7 +14,7 @@ from snakemake.utils import validate
 #fqDir = ""   #"/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 runid = config['runid']
 bcldir = config['bcldir']
-rgid =  config['rgID']
+rgid =  bcldir.split('_')[1]  #config['rgID']
 # read structure of our UMIs 
 r1_read_structure = config["r1_read_structure"]
 r2_read_structure = config["r2_read_structure"]

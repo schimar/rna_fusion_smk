@@ -4,8 +4,9 @@
 
 rule bcl2fq:
     input:
-        bcldir = {bcldir},
-        sampleSheet = "{bcldir}/SampleSheet_rna.csv",
+        bcldir= config['bcldir'],
+        #bcldir = {bcldir}
+        #sampleSheet = "{bcldir}/SampleSheet_rna.csv",
     output:
         #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
         "{runid}/results/bcl2fq/Reports/html/tree.html",
@@ -13,12 +14,13 @@ rule bcl2fq:
 #        runid = "[0-9A-Za-z\/]+[^routine]"
     params:
         outdir = "{runid}/results/bcl2fq/",
+        sampleSheet = "{wildcards.bcldir}/SampleSheet_rna.csv"
     #log:
     #    "{runid}/logs/bcl2fastq.log",
     threads: 32
     shell:
         """
-        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {input.sampleSheet} -p 18 -r 3 -w 3 > {runid}/logs/bcl2fastq.log 2>&1
+        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {params.sampleSheet} -p 18 -r 3 -w 3 > {runid}/logs/bcl2fastq.log 2>&1
         """
 
 
