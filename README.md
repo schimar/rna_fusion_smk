@@ -20,38 +20,27 @@ git clone tpgit:/home/admin_bio/projects/rna_fusion.git
 go to the working directory 
 (in my case, it was cloned into the folder smk/ in my home directory)
 ```
-cd ~/smk/rna_fusion_quant/workflow/
+cd ~/smk/rna_fusion/workflow/
 git pull
 ```
 
 and install the dependencies for this workflow. For this, you need to have mamba installed (see the [mamba documentation](https://mamba.readthedocs.io/en/latest/mamba-installation.html#mamba-install) and [this handy page](https://www.imranabdullah.com/2021-08-21/Conda-and-Mamba-Commands-for-Managing-Virtual-Environments)).
 
 ```
-mamba env create -f evs/s7_fgbio2.yaml
+mamba env create -f envs/envs.yaml
 ```
 this will create an environment called "fgbio2"; activate it with the following:
 ```
-mamba activate fgbio2
+mamba activate env_rna
 ```
 
-# ----------------------
-### egfr-v3-determiner
-
-Further, we need this tool for the EGFR variant III detection (install it in a location of your choosing):
-```
-git clone https://github.com/yhoogstrate/egfr-v3-determiner.git
-cd egfr-v3-determiner
-python setup.py install 
-# and test it with:
-nosetests tests/*.py
-```
 
 # ----------------------
 ### Resources
 
 Finally, make sure you have all of the necessary resource files copied into the resources/ folder 
 ```
-# in ~/smk/rna_fusion_quant/workflow/
+# in ~/smk/rna_fusion/workflow/
 rsync -avzP /mnt/routine/pipelines/shared_resources/rna_v1/* resources/
 ```
 
@@ -78,32 +67,32 @@ For this, you need to comment out everything after the bcl2fq file in rule all (
 (i.e. where is your raw data (the *.bcl files) and where do you want to write the data to?) make sure you have the following info:
 
     - runid (where to write to - consider writing to local ssd) 
-    - # bcldir (location of NovaSeq run folder)
-    - # sashdir (location of SampleSheet.csv, if not in bcldir)
+    - bcldir (location of NovaSeq run folder)
+    - SampleSheet_rna.csv in bcldir
 
 
 ### 2) go to working directory
 ``` 
-cd ~/smk/rna_fusion_quant/workflow/
+cd ~/smk/rna_fusion/workflow/
 ```
 
 ### 3) activate mamba environment
 ```
-mamba activate fgbio2
+mamba activate env_rna
 ```
 
 ### 4) perform dry-run 
 ```
-smk -npr --config runID=<output_path> units=../config/units_<tmp>.tsv bcldir=/mnt/{illumina,routine}/<run_folder>
+smk -npr --config runid=<output_path> bcldir=/mnt/{illumina,routine}/<run_folder>/
 # e.g.
-smk -npr --config runID=/mnt/sda/rnaSeq/runs/231025_rerun units=/mnt/sda/rnaSeq/runs/231025/units_231025.tsv bcldir=/mnt/illumina/231025_A01272_0063_AHK5CGDRX3 
+smk -npr --config runid=/mnt/sda/rnaSeq/runs/231025_rerun bcldir=/mnt/illumina/231025_A01272_0063_AHK5CGDRX3/
 ```
 
 ### 5) run workflow
 ```
-smk -j<nthreads> --config runID=<PATH/TO/runid> units=../config/units_<tmp>.tsv
+smk -j<nthreads> --config runID=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/>
 # e.g.
-smk -j50 --config runID=/mnt/sda/rnaSeq/runs/231025_rerun units=/mnt/sda/rnaSeq/runs/231025/units_231025.tsv bcldir=/mnt/illumina/231025_A01272_0063_AHK5CGDRX3
+smk -j50 --config runID=/mnt/sda/rnaSeq/runs/231025 bcldir=/mnt/illumina/231025_A01272_0063_AHK5CGDRX3/
 ```
 
 
@@ -115,10 +104,10 @@ smk -j50 --config runID=/mnt/sda/rnaSeq/runs/231025_rerun units=/mnt/sda/rnaSeq/
 
 ### get the directed acyclic graph (DAG) as pdf:
 ```
-smk -npr --config runID=<PATH/TO/runid> units=../config/units_<tmp>.tsv --rulegraph | dot -Tpdf > dag.pdf
+smk -npr --config runID=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> --rulegraph | dot -Tpdf > dag.pdf
 
 # e.g. 
-smk -npr --config runID=/mnt/sda/rnaSeq/runs/230720 units=../config/units_230720.tsv --rulegraph | dot -Tpdf > dag.pdf
+smk -npr --config runID=/mnt/sda/rnaSeq/runs/230720 bcldir=/mnt/illumina/230720_A01272_0063_AHK5CGDRX3/ --rulegraph | dot -Tpdf > dag.pdf
 
 ```
 
