@@ -4,11 +4,8 @@
 
 rule bcl2fq:
     input:
-        bcldir = {bcldir} #"/mnt/illumina/231025_A01272_0063_AHK5CGDRX3/",
-        #bcldir = "/mnt/routine/230822_A01358_0062_AHJWH7DRX3/",
-        #bcldir = "/mnt/routine/230915_A01358_0066_AHJWHKDRX3/",
-        #bcldir = "/mnt/illumina/231011_A01272_0061_AHK7N7DRX3/",
-        #230426_A01272_0045_AH5CT5DRX3/",
+        bcldir = {bcldir},
+        sampleSheet = "{bcldir}/SampleSheet_rna.csv",
     output:
         #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
         "{runid}/results/bcl2fq/Reports/html/tree.html",
@@ -21,7 +18,7 @@ rule bcl2fq:
     threads: 32
     shell:
         """
-        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} -p 18 -r 3 -w 3 > {runid}/logs/bcl2fastq.log 2>&1
+        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {input.sampleSheet} -p 18 -r 3 -w 3 > {runid}/logs/bcl2fastq.log 2>&1
         """
 
 
@@ -63,17 +60,18 @@ rule bbmerge_fqs:
         #fq1 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R1.fq.gz",
         #fq2 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R2.fq.gz",
     output:
-        out = temp("{runid}/results/bbmerge/{sample}.fq.gz"),
+        out = "{runid}/results/bbmerge/{sample}.fq.gz",
         outu1 = temp("{runid}/results/bbmerge/outu/{sample}.1.fq.gz"),
         outu2 = temp("{runid}/results/bbmerge/outu/{sample}.2.fq.gz"),
         hist = "{runid}/results/bbmerge/{sample}.hist.txt"
     wildcard_constraints:
         sample = common_constraint
     log: "{runid}/logs/bbmerge/{sample}.log"
+    priority: 1
     resources:
-        mem_gb=46
-    threads: 8
+        mem_gb=56
+    threads: 12
     shell:"""
-        bbmerge-auto.sh -Xmx46g in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
+        bbmerge-auto.sh -Xmx56g in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
         """
 
