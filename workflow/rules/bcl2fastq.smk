@@ -14,15 +14,14 @@ rule bcl2fq:
 #        runid = "[0-9A-Za-z\/]+[^routine]"
     params:
         outdir = "{runid}/results/bcl2fq/",
-        sampleSheet = "{wildcards.bcldir}/SampleSheet_rna.csv"
-    #log:
-    #    "{runid}/logs/bcl2fastq.log",
+    log:
+        "{runid}/logs/bcl2fastq.log",
     threads: 32
     shell:
         """
-        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {params.sampleSheet} -p 18 -r 3 -w 3 > {runid}/logs/bcl2fastq.log 2>&1
+        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv -p 32 -r 4 -w 4 > {log} 2>&1
         """
-
+ #{runid}/logs/bcl2fastq.log 2>&1
 
 
 ## expand("../fq/{{runid}}_S0_L001_{readid}_001.fastq.gz", readid=config['readids'])
