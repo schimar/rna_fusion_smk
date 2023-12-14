@@ -1,9 +1,32 @@
-## bb 
 
+rule targetcov_bed:
+    input:
+        bam= "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        bed= "resources/twist_rna_exome_target_regions_hg38_annotated.srtd.bed",
+        genord="resources/genome.txt"
+    output:
+        "{runid}/results/qc/bedtools/{sample}/bcov.tsv"
+    log: "{runid}/logs/bedtools/{sample}.cov.log"
+    threads: 57
+    resources:
+        mem_gb = 242
+    priority: 2
+    shell:"""
+        bedtools coverage -a {input.bed} -b {input.bam} -g {input.genord} -sorted -d > {output} 2> {log}
+        """
 
-# bbmerge.sh in1=/mnt/sda/rnaSeq/runs/230627/results/bcl2fq/cat/H22032902-25ng-rep1_S13_R1.fq.gz in2=/mnt/sda/rnaSeq/runs/230627/results/bcl2fq/cat/H22032902-25ng-rep1_S13_R2.fq.gz out=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/H22032902-25ng-rep1_S13.fq.gz outu1=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/outu/H22032902-25ng-rep1_S13_1.fq.gz outu2=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/outu/H22032902-25ng-rep1_S13_2.fq.gz       
-    
-# bbmerge-auto.sh in1=/mnt/sda/rnaSeq/runs/230627/results/bcl2fq/cat/H22032902-25ng-rep1_S13_R1.fq.gz in2=/mnt/sda/rnaSeq/runs/230627/results/bcl2fq/cat/H22032902-25ng-rep1_S13_R2.fq.gz out=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/kmer/H22032902-25ng-rep1_S13.fq.gz outu1=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/kmer/outu/H22032902-25ng-rep1_S13_1.fq.gz outu2=/mnt/sda/rnaSeq/runs/230627/results/bbmerge/kmer/outu/H22032902-25ng-rep1_S13_2.fq.gz ihist=ihist_auto.txt ecct extend2=20 iterations=5
+rule targetcov_perc:
+    input:
+        "{runid}/results/qc/bedtools/{sample}/bcov.tsv"
+    output:
+        "{runid}/results/qc/bedtools/{sample}/bcov.perc.tsv"
+    log: "{runid}/logs/bedtools/{sample}.awk.log"
+    threads: 14
+    priority: 0
+    shell: """
+        awk '{{if ($6 > 0) sum += 1}} END {{print (sum / NR) * 100}}' {input} | tr ',' '.' > {output} 2> {log}
+        """
+
 
 rule fastqc_bbmerged:
     input:
