@@ -61,11 +61,11 @@ rule all:
 	    #expand("{runid}/results/reads/star/mrkdup/{sample}_genes.out", runid= runid, sample= idkeys),
 	    ## bedtools coverage & percentage across target region
 	    expand("{runid}/results/qc/bedtools/{sample}/bcov.perc.tsv", runid= runid, sample= idkeys),
-	    ## fusions & exon skipping
-	    ###expand("{runid}/results/arriba/{sample}/fusions.{prefix}.fltrd.tsv", runid= runid, sample= idkeys, prefix= ['clinout', 'nonclinout']),
+	    ### fusions & exon skipping
+	    ####expand("{runid}/results/arriba/{sample}/fusions.{prefix}.fltrd.tsv", runid= runid, sample= idkeys, prefix= ['clinout', 'nonclinout']),
 	    expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),
 	    expand("{runid}/results/qc/rseqc_multiqc_report.html", runid= runid),
-	    ## rMats 
+	    ### rMats 
 	    expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
 	    ##expand("{runid}/run.done", runid= runid),
 
