@@ -15,7 +15,7 @@ import numpy as np
 #np.random.seed(42)
 import pandas as pd
 
-# Usage: scripts/fusGetExons.py -i fusions.tsv -d
+# Usage: scripts/fusGetExons.py -i fusions.tsv -d exons23.h5 > <output> 2> <log>
 
 # -----------------------------------------------------------------------------
 
@@ -72,7 +72,12 @@ if __name__ == "__main__":
                     print(header)
                 else:
                     lspl = line.split('\t')
-                    [gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, warning, confidence, reading_frame, ensg1, ensg2, enst1, enst2, filters, s2_gene, s2_descr] = lspl
+                    if len(lspl) < 24:
+                        [gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, warning, confidence, reading_frame, ensg1, ensg2, enst1, enst2, filters] = lspl
+                        s2_gene = str()
+                        s2_descr = str()
+                    else:
+                        [gene1, gene2, strand1, strand2, breakpoint1, breakpoint2, site1, site2, typ, split_reads1, split_reads2, disco_mates, cov1, cov2, warning, confidence, reading_frame, ensg1, ensg2, enst1, enst2, filters, s2_gene, s2_descr] = lspl
                     ensts = lspl[19:21]
                     enstls = [x.split('.')[0] for x in ensts]
                     breakpoints = [int(x.split(':')[1]) for x in [breakpoint1, breakpoint2]]
