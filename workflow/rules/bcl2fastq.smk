@@ -14,12 +14,14 @@ rule bcl2fq:
 #        runid = "[0-9A-Za-z\/]+[^routine]"
     params:
         outdir = "{runid}/results/bcl2fq/",
+        units = "{runid}/units.tsv"
     log:
         "{runid}/logs/bcl2fastq.log",
     threads: 32
     shell:
         """
         nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv -p 32 -r 4 -w 4 > {log} 2>&1
+        #rm {params.units}
         """
  #{runid}/logs/bcl2fastq.log 2>&1
 
@@ -28,30 +30,46 @@ rule bcl2fq:
 ## I will probably have to use the expand in the output, so I can name the files in rule all! 
    
 #   "{sample}_{read}_001.fastq.gz"
-
-rule cat_fq1:
+rule cat_lanes:
     input:
-        "{runid}/results/bcl2fq/Reports/html/tree.html"
-    output: 
-        fq = temp("{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz"),
-        #fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R1.fq.gz",
-        done = touch("{runid}/results/bcl2fq/cat/{sample}.cat.1.done")
-    log: "{runid}/logs/cat_fq/{sample}_1.log"
-    shell: """
-        cat {runid}/results/bcl2fq/{wildcards.sample}_L*_R1_001.fastq.gz > {output.fq} 2> {log}
+        fq = expand(config["runid"] + "/results/bcl2fq/{{sample}}_{lane}_R{{read}}.fq.gz", lane=config["lanes"])
+    output:
+        fq = temp("{runid}/results2fq/cat/{sample}_R{read}.fq.gz")
+    threads: 1
+    resources:
+        #mem_mb=100,
+    #benchmark:
+    #    "{runid}/benchmarks/cat_lanes/{sample}_{read}.tsv"
+    log:
+        "{runid}/logs/cat_lanes/{sample}_{read}.log"
+    shell:
+        """
+        cat {input.fq} > {output.fq} 2> {log}
         """
 
-rule cat_fq2:
-    input:
-        "{runid}/results/bcl2fq/Reports/html/tree.html"
-    output: 
-        fq = temp("{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz"),
-        #fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R2.fq.gz",
-        done = touch("{runid}/results/bcl2fq/cat/{sample}.cat.2.done")
-    log: "{runid}/logs/cat_fq/{sample}_2.log"
-    shell: """
-        cat {runid}/results/bcl2fq/{wildcards.sample}_L*_R2_001.fastq.gz > {output.fq} 2> {log}
-        """
+#rule cat_fq1:
+#    input:
+#        "{runid}/results/bcl2fq/Reports/html/tree.html"
+#    output: 
+#        fq = temp("{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz"),
+#        #fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R1.fq.gz",
+#        done = touch("{runid}/results/bcl2fq/cat/{sample}.cat.1.done")
+#    log: "{runid}/logs/cat_fq/{sample}_1.log"
+#    shell: """
+#        cat {runid}/results/bcl2fq/{wildcards.sample}_L*_R1_001.fastq.gz > {output.fq} 2> {log}
+#        """
+#
+#rule cat_fq2:
+#    input:
+#        "{runid}/results/bcl2fq/Reports/html/tree.html"
+#    output: 
+#        fq = temp("{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz"),
+#        #fq = "/mnt/illumina/230627_A01358_0051_BHGCJ5DRX3/Fastq/{runid}/cat/{sample}_R2.fq.gz",
+#        done = touch("{runid}/results/bcl2fq/cat/{sample}.cat.2.done")
+#    log: "{runid}/logs/cat_fq/{sample}_2.log"
+#    shell: """
+#        cat {runid}/results/bcl2fq/{wildcards.sample}_L*_R2_001.fastq.gz > {output.fq} 2> {log}
+#        """
 
 
 rule bbmerge_fqs:
