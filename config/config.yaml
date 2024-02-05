@@ -11,6 +11,7 @@ splicingTargets: "../config/splicingTargets.tsv"
 
 units: "units.tsv"
 
+lanes: ['1','2']
 #fqDir: "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 
 # NOTE: eventually, get these values from one of the input files??
