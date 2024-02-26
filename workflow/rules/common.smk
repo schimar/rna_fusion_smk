@@ -19,7 +19,13 @@ rgid =  bcldir.split('_')[1]  #config['rgID']
 r1_read_structure = config["r1_read_structure"]
 r2_read_structure = config["r2_read_structure"]
 
+
 units_wd = '/'.join([runid, config["units"]])
+pr = Path('/'.join([runid, 'results/']))
+pr.mkdir(parents= True, exist_ok= True)
+pl = Path('/'.join([runid, 'logs/']))
+pl.mkdir(parents= True, exist_ok= True)
+
 
 # 
 #validate(config, schema="../../config/schemas/config.schema.yaml")
@@ -32,6 +38,10 @@ if Path(units_wd).is_file():
   samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))  #, units['fq2'])))
   idkeys = list(samples_dict.keys())
 else: 
+  pr = Path('/'.join([runid, 'results/bcl2fq/']))
+  pr.mkdir(parents= True, exist_ok= True)
+  pl = Path('/'.join([runid, 'logs/']))
+  pl.mkdir(parents= True, exist_ok= True)
   #idkeys = list()
   #units= str()
   lsda = os.listdir('/'.join([runid, "results/bcl2fq/"]))
@@ -54,10 +64,7 @@ else:
 #pth = Path(units['fq'].iloc[0])
 #fqDir = str(pth.parent)
 
-pr = Path('/'.join([runid, 'results/']))
-pr.mkdir(parents= True, exist_ok= True)
-pl = Path('/'.join([runid, 'logs/']))
-pl.mkdir(parents= True, exist_ok= True)
+
 
 
 # set wildcard constraints on {sample}

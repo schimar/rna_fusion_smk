@@ -9,7 +9,7 @@ rule arriba:
         #known_fusions="resources/known_fusions_hg38_GRCh38_v2.3.0.tsv.gz",
         # default blacklists are selected via blacklist parameter
         # see https://arriba.readthedocs.io/en/latest/input-files/#blacklist
-        #custom_blacklist=[],
+        custom_blacklist = "resources/blacklist_hg38_GRCh38_v2.3.0.tsv",  #[],
     output:
         fusions="{runid}/results/arriba/{sample}/fusions.tsv",
         discarded="{runid}/results/arriba/{sample}/fusions.discarded.tsv",
@@ -17,7 +17,7 @@ rule arriba:
     params:
         # required if blacklist or known_fusions is set
         genome_build="GRCh38",
-        default_blacklist=True,
+        default_blacklist=False,
         default_known_fusions=True,
         extra="-u",   #alignIntronMax",
     log:
@@ -67,5 +67,6 @@ rule getExons_arriba:
     shell:"""
         scripts/fusGetExons.py -i {input.tsv} -d {input.h5} > {output} 2> {log}
         """
+
 
 

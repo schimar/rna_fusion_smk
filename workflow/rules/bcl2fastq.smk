@@ -32,9 +32,9 @@ rule bcl2fq:
 #   "{sample}_{read}_001.fastq.gz"
 rule cat_lanes:
     input:
-        fq = expand(config["runid"] + "/results/bcl2fq/{{sample}}_{lane}_R{{read}}.fq.gz", lane=config["lanes"])
+        fq = expand(config["runid"] + "/results/bcl2fq/{{sample}}_{lane}_R{{read}}_001.fastq.gz", lane=config["lanes"])
     output:
-        fq = temp("{runid}/results2fq/cat/{sample}_R{read}.fq.gz")
+        fq = temp("{runid}/results/bcl2fq/cat/{sample}_R{read}.fq.gz")
     threads: 1
     resources:
         #mem_mb=100,
