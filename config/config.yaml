@@ -11,12 +11,12 @@ splicingTargets: "../config/splicingTargets.tsv"
 
 units: "units.tsv"
 
-lanes: ['1','2']
+lanes: ['L001','L002']
 #fqDir: "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 
 # NOTE: eventually, get these values from one of the input files??
 runid: "rnaSeq"
-bcldir: "dummy"
+bcldir: "dummy_A01358"
 #rgID: "A01358"
 r1_read_structure: "5M2S+T"  #"8M+T"
 r2_read_structure: "5M2S+T"  #"8M+T"
