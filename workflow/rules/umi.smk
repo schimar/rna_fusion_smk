@@ -222,7 +222,7 @@ rule map_star:
         idx="resources/star_genome",
         gtf = "resources/genome.gtf",
     output:
-        aln = "{runid}/results/reads/star/{sample}.bam",
+        aln = temp("{runid}/results/reads/star/{sample}.bam"),
         sj = "{runid}/results/reads/star/{sample}/SJ.out.tab",
     wildcard_constraints:
         sample = common_constraint

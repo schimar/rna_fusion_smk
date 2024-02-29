@@ -21,7 +21,7 @@ rule sub_chr:
       bam = "{runid}/results/reads/star/mrkdup/{sample}.bam", 
       bai = "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
     output:
-      sub = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam",
+      sub = temp("{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam"),
     #wildcard_constraints:
     #    sample = common_constraint
     log: "{runid}/logs/sub_{chrom}/{sample}.log",
