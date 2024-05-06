@@ -1,29 +1,42 @@
 #ruleorder: bcl2fq > cat_fq1 
 #ruleorder: bcl2fq > cat_fq2
-
-
-rule bcl2fq:
+rule bcl_convert:
     input:
-        bcldir= config['bcldir'],
-        #bcldir = {bcldir}
-        #sampleSheet = "{bcldir}/SampleSheet_rna.csv",
+      bcldir= config['bcldir'],
     output:
-        #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
-        "{runid}/results/bcl2fq/Reports/html/tree.html",
-#    wildcard_constraints:
-#        runid = "[0-9A-Za-z\/]+[^routine]"
+      "{runid}/results/bcl2fq/Reports/html/tree.html",
     params:
-        outdir = "{runid}/results/bcl2fq/",
-        units = "{runid}/units.tsv"
+      outdir= "{runid}/results/bcl2fq/",
+      extra= ""
     log:
-        "{runid}/logs/bcl2fastq.log",
+      "{runid}/logs/bcl_convert.log",
     threads: 32
-    shell:
-        """
-        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv -p 32 -r 4 -w 4 > {log} 2>&1
-        #rm {params.units}
-        """
- #{runid}/logs/bcl2fastq.log 2>&1
+    shell:"""
+      nohup bcl-convert -f --bcl-input-directory {input.bcldir} --output-directory {output} --sample-sheet {input.bcldir}/SampleSheet_rna.csv --bcl-sampleproject-subdirectories false > {log} 2>&1
+      """
+
+#rule bcl2fq:
+#    input:
+#        bcldir= config['bcldir'],
+#        #bcldir = {bcldir}
+#        #sampleSheet = "{bcldir}/SampleSheet_rna.csv",
+#    output:
+#        #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
+#        "{runid}/results/bcl2fq/Reports/html/tree.html",
+##    wildcard_constraints:
+##        runid = "[0-9A-Za-z\/]+[^routine]"
+#    params:
+#        outdir = "{runid}/results/bcl2fq/",
+#        units = "{runid}/units.tsv"
+#    log:
+#        "{runid}/logs/bcl2fastq.log",
+#    threads: 32
+#    shell:
+#        """
+#        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv -p 32 -r 4 -w 4 > {log} 2>&1
+#        #rm {params.units}
+#        """
+# #{runid}/logs/bcl2fastq.log 2>&1
 
 
 ## expand("../fq/{{runid}}_S0_L001_{readid}_001.fastq.gz", readid=config['readids'])
