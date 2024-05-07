@@ -4,15 +4,15 @@ rule bcl_convert:
     input:
       bcldir= config['bcldir'],
     output:
-      "{runid}/results/bcl2fq/Reports/html/tree.html",
+      "{runid}/results/bcl2fq/Logs/FastqComplete.txt",
     params:
       outdir= "{runid}/results/bcl2fq/",
       extra= ""
     log:
       "{runid}/logs/bcl_convert.log",
-    threads: 32
+    threads: 56
     shell:"""
-      nohup bcl-convert -f --bcl-input-directory {input.bcldir} --output-directory {output} --sample-sheet {input.bcldir}/SampleSheet_rna.csv --bcl-sampleproject-subdirectories false > {log} 2>&1
+      nohup bcl-convert -f --bcl-input-directory {input.bcldir} --output-directory {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv --bcl-sampleproject-subdirectories false --shared-thread-odirect-output true --bcl-num-parallel-tiles 1 > {log} 2>&1
       """
 
 #rule bcl2fq:
