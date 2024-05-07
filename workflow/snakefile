@@ -42,24 +42,24 @@ rule all:
 	    multiext("resources/genome.fa", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai"),
 	    directory("resources/star_genome"),
 	    expand("resources/{bed}_file_UMI_demo_data_hg38.interval_list", bed= ['target', 'probe']),
-	    # bcl2fq
-	    #expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
-	    #expand("{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz", runid= runid, sample= idkeys),
-	    #expand("{runid}/results/bcl2fq/cat/{sample}_{read}.fq.gz", runid= runid, sample= idkeys, read= ['R1', 'R2']),    
-	    #expand("{runid}/results/bbmerge/{sample}.fq.gz", runid= runid, sample= idkeys),
+	    ##
+	    ## bcl_convert
+	    expand("{runid}/results/bcl2fq/Logs/FastqComplete.txt", runid= runid),
+	    ## bcl2fastq
+	    ##expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
 	    ##
 	    ## qc
 	    ##expand("{runid}/results/qc/bbmerge/fastqc/{sample}.html", runid= runid, sample= idkeys),
 	    expand("{runid}/results/qc/fastqc_multiqc_report.html", runid= runid),
-	    ##
-	    ## fgbio fq2cons
-	    ###expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
-	    ###expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
-	    ###expand("{runid}/results/reads/fstat/{sample}.mapped.fstat", runid= runid, sample= idkeys),
-	    ## 
-	    ## TPM read quant
-	    #expand("{runid}/results/reads/star/mrkdup/{sample}_genes.out", runid= runid, sample= idkeys),
-	    ## bedtools coverage & percentage across target region
+	    ###
+	    ### fgbio fq2cons
+	    ####expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
+	    ####expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
+	    ####expand("{runid}/results/reads/fstat/{sample}.mapped.fstat", runid= runid, sample= idkeys),
+	    ### 
+	    ### TPM read quant
+	    ##expand("{runid}/results/reads/star/mrkdup/{sample}_genes.out", runid= runid, sample= idkeys),
+	    ### bedtools coverage & percentage across target region
 	    expand("{runid}/results/qc/bedtools/{sample}/bcov.perc.tsv", runid= runid, sample= idkeys),
 	    ### fusions & exon skipping
 	    ####expand("{runid}/results/arriba/{sample}/fusions.{prefix}.fltrd.tsv", runid= runid, sample= idkeys, prefix= ['clinout', 'nonclinout']),
