@@ -51,6 +51,7 @@ else:
   lsidsL12 = [word for word in lsda if word.endswith("R1_001.fastq.gz") and 'Undetermined' not in word]
   idkeysL12 = ['_'.join(x.split('_')[0:2]) for x in lsidsL12]
   lanes = [re.findall('L00[12]', x)[0] for x in lsidsL12]
+  #lanes = ['L001' for x in lsidsL12]
   fq = ['/'.join([runid, 'results/bcl2fq', fqgz]) for fqgz in lsidsL12]
   df = pd.DataFrame({'sample_name': idkeysL12, 'unit_name': lanes, 'fq': fq})
   df.to_csv('/'.join([runid, 'units.tsv']), sep= '\t')
