@@ -44,7 +44,7 @@ rule all:
 	    expand("resources/{bed}_file_UMI_demo_data_hg38.interval_list", bed= ['target', 'probe']),
 	    ##
 	    ## bcl_convert
-	    expand("{runid}/results/bcl2fq/Logs/FastqComplete.txt", runid= runid),
+	    #expand("{runid}/results/bcl2fq/Logs/FastqComplete.txt", runid= runid),
 	    ## bcl2fastq
 	    ##expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
 	    ##

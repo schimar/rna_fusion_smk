@@ -7,6 +7,9 @@ rule fq2ubam:
     input:
         fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
         fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        #fq1 = "{runid}/results/bcl2fq/{sample}_R1_001.fastq.gz",
+        #fq2 = "{runid}/results/bcl2fq/{sample}_R2_001.fastq.gz",
+
         #fq1 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R1.fq.gz",
         #fq2 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R2.fq.gz",
     params:

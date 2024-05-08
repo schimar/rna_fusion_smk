@@ -12,31 +12,32 @@ rule bcl_convert:
       "{runid}/logs/bcl_convert.log",
     threads: 56
     shell:"""
-      nohup bcl-convert -f --bcl-input-directory {input.bcldir} --output-directory {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv --bcl-sampleproject-subdirectories false --shared-thread-odirect-output true --bcl-num-parallel-tiles 1 > {log} 2>&1
+      nohup bcl-convert -f --bcl-input-directory {input.bcldir} --output-directory {params.outdir} --sample-sheet {input.bcldir}/SampleSheet.csv --bcl-sampleproject-subdirectories false --bcl-num-parallel-tiles 1 --bcl-num-conversion-threads {threads} > {log} 2>&1
       """
+# --shared-thread-odirect-output true 
 
-#rule bcl2fq:
-#    input:
-#        bcldir= config['bcldir'],
-#        #bcldir = {bcldir}
-#        #sampleSheet = "{bcldir}/SampleSheet_rna.csv",
-#    output:
-#        #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
-#        "{runid}/results/bcl2fq/Reports/html/tree.html",
-##    wildcard_constraints:
-##        runid = "[0-9A-Za-z\/]+[^routine]"
-#    params:
-#        outdir = "{runid}/results/bcl2fq/",
-#        units = "{runid}/units.tsv"
-#    log:
-#        "{runid}/logs/bcl2fastq.log",
-#    threads: 32
-#    shell:
-#        """
-#        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv -p 32 -r 4 -w 4 > {log} 2>&1
-#        #rm {params.units}
-#        """
-# #{runid}/logs/bcl2fastq.log 2>&1
+rule bcl2fq:
+    input:
+        bcldir= config['bcldir'],
+        #bcldir = {bcldir}
+        #sampleSheet = "{bcldir}/SampleSheet_rna.csv",
+    output:
+        #expand("{runid}/results/bcl2fq/{sample}_{read}_001.fastq.gz", runid= runid, sample = idkeys, lane = ['L001', 'L002'], read = ['R1', 'R2']), #, runid = config['runID']),
+        "{runid}/results/bcl2fq/Reports/html/tree.html",
+#    wildcard_constraints:
+#        runid = "[0-9A-Za-z\/]+[^routine]"
+    params:
+        outdir = "{runid}/results/bcl2fq/",
+        units = "{runid}/units.tsv"
+    log:
+        "{runid}/logs/bcl2fastq.log",
+    threads: 32
+    shell:
+        """
+        nohup bcl2fastq --runfolder-dir {input.bcldir} --output-dir {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv -p 32 -r 4 -w 4 > {log} 2>&1
+        #rm {params.units}
+        """
+ #{runid}/logs/bcl2fastq.log 2>&1
 
 
 ## expand("../fq/{{runid}}_S0_L001_{readid}_001.fastq.gz", readid=config['readids'])
@@ -89,7 +90,8 @@ rule bbmerge_fqs:
     input:
         fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
         fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
-        #fq1 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        #fq1 = "{runid}/results/bcl2fq/{sample}_R1_001.fastq.gz",
+        #fq2 = "{runid}/results/bcl2fq/{sample}_R2_001.fastq.gz",        #fq1 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R1.fq.gz",
         #fq2 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R2.fq.gz",
     output:
         out = temp("{runid}/results/bbmerge/{sample}.fq.gz"),
