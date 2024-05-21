@@ -1,5 +1,5 @@
 ruleorder: samtools_index > egfr_v3
-
+#ruleorder: sub_chr > sambamba_rmdup_sub
 
 rule samtools_index:
     input:
@@ -21,7 +21,7 @@ rule sub_chr:
       bam = "{runid}/results/reads/star/mrkdup/{sample}.bam", 
       bai = "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
     output:
-      sub = temp("{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam"),
+      sub = temp("{runid}/results/reads/star/mrkdup/{sample}/{chrom}.dup.bam"),
     #wildcard_constraints:
     #    sample = common_constraint
     log: "{runid}/logs/sub_{chrom}/{sample}.log",
@@ -30,10 +30,23 @@ rule sub_chr:
       samtools view -F4 {input.bam} -b {wildcards.chrom} > {output.sub}
       """
 
+rule sambamba_rmdup_sub:
+    input:
+        "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.dup.bam"
+    output:
+        "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
+    priority: 20
+    params:
+        extra="-r"  # optional parameters
+    log: "{runid}/logs/sambamba-markdup_subchr/{sample}_{chrom}.log"
+    threads: 8
+    wrapper:
+        "v1.31.1/bio/sambamba/markdup"
+
 
 rule rmats_createin:
     input:
-        bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam",
+        bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
         #bam = "{runid}/results/reads/star/{sample}/chr7.bam",
     output:
         bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
@@ -52,6 +65,7 @@ rule rmats_createin:
 
 rule rMats:
     input:
+        bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
         bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
         bai = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.bai",
         medRL="{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
