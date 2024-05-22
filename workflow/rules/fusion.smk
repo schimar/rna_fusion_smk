@@ -34,8 +34,10 @@ rule get_clinFuse:
     output:
         clinout = "{runid}/results/arriba/{sample}/fusions.clinout.tsv",
         nonclinout = "{runid}/results/arriba/{sample}/fusions.nonclinout.tsv",
+    log: 
+        "{runid}/logs/clinFuse/{sample}.log"
     shell:"""
-        scripts/clinFuse.py -f {input.fus} -c {input.clinTab}
+        scripts/clinFuse.py -f {input.fus} -c {input.clinTab} 2> {log}
         """
 
 

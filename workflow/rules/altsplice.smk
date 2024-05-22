@@ -6,6 +6,8 @@ rule samtools_index:
         "{runid}/results/reads/star/mrkdup/{sample}.bam", 
     output:
       "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
+    wildcard_constraints:
+        sample = common_constraint
     log:
       "{runid}/logs/samtools_index/{sample}.log",
     params:
@@ -67,7 +69,7 @@ rule rMats:
     input:
         bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
         bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
-        bai = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.bai",
+        #bai = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.bai",
         medRL="{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
         gtf = "resources/genome.gtf",
     output:
