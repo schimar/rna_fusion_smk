@@ -4,6 +4,7 @@ rule rsync:
         rseqc = expand("{runid}/results/qc/rseqc_multiqc_report.html", runid= runid),
         arriba = expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),#, unit=units.itertuples()),  #, sample= idkeys[0]),
         rmats = expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys), #unit=units.itertuples()), #, sample= idkeys[0]), 
+        bcov = expand("{runid}/results/qc/bedtools/{sample}/bcov.tsv", runid= runid, sample= idkeys),
     output:
         touch("{bcldir}analysis_rna/run.done")
     #log:
