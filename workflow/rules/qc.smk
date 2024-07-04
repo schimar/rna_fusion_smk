@@ -13,6 +13,19 @@ rule targetcov_bed:
     priority: 2
     shell:"""
         bedtools coverage -a {input.bed} -b {input.bam} -g {input.genord} -sorted -d > {output} 2> {log}
+        #coverageBed -b {input.bam} -a {input.bed} -split -d -sorted > {output} 2> {log}
+        """
+
+rule cov_n10:
+    input:
+        cov = "{runid}/results/qc/bedtools/{sample}/bcov.tsv",
+        genes = "resources/s2_winters2018.tsv"
+    output:
+        "{runid}/results/qc/n10_cov/{sample}.n10.tsv"
+    log: "{runid}/logs/bedtools/{sample}.cov_n10.log"
+    threads: 6
+    shell: """
+        scripts/clinFuseCov.py -c {input.cov} -d {input.genes} > {output} 2> {log}
         """
 
 rule targetcov_perc:
