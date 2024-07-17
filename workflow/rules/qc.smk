@@ -307,3 +307,43 @@ rule multiqcRSeQC:
         "v1.23.1/bio/multiqc"
 
 
+rule deeptools_multiBamSummary:
+    input:
+        bams = expand("{runid}/results/reads/star/mrkdup/{sample}.bam", runid= runid, sample= idkeys),
+        bed = "resources/genome.gtf"
+    output:
+        "{runid}/results/qc/deeptools/bamSummary.npz"
+    params:
+        binSize = 100,
+        extra = "--ignoreDuplicates --centerReads --smartLabels"    # see https://deeptools.readthedocs.io/en/develop/content/tools/multiBamSummary.html
+    log: "{runid}/logs/deeptools/multiBamSummary.log"
+    threads: 24
+    shell: """
+        multiBamSummary BED-file --BED {input.bed} -p {threads} {params.extra} --bamfiles {input.bams} -o {output} 2> {log}
+        """
+        # here, you can use BED-file instead of bins mode (then, you need to supply the --BED {input.bed}
+        # multiBamSummary bins -bs {params.binSize} -p {threads} {params.extra} --bamfiles {input} -o {output} 2> {log}
+
+rule deeptools_plotCor:
+    input:
+      "{runid}/results/qc/deeptools/bamSummary.npz"
+    output:
+      "{runid}/results/qc/deeptools/cor_plot.png"
+    params:
+      extra = "-p heatmap -c pearson"   # spearman or pearson (i.e. more robust or more sensible?) see https://deeptools.readthedocs.io/en/develop/content/tools/plotCorrelation.html
+    log: "{runid}/logs/deeptools/plotCor.log"
+    shell: """
+      plotCorrelation -in {input} {params.extra} -o {output} 2> {log}
+      """
+
+rule deeptools_plotPCA:
+    input:
+      "{runid}/results/qc/deeptools/bamSummary.npz"
+    output:
+      "{runid}/results/qc/deeptools/pca_plot.png"
+    params:
+      extra = "--transpose"    # see https://deeptools.readthedocs.io/en/develop/content/tools/plotPCA.html
+    log: "{runid}/logs/deeptools/plotPCA.log"
+    shell: """
+      plotPCA -in {input} {params.extra} -o {output} 2> {log}
+      """
