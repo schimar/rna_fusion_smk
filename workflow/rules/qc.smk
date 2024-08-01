@@ -310,6 +310,7 @@ rule multiqcRSeQC:
 rule deeptools_multiBamSummary:
     input:
         bams = expand("{runid}/results/reads/star/mrkdup/{sample}.bam", runid= runid, sample= idkeys),
+        bais = expand("{runid}/results/reads/star/mrkdup/{sample}.bam.bai", runid= runid, sample= idkeys),
         bed = "resources/genome.gtf"
     output:
         "{runid}/results/qc/deeptools/bamSummary.npz"
