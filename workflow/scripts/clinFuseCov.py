@@ -3,20 +3,12 @@
 
 # ---------------------------
 
-#import os
-#import glob
-#import sys
-#from sys import argv
+
 from argparse import ArgumentParser
-#import os.path
-#import h5py
-
-
 import numpy as np
-#np.random.seed(42)
-#import pandas as pd
 
-# Usage: scripts/clinFuseCov.py -c bcov.tsv -d resources/s2_winters2018.tsv
+
+# Usage: scripts/clinFuseCov.py -c bcov.tsv -d resources/s2_winters2018.tsv > output.tsv
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
@@ -27,6 +19,12 @@ def gini_coefficient(coverage_values):
     cumulative_values = np.cumsum(sorted_values)
     return (2.0 / n) * (sum((i + 1) * cumulative_values[i] for i in range(n))) / cumulative_values[-1] - (n + 1) / n
 
+
+def gene_presence_absence(targets, genedict):
+    presence_absence = {}
+    for gene in targets:
+        presence_absence[gene] = 1 if gene in genedict else 0
+    return presence_absence
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -65,19 +63,35 @@ if __name__ == "__main__":
                 else:
                     genedict[gene].append(cov)
 
-    #print('\t'.join(['gene', 'n10', 'mean', 'median', 'n90', 'prop10x', 'gini_coeff']))
-    print('\t'.join(['gene', 'n10', 'prop_bases_over_10x']))
-    for gene, cov in genedict.items():
-        cov = [int(i) for i in cov]
-        prop10x = np.round(sum(np.array(cov) > 10) / len(cov), 2)
-        #n90 = int(np.percentile(cov, 90))
-        n10 = int(np.percentile(cov, 10))
-        #gini = np.round(gini_coefficient(cov), 2)
-        #mean = np.round(np.mean(cov))
-        #med = np.median(cov)
-        #outls = [gene, str(n10), str(mean), str(med), str(n90), str(prop10x*100), str(gini)]
-        outls = [gene, str(n10), str(prop10x*100)]
-        print('\t'.join(outls))
+#    #print('\t'.join(['gene', 'n10', 'mean', 'median', 'n90', 'prop10x', 'gini_coeff']))
+#    print('\t'.join(['gene', 'n10', 'prop_bases_over_10x']))
+#    for gene, cov in genedict.items():
+#        cov = [int(i) for i in cov]
+#        prop10x = np.round(sum(np.array(cov) > 10) / len(cov), 2)
+#        #n90 = int(np.percentile(cov, 90))
+#        n10 = int(np.percentile(cov, 10))
+#        #gini = np.round(gini_coefficient(cov), 2)
+#        #mean = np.round(np.mean(cov))
+#        #med = np.median(cov)
+#        #outls = [gene, str(n10), str(mean), str(med), str(n90), str(prop10x*100), str(gini)]
+#        outls = [gene, str(n10), str(prop10x*100)]
+#        print('\t'.join(outls))
 
 
+    presence_absence = gene_presence_absence(targets, genedict)
+
+
+
+    print('\t'.join(['gene', 'presence_absence', 'n10', 'prop_bases_over_10x']))
+
+    for gene in targets:
+        if gene in genedict:
+            cov = [int(i) for i in genedict[gene]]
+            prop10x = np.round(sum(np.array(cov) > 10) / len(cov), 2)
+            n10 = int(np.percentile(cov, 10))
+        else:
+            prop10x = 0.0
+            n10 = 0
+        presence = presence_absence[gene]
+        print('\t'.join([gene, str(presence), str(n10), str(prop10x * 100)]))
 
