@@ -55,6 +55,17 @@ rule filter_arriba:
         scripts/fusionfltr.py -i {input.fus} -b {input.bl} > {output} 2> {log}
         """
 
+rule gtf2exon_h5:
+    input:
+      gtf = "resources/genome.gtf"
+    output:
+      h5 = "resources/exons_from_gtf.h5"
+    log:
+      "logs/gtf2exon_h5.log"
+    shell: """
+      scripts/gtf2exon_h5.py -g {input.gtf} -h5 {output.h5}
+      """
+
 
 rule getExons_arriba:
     input:
