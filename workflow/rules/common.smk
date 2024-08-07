@@ -15,6 +15,8 @@ from snakemake.utils import validate
 runid = config['runid']
 bcldir = config['bcldir']
 rgid =  bcldir.split('_')[1]  #config['rgID']
+bed_file = config['bed']
+bed_file_stem = bed_file.split('.')[0]
 # read structure of our UMIs 
 r1_read_structure = config["r1_read_structure"]
 r2_read_structure = config["r2_read_structure"]

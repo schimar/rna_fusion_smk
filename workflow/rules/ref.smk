@@ -111,3 +111,13 @@ rule bed_to_interval_list:
         mem_mb=1024,
     wrapper:
         "v2.1.1/bio/picard/bedtointervallist"
+
+rule sort_bed:
+  input:
+    config["bed"]
+  output:
+    "{bed_file_stem}.srtd.bed"
+  log: "logs/sort_bed/{bed_file_stem}.log"
+  shell:"""
+    sort -k1,1V -k2,2n -k3,3n {input} > {output}
+    """

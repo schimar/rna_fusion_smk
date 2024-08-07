@@ -40,6 +40,7 @@ rule all:
 	    #"{runid}/results/qc/multiqc_report.html"
 	    "resources/genome.gtf",
 	    multiext("resources/genome.fa", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai"),
+	    expand("{bed_file_stem}.srtd.bed", bed_file_stem= bed_file_stem),
 	    directory("resources/star_genome"),
 	    expand("resources/{bed}_file_UMI_demo_data_hg38.interval_list", bed= ['target', 'probe']),
 	    ##
@@ -68,7 +69,7 @@ rule all:
 	    #####expand("{runid}/results/arriba/{sample}/fusions.{prefix}.fltrd.tsv", runid= runid, sample= idkeys, prefix= ['clinout', 'nonclinout']),
 	    #expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),
 	    #expand("{runid}/results/qc/rseqc_multiqc_report.html", runid= runid),
-	    ### rMats 
+	    #### rMats 
 	    #expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
 	    expand("{bcldir}analysis_rna/run.done", runid= runid, bcldir= bcldir),
 
