@@ -2,7 +2,7 @@
 rule targetcov_bed:
     input:
         bam= "{runid}/results/reads/star/mrkdup/{sample}.bam",
-        bed= config["bed"].split('.')[0] + "srtd.bed",     #"resources/twist_rna_exome_target_regions_hg38_annotated.srtd.bed",
+        bed= config["bed"].split('.')[0] + ".srtd.bed",     #"resources/twist_rna_exome_target_regions_hg38_annotated.srtd.bed",
         genord="resources/genome.txt"
     output:
         "{runid}/results/qc/bedtools/{sample}/bcov.tsv"
