@@ -203,8 +203,8 @@ rule bam2fq:
     input:
         "{runid}/results/reads/{sample}.cons.mapped.bam",
     output:
-        fastq1 = temp("{runid}/results/reads/cons/{sample}.cons.1.fq"),
-        fastq2 = temp("{runid}/results/reads/cons/{sample}.cons.2.fq"),       
+        fastq1 = "{runid}/results/reads/cons/{sample}.cons.1.fq",
+        fastq2 = "{runid}/results/reads/cons/{sample}.cons.2.fq",       
     wildcard_constraints:
         sample = common_constraint,
     log:
@@ -235,13 +235,13 @@ rule map_star:
         lib = "Library1",
         pu = "Unit1",
         pl = "Illumina",
-        extra="--chimSegmentMin 12 --chimOutType WithinBAM --readFilesSAMattrKeep All --quantMode GeneCounts --limitBAMsortRAM 84000000000 --outSAMtype BAM SortedByCoordinate --outBAMsortingThreadN 1 --chimJunctionOverhangMin 8 --chimOutJunctionFormat 1 --alignSJDBoverhangMin 10 --alignMatesGapMax 100000 --alignIntronMax 100000 --alignSJstitchMismatchNmax 5 -1 5 5 --chimMultimapScoreRange 3 --chimScoreJunctionNonGTAG -4 --chimMultimapNmax 20 --chimNonchimScoreDropMin 10 --peOverlapNbasesMin 12 --peOverlapMMp 0.1 --alignInsertionFlush Right --alignSplicedMateMapLminOverLmate 0 --alignSplicedMateMapLmin 30,  --sjdbGTFfile resources/genome.gtf"  # --outSAMattrRGline ID:{sample} --sjdbGTFfile {} {}".format(
+        extra="--chimSegmentMin 12 --chimOutType WithinBAM --readFilesSAMattrKeep All --quantMode GeneCounts --limitBAMsortRAM 110000000000 --outSAMtype BAM SortedByCoordinate --outBAMsortingThreadN 1 --chimJunctionOverhangMin 8 --chimOutJunctionFormat 1 --alignSJDBoverhangMin 10 --alignMatesGapMax 100000 --alignIntronMax 100000 --alignSJstitchMismatchNmax 5 -1 5 5 --chimMultimapScoreRange 3 --chimScoreJunctionNonGTAG -4 --chimMultimapNmax 20 --chimNonchimScoreDropMin 10 --peOverlapNbasesMin 12 --peOverlapMMp 0.1 --alignInsertionFlush Right --alignSplicedMateMapLminOverLmate 0 --alignSplicedMateMapLmin 30,  --sjdbGTFfile resources/genome.gtf"  # --outSAMattrRGline ID:{sample} --sjdbGTFfile {} {}".format(
         #"resources/genome.gtf", config["params"]["star"]
         #),
     log: "{runid}/logs/star/{sample}.log"
     threads: 24
     shell:"""
-        STAR --runThreadN {threads} --genomeDir {input.idx} --readFilesIn {input.fq1} {input.fq2} {params.extra} --outFileNamePrefix {runid}/results/reads/star/{wildcards.sample}/ --outStd BAM_SortedByCoordinate --outSAMattrRGline ID:{rgid} SM:{params.smpl} LB:{params.pl} PU:{params.pu} > {output.aln} 
+        STAR --runThreadN {threads} --genomeDir {input.idx} --readFilesIn {input.fq1} {input.fq2} {params.extra} --outFileNamePrefix {runid}/results/reads/star/{wildcards.sample}/ --outStd BAM_SortedByCoordinate --outSAMattrRGline ID:{rgid} SM:{params.smpl} LB:{params.pl} PU:{params.pu} > {output.aln} 2> {log}
         """
 
 rule star_index_dup:
