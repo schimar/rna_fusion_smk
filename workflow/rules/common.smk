@@ -14,6 +14,8 @@ from snakemake.utils import validate
 #fqDir = ""   #"/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
 runid = config['runid']
 bcldir = config['bcldir']
+analysis_path = config['analysis_path']
+
 rgid =  bcldir.split('_')[1]  #config['rgID']
 bed_file = config['bed']
 bed_file_stem = bed_file.split('.')[0]
@@ -69,9 +71,9 @@ else:
 
 
 
-
 # set wildcard constraints on {sample}
 common_constraint = "[0-9A-Za-z\-\_]+[^\/L][^\/umi][^\/chr7][^\/SE]"  #[^/]"
+#bcldir_constraint = "[^analysis]"
 
 #[^\/mrkdup]
 

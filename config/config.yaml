@@ -18,6 +18,7 @@ lanes: ['L001','L002']
 # NOTE: eventually, get these values from one of the input files??
 runid: "rnaSeq"
 bcldir: "dummy_A01358"
+analysis_path: "analysis_rna"   # output will be rsync'd to {bcldir}/analysis_rna/ (see also out.smk and common.smk)
 #rgID: "A01358"
 r1_read_structure: "5M2S+T"  #"8M+T"
 r2_read_structure: "5M2S+T"  #"8M+T"
