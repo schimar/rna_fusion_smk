@@ -7,17 +7,19 @@ rule rsync:
         bcov = expand("{runid}/results/qc/bedtools/{sample}/bcov.tsv", runid= runid, sample= idkeys),
         n10cov = expand("{runid}/results/qc/n10_cov/{sample}.n10.tsv", runid= runid, sample= idkeys),
     output:
-        touch("{bcldir}analysis_rna/run.done")
+        touch("{bcldir}{analysis_path}/run.done")
     #log:
     #    "{runid}/logs/rsync.log"
     wildcard_constraints:
-        sample = common_constraint
+        sample = common_constraint,
+        analysis_path = ".*analysis_rna.*"
     params:
         bcldir = config["bcldir"],
         runid = config['runid'],
-        log = config['bcldir'] + "analysis_rna/logs/rsync.log"
+        final_dest = config['bcldir'] + config['analysis_path'],
+        log = config['bcldir'] + "{analysis_path}/logs/rsync.log"
     shell:"""
-        rsync -rDvz {params.runid}/* {params.bcldir}analysis_rna/ --log-file={params.log}
+        rsync -rDvz {params.runid}/* {params.final_dest}/ --log-file={params.log}
         """
 
  ##dt=$(date '+%d%m%Y_%H%M')
