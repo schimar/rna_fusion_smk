@@ -272,6 +272,20 @@ rule star_markdup:
     wrapper:
         "v2.2.1/bio/sambamba/markdup"
 
+rule picard_markdup:
+    input:
+      "{runid}/results/reads/star/{sample}.bam"
+    output:
+      bam = temp("{runid}/results/reads/star/mrkdup/picard/{sample}.bam"),
+      metrics = "{runid}/results/reads/star/mrkdup/picard/{sample}.txt"
+    params:
+      rn_re = "'^([A-Z0-9]+):([0-9]+):([A-Z0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+) .*'"
+    log: "{runid}/logs/picard/markdup/{sample}.log"
+    threads: 2
+    shell:"""
+      picard MarkDuplicates I={input} O={output.bam} M={output.metrics} READ_NAME_REGEX={params.rn_re} OPTICAL_DUPLICATE_PIXEL_DISTANCE=100 2> {log}
+      """
+
 
 #rule filter_bam:
 #    input:
@@ -336,5 +350,6 @@ rule formatHs_star:
         """
         scripts/formatHs.sh {input} {runid} > {output} 2> {log}
         """
+
 
 

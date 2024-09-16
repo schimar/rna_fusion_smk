@@ -61,6 +61,8 @@ rule all:
 	    #####expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
 	    #####expand("{runid}/results/reads/fstat/{sample}.mapped.fstat", runid= runid, sample= idkeys),
 	    #### 
+	    #### picard markdup metrics
+	    #expand("{runid}/results/reads/star/mrkdup/picard/{sample}.txt", runid= runid, sample= idkeys),
 	    #### TPM read quant
 	    ###expand("{runid}/results/reads/star/mrkdup/{sample}_genes.out", runid= runid, sample= idkeys),
 	    #### bedtools coverage & percentage across target region
