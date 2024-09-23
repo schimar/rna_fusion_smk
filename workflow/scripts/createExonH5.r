@@ -30,7 +30,7 @@ for(i in 1:length(exls)){
 	#h5createGroup("tst.h5", names(exls)[i])
 	if (length(exls[[i]]) != 0){
 		for(j in 1:length(exls[[i]])){
-			h5write(exls[[i]][[j]], "exons23.h5", names(exls[[i]])[j])
+			h5write(exls[[i]][[j]], "exons24.h5", names(exls[[i]])[j])
 		}
 	}
 }

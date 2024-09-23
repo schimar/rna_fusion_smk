@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 import numpy as np
 
 
-# Usage: scripts/clinFuseCov.py -c bcov.tsv -d resources/s2_winters2018.tsv > output.tsv
+# Usage: scripts/clinFuseCov.py -c bcov.tsv -d resources/winters_and_cegat_genes.tsv > output.tsv
 
 # -----------------------------------------------------------------------------
 # -----------------------------------------------------------------------------
@@ -48,7 +48,8 @@ if __name__ == "__main__":
         targets = list()
         for line in winters:
             if line[0:2] != '#G':
-                gene = line.split('\t')[0]
+                #gene = line.split('\t')
+                gene = line.strip('\n')
                 targets.append(gene)
 
 
