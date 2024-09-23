@@ -19,7 +19,7 @@ rule targetcov_bed:
 rule cov_n10:
     input:
         cov = "{runid}/results/qc/bedtools/{sample}/bcov.tsv",
-        genes = "resources/s2_winters2018.tsv"
+        genes = "resources/winters_and_cegat_genes.tsv"
     output:
         "{runid}/results/qc/n10_cov/{sample}.n10.tsv"
     log: "{runid}/logs/bedtools/{sample}.cov_n10.log"

@@ -30,7 +30,7 @@ rule arriba:
 rule get_clinFuse:
     input:
         fus = "{runid}/results/arriba/{sample}/fusions.tsv",
-        clinTab = "resources/s2_winters2018.tsv",
+        clinTab = "resources/winters_and_cegat_genes.tsv",
     output:
         clinout = "{runid}/results/arriba/{sample}/fusions.clinout.tsv",
         nonclinout = "{runid}/results/arriba/{sample}/fusions.nonclinout.tsv",

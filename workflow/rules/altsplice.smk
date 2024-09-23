@@ -125,7 +125,7 @@ rule clinEx:
 rule exonfltr:
     input:
         co = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.tsv",
-        h5 = "resources/exons23.h5",
+        h5 = "resources/exons24.h5",
         bl = "resources/bl_exonSkip.tsv"
     output:
         "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv",

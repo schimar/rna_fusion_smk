@@ -15,9 +15,9 @@ import numpy as np
 #np.random.seed(42)
 import pandas as pd
 
-# This script takes as input an arriba fusions file and parses each line and respective fusion partner.If at least one of the fusion partners occurs in the list of clinically relevant fusions (in resources/s2_winters2018.tsv), then it will be output into fusions.clin.tsv. Otherwise, fusions.nonclin.tsv.
+# This script takes as input an arriba fusions file and parses each line and respective fusion partner.If at least one of the fusion partners occurs in the list of clinically relevant fusions (in resources/winters_and_cegat_genes.tsv), then it will be output into fusions.clin.tsv. Otherwise, fusions.nonclin.tsv.
 
-# Usage: scripts/clinFuse.py -f fusions.tsv -c ~/smk/rna_fusion_quant/workflow/resources/s2_winters2018.tsv
+# Usage: scripts/clinFuse.py -f fusions.tsv -c ~/smk/rna_fusion_quant/workflow/resources/winters_and_cegat_genes.tsv
 
 # -----------------------------------------------------------------------------
 
