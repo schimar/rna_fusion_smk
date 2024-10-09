@@ -17,6 +17,8 @@ rule fq2ubam:
         rs2 = r2_read_structure,
     output:
         bam = temp("{runid}/results/reads/{sample}.unmapped.bam")
+    conda:
+      "../envs/umi.yaml"
     resources:
         mem_gb = 4
     log:
@@ -38,6 +40,8 @@ rule align_bam:
         ref = "resources/genome.fa"
     output:
         bam = temp("{runid}/results/reads/{prefix}.mapped.bam")
+    conda:
+      "../envs/umi.yaml"
     threads:
         16
     resources:
@@ -62,6 +66,8 @@ rule flagstat_mapped:
         "{runid}/results/reads/{sample}.mapped.bam",
     output:
         "{runid}/results/reads/fstat/{sample}.mapped.fstat",
+    conda:
+      "../envs/umi.yaml"
     shell:"""
         samtools flagstat {input} > {output}
         """
@@ -74,6 +80,8 @@ rule group_reads:
     output:
         bam = temp("{runid}/results/reads/{sample}.grouped.bam"),
         stats = "{runid}/results/reads/{sample}.grouped-family-sizes.txt"
+    conda:
+      "../envs/umi.yaml"
     params:
         allowed_edits = 1,
     threads:
@@ -98,6 +106,8 @@ rule call_consensus_reads:
         bam = "{runid}/results/reads/{sample}.grouped.bam",
     output:
         bam = temp("{runid}/results/reads/{sample}.cons.unmapped.bam"),
+    conda:
+      "../envs/umi.yaml"
     params:
         min_reads = 1,
         min_base_qual = 20
@@ -124,6 +134,8 @@ rule filter_consensus_reads:
         ref = "resources/genome.fa",
     output:
         bam = "{runid}/results/reads/{sample}.cons.filtered.bam",
+    conda:
+      "../envs/umi.yaml"
     params:
         min_reads = 3,
         min_base_qual = 40,
@@ -150,7 +162,7 @@ rule filter_consensus_reads:
 rule collectHs_cons:
     input:
         bam = "{runid}/results/reads/{sample}.cons.mapped.bam",
-        bed = "resources/twist_rna_exome_target_regions_hg38_annotated.bed",
+        bed = config['bed'],		#"resources/twist_rna_exome_target_regions_hg38_annotated.bed",
         # target_file_UMI_demo_data_hg38.bed",
         ref = "resources/genome.fa",
         probes = "resources/probe_file_UMI_demo_data_hg38.interval_list",
@@ -158,6 +170,8 @@ rule collectHs_cons:
     output:
         metrics = "{runid}/results/picard/metrics/cons/{sample}.metrics.tsv",
         perTargetCov = "{runid}/results/picard/metrics/cons/{sample}.cov.bed",
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log:
@@ -176,6 +190,8 @@ rule formatHs_cons:
         "{runid}/results/picard/metrics/cons/{sample}.metrics.tsv",
     output:
         "{runid}/results/picard/metrics/cons/{sample}.metricsFrmt.tsv",
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log:
@@ -191,6 +207,8 @@ rule sambamba_markdup:
         "{runid}/results/reads/{sample}.cons.mapped.bam"
     output:
         "{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam",
+    conda:
+      "../envs/hts.yaml"
     priority: 20
     params:
         extra="-r"  # optional parameters
@@ -205,6 +223,8 @@ rule bam2fq:
     output:
         fastq1 = "{runid}/results/reads/cons/{sample}.cons.1.fq",
         fastq2 = "{runid}/results/reads/cons/{sample}.cons.2.fq",       
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint,
     log:
@@ -227,6 +247,8 @@ rule map_star:
     output:
         aln = temp("{runid}/results/reads/star/{sample}.bam"),
         sj = "{runid}/results/reads/star/{sample}/SJ.out.tab",
+    conda:
+      "../envs/star.yaml"
     wildcard_constraints:
         sample = common_constraint
     params:
@@ -249,6 +271,8 @@ rule star_index_dup:
         "{runid}/results/reads/star/{sample}.bam",
     output:
         "{runid}/results/reads/star/{sample}.bam.bai",
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log: "{runid}/logs/star_index_dup/{sample}.log"
@@ -262,6 +286,8 @@ rule star_markdup:
         "{runid}/results/reads/star/{sample}.bam"
     output:
         "{runid}/results/reads/star/mrkdup/{sample}.bam",
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     priority: 20
@@ -278,6 +304,8 @@ rule picard_markdup:
     output:
       bam = temp("{runid}/results/reads/star/mrkdup/picard/{sample}.bam"),
       metrics = "{runid}/results/reads/star/mrkdup/picard/{sample}.txt"
+    conda:
+      "../envs/hts.yaml"
     params:
       rn_re = "'^([A-Z0-9]+):([0-9]+):([A-Z0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+) .*'"
     log: "{runid}/logs/picard/markdup/{sample}.log"
@@ -305,18 +333,22 @@ rule tpmCalc:
         bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
         gtf = "resources/genome.gtf",
     output:
-        "{runid}/results/reads/star/mrkdup/{sample}_genes.out",
+        "{runid}/results/reads/star/mrkdup/tpm/{sample}_genes.out",
+    conda:
+      "../envs/hts.yaml"
+    params:
+	    outdir = "{runid}/results/reads/star/mrkdup/tpm"
     log:
         "{runid}/logs/TPMcalc/{sample}.log"
     shell:"""
-        TPMCalculator -g {input.gtf} -b {input.bam} 2> {log}
+        TPMCalculator -g {input.gtf} -b {input.bam} -o {params.outdir} 2> {log}
         """
  
 
 rule collectHs_star:
     input:
         bam = "{runid}/results/reads/star/{sample}.bam",
-        bed = "resources/twist_rna_exome_target_regions_hg38_annotated.bed",
+        bed = config['bed'],		#"resources/twist_rna_exome_target_regions_hg38_annotated.bed",
         # target_file_UMI_demo_data_hg38.bed",
         ref = "resources/genome.fa",
         probes = "resources/probe_file_UMI_demo_data_hg38.interval_list",
@@ -324,6 +356,8 @@ rule collectHs_star:
     output:
         metrics = "{runid}/results/picard/metrics/star/{sample}.metrics.tsv",
         perTargetCov = "{runid}/results/picard/metrics/star/{sample}.cov.bed",
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log:
@@ -342,6 +376,8 @@ rule formatHs_star:
         "{runid}/results/picard/metrics/star/{sample}.metrics.tsv",
     output:
         "{runid}/results/picard/metrics/star/{sample}.metricsFrmt.tsv",
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log:

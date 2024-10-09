@@ -72,7 +72,7 @@ else:
 
 
 # set wildcard constraints on {sample}
-common_constraint = "[0-9A-Za-z\-\_]+[^\/L][^\/umi][^\/chr7][^\/SE]"  #[^/]"
+common_constraint = r"[0-9A-Za-z\-\_]+[^\/L][^\/umi][^\/chr7][^\/SE]"  #[^/]"
 #bcldir_constraint = "[^analysis]"
 
 #[^\/mrkdup]

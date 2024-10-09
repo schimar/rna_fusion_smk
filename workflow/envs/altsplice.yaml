@@ -1,0 +1,9 @@
+name: altsplice 
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - rmats
+  - pip
+  - pip:
+      - git+https://github.com/yhoogstrate/egfr-v3-determiner.git@3e201d82437bd8fbd314a81ba9cf7daf6dc46df7#egg=egfr_v3_determiner

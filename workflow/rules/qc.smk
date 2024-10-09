@@ -6,6 +6,8 @@ rule targetcov_bed:
         genord="resources/genome.txt"
     output:
         "{runid}/results/qc/bedtools/{sample}/bcov.tsv"
+    conda:
+      "../envs/hts.yaml"
     log: "{runid}/logs/bedtools/{sample}.cov.log"
     threads: 57
     resources:
@@ -22,10 +24,12 @@ rule cov_n10:
         genes = "resources/winters_and_cegat_genes.tsv"
     output:
         "{runid}/results/qc/n10_cov/{sample}.n10.tsv"
+    conda:
+      "../envs/hts.yaml"
     log: "{runid}/logs/bedtools/{sample}.cov_n10.log"
     threads: 6
     shell: """
-        scripts/clinFuseCov.py -c {input.cov} -d {input.genes} > {output} 2> {log}
+        python scripts/clinFuseCov.py -c {input.cov} -d {input.genes} > {output} 2> {log}
         """
 
 rule targetcov_perc:
@@ -34,6 +38,8 @@ rule targetcov_perc:
     output:
         "{runid}/results/qc/bedtools/{sample}/bcov.perc.tsv"
     log: "{runid}/logs/bedtools/{sample}.awk.log"
+    conda:
+      "../envs/hts.yaml"
     threads: 14
     priority: 0
     shell: """
@@ -47,6 +53,8 @@ rule fastqc_bbmerged:
     output:
         html="{runid}/results/qc/bbmerge/fastqc/{sample}.html",
         zip="{runid}/results/qc/bbmerge/fastqc/{sample}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+    conda:
+      "../envs/hts.yaml"
     params:
         extra = "--quiet"
     log:
@@ -63,6 +71,8 @@ rule multiqc_bbmerged:
         expand("{runid}/results/qc/bbmerge/fastqc/{sample}.html", runid= runid, sample= idkeys)
     output:
         "{runid}/results/qc/fastqc_multiqc_report.html"
+    conda:
+      "../envs/hts.yaml"
     params:
         extra="--zip-data-dir"
     log:
@@ -78,6 +88,8 @@ rule fastqc_cons:
     output:
         html="{runid}/results/reads/consensus/qc/fastqc/{sample}.{read}.html",
         zip="{runid}/results/reads/consensus/qc/fastqc/{sample}.{read}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
+    conda:
+      "../envs/hts.yaml"
     params:
         extra = "--quiet"
     log:
@@ -96,6 +108,8 @@ rule multiqc_cons:
         expand("{runid}/results/reads/consensus/qc/fastqc/{sample}.{read}.html", runid= runid, sample= idkeys, read= [1,2])
     output:
         "{runid}/results/reads/consensus/qc/multiqc_report.html"
+    conda:
+      "../envs/hts.yaml"
     params:
         extra="--zip-data-dir"
     log:
@@ -118,6 +132,8 @@ rule rseqc_gtf2bed:
     output:
         bed="{runid}/results/qc/rseqc/annotation.bed",
         db="{runid}/results/qc/rseqc/annotation.db",
+    conda:
+      "../envs/hts.yaml"
     log:
         "{runid}/logs/rseqc/rseqc_gtf2bed.log",
     script:
@@ -131,6 +147,8 @@ rule rseqc_junction_annotation:
         bed="resources/annotation.bed", #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.junctionanno.junction.bed",
+    conda:
+      "../envs/hts.yaml"
     priority: 1
     log:
         "{runid}/logs/rseqc/rseqc_junction_annotation/{sample}.log",
@@ -149,6 +167,8 @@ rule rseqc_junction_saturation:
         bed="resources/annotation.bed",  #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.junctionsat.junctionSaturation_plot.pdf",
+    conda:
+      "../envs/hts.yaml"
     priority: 1
     log:
         "{runid}/logs/rseqc/rseqc_junction_saturation/{sample}.log",
@@ -166,6 +186,8 @@ rule rseqc_stat:
         bam="{runid}/results/reads/star/{sample}.bam",
     output:
         "{runid}/results/qc/rseqc/{sample}.stats.txt",
+    conda:
+      "../envs/hts.yaml"
     priority: 1
     log:
         "{runid}/logs/rseqc/rseqc_stat/{sample}.log",
@@ -181,6 +203,8 @@ rule rseqc_infer:
         bed="resources/annotation.bed",   #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.infer_experiment.txt",
+    conda:
+      "../envs/hts.yaml"
     priority: 1
     log:
         "{runid}/logs/rseqc/rseqc_infer/{sample}.log",
@@ -196,6 +220,8 @@ rule rseqc_innerdis:
         bed="resources/annotation.bed",   #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.inner_distance_freq.inner_distance.txt",
+    conda:
+      "../envs/hts.yaml"
     priority: 1
     log:
         "{runid}/logs/rseqc/rseqc_innerdis/{sample}.log",
@@ -213,6 +239,8 @@ rule rseqc_readdis:
         bed="resources/annotation.bed",     #"{runid}/results/qc/rseqc/annotation.bed",
     output:
         "{runid}/results/qc/rseqc/{sample}.readdistribution.txt",
+    conda:
+      "../envs/hts.yaml"
     priority: 1
     log:
         "{runid}/logs/rseqc/rseqc_readdis/{sample}.log",
@@ -227,6 +255,8 @@ rule rseqc_readdup:
         "{runid}/results/reads/star/{sample}.bam",
     output:
         "{runid}/results/qc/rseqc/{sample}.readdup.DupRate_plot.pdf",
+    conda:
+      "../envs/hts.yaml"
     priority: 1
     log:
         "{runid}/logs/rseqc/rseqc_readdup/{sample}.log",
@@ -243,6 +273,8 @@ rule rseqc_readgc:
         "{runid}/results/reads/star/{sample}.bam",
     output:
         "{runid}/results/qc/rseqc/{sample}.readgc.GC_plot.pdf",
+    conda:
+      "../envs/hts.yaml"
     priority: 1
     log:
         "{runid}/logs/rseqc/rseqc_readgc/{sample}.log",
@@ -298,6 +330,8 @@ rule multiqcRSeQC:
         ),
     output:
         "{runid}/results/qc/rseqc_multiqc_report.html",
+    conda:
+      "../envs/hts.yaml"
     params:
         extra= "",
         #use_input_files_only= True,
@@ -314,6 +348,8 @@ rule deeptools_multiBamSummary:
         bed = "resources/genome.gtf"
     output:
         "{runid}/results/qc/deeptools/bamSummary.npz"
+    conda:
+      "../envs/hts.yaml"
     params:
         binSize = 100,
         extra = "--ignoreDuplicates --centerReads --smartLabels"    # see https://deeptools.readthedocs.io/en/develop/content/tools/multiBamSummary.html
@@ -330,6 +366,8 @@ rule deeptools_plotCor:
       "{runid}/results/qc/deeptools/bamSummary.npz"
     output:
       "{runid}/results/qc/deeptools/cor_plot.png"
+    conda:
+      "../envs/hts.yaml"
     params:
       extra = "-p heatmap -c pearson"   # spearman or pearson (i.e. more robust or more sensible?) see https://deeptools.readthedocs.io/en/develop/content/tools/plotCorrelation.html
     log: "{runid}/logs/deeptools/plotCor.log"
@@ -342,6 +380,8 @@ rule deeptools_plotPCA:
       "{runid}/results/qc/deeptools/bamSummary.npz"
     output:
       "{runid}/results/qc/deeptools/pca_plot.png"
+    conda:
+      "../envs/hts.yaml"
     params:
       extra = "--transpose"    # see https://deeptools.readthedocs.io/en/develop/content/tools/plotPCA.html
     log: "{runid}/logs/deeptools/plotPCA.log"

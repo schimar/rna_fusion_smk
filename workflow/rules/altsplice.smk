@@ -6,6 +6,8 @@ rule samtools_index:
         "{runid}/results/reads/star/mrkdup/{sample}.bam", 
     output:
       "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log:
@@ -24,6 +26,8 @@ rule sub_chr:
       bai = "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
     output:
       sub = temp("{runid}/results/reads/star/mrkdup/{sample}/{chrom}.dup.bam"),
+    conda:
+      "../envs/hts.yaml"
     #wildcard_constraints:
     #    sample = common_constraint
     log: "{runid}/logs/sub_{chrom}/{sample}.log",
@@ -37,6 +41,8 @@ rule sambamba_rmdup_sub:
         "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.dup.bam"
     output:
         "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
+    conda:
+      "../envs/hts.yaml"
     priority: 20
     params:
         extra="-r"  # optional parameters
@@ -53,6 +59,8 @@ rule rmats_createin:
     output:
         bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
         medRL = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
+    conda:
+      "../envs/hts.yaml"
     #wildcard_constraints:
     #    sample = common_constraint
     log: "{runid}/logs/rmats_createin/{sample}.{chrom}.log"
@@ -74,6 +82,8 @@ rule rMats:
         gtf = "resources/genome.gtf",
     output:
         se = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.txt",
+    conda:
+      "../envs/altsplice.yaml"
     wildcard_constraints:
         sample = common_constraint
     params:
@@ -114,11 +124,13 @@ rule clinEx:
     output:
         clinout = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.tsv",
         nonclinout = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.nonclinout.tsv",
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log: "{runid}/logs/clinEx/{sample}.{chrom}.log"
     shell:"""
-        scripts/clinExSkip.py -e {input.se} -c {input.db}  2> {log}
+        python scripts/clinExSkip.py -e {input.se} -c {input.db}  2> {log}
         """
 
 
@@ -129,11 +141,13 @@ rule exonfltr:
         bl = "resources/bl_exonSkip.tsv"
     output:
         "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv",
+    conda:
+      "../envs/hts.yaml"
 #    wildcard_constraints:
 #        sample = common_constraint
     log: "{runid}/logs/exonfltr/{sample}/{chrom}.log"
     shell:"""
-        scripts/exonSkipfltr.py -e {input.co} -d {input.h5} -b {input.bl} > {output} 2> {log}
+        python scripts/exonSkipfltr.py -e {input.co} -d {input.h5} -b {input.bl} > {output} 2> {log}
         """
 
 rule cat_exonSkippers:
@@ -141,6 +155,8 @@ rule cat_exonSkippers:
         expand("{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.clinout.fltrd.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX'])
     output:
         "{runid}/results/rmats/{sample}.exonSkipFull.tsv"
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     params:
@@ -157,6 +173,8 @@ rule egfr_v3:
         bai = "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
     output:
         "{runid}/results/rmats/{sample}.egfr_v3.out"
+    conda:
+      "../envs/altsplice.yaml"
     log: "{runid}/logs/egfr_v3/{sample}.log"
     shell: """
         egfr-v3-determiner -r hg38 {input.bam} -w all -v all > {output} 2> {log}
@@ -169,12 +187,14 @@ rule exonFinalOut:
         egfr = "{runid}/results/rmats/{sample}.egfr_v3.out"
     output:
         "{runid}/results/rmats/{sample}.exonSkip.tsv"
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log:
         "{runid}/logs/exonFinalOut/{sample}.log"
     shell: """
-        scripts/exonFinalOut.py -e {input.es} -g {input.egfr} > {output} 2> {log}
+        python scripts/exonFinalOut.py -e {input.es} -g {input.egfr} > {output} 2> {log}
         """
 
 

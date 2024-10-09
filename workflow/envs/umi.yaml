@@ -1,0 +1,13 @@
+name: umi 
+channels:
+  - conda-forge
+  - bioconda
+    #- dranew
+  - bih-cubi
+dependencies:
+  - pigz
+  - sambamba #=0.6.8
+  - bwa = 0.7.17
+  - samtools #=1.15.1
+  - htslib #=1.15.1
+  - fgbio-minimal #=1.5.1
