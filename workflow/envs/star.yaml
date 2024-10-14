@@ -1,0 +1,30 @@
+name: star 
+channels:
+  - conda-forge
+  - bioconda
+    #- dranew
+  - bih-cubi
+dependencies:
+  - star=2.7.10b 
+    #  - ucsc-gtftogenepred 
+    #  - gffread 
+    #  - seaborn #=0.11.1
+    #  - matplotlib #=3.3.4
+  - arriba
+    #  - bcl2fastq2
+    #  - picard-slim
+    #  - vcftools #=0.1.16
+    #- htseq
+    #  - bwa = 0.7.17
+    #  - bwa-mem2
+    #  - samtools =1.15.1
+    #  - htslib =1.15.1
+    #    #- gatk4 =4.2.6.1
+    #  - fgbio-minimal #=1.5.1
+    #  - rmats
+    #    #- pybiomart
+    #  - pytools
+    #  - bedtools
+    #  - pip
+    #  - pip:
+    #      - git+https://github.com/yhoogstrate/egfr-v3-determiner.git@3e201d82437bd8fbd314a81ba9cf7daf6dc46df7#egg=egfr_v3_determiner

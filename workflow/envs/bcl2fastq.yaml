@@ -1,0 +1,8 @@
+name: bcl2fastq 
+channels:
+  #- conda-forge
+  #- bioconda
+    #- dranew
+  - bih-cubi
+dependencies:
+  - bcl2fastq2

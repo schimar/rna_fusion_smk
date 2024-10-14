@@ -14,6 +14,8 @@ rule arriba:
         fusions="{runid}/results/arriba/{sample}/fusions.tsv",
         discarded="{runid}/results/arriba/{sample}/fusions.discarded.tsv",
         #done="{runid}/results/arriba/{sample}/arriba.done",
+    conda:
+      "../envs/star.yaml"
     params:
         # required if blacklist or known_fusions is set
         genome_build="GRCh38",
@@ -34,10 +36,12 @@ rule get_clinFuse:
     output:
         clinout = "{runid}/results/arriba/{sample}/fusions.clinout.tsv",
         nonclinout = "{runid}/results/arriba/{sample}/fusions.nonclinout.tsv",
+    conda:
+      "../envs/hts.yaml"
     log: 
         "{runid}/logs/clinFuse/{sample}.log"
     shell:"""
-        scripts/clinFuse.py -f {input.fus} -c {input.clinTab} 2> {log}
+        python scripts/clinFuse.py -f {input.fus} -c {input.clinTab} 2> {log}
         """
 
 
@@ -47,12 +51,14 @@ rule filter_arriba:
         bl = "resources/bl_exonSkip.tsv",
     output:
         "{runid}/results/arriba/{sample}/fusions.{clin_nonclin}.fltrd.tsv",
+    conda:
+      "../envs/hts.yaml"
     #wildcard_constraints:
     #    sample = common_constraint
     log:
         "{runid}/logs/fltr_arriba/{sample}/{clin_nonclin}.log"
     shell:"""
-        scripts/fusionfltr.py -i {input.fus} -b {input.bl} > {output} 2> {log}
+        python scripts/fusionfltr.py -i {input.fus} -b {input.bl} > {output} 2> {log}
         """
 
 rule gtf2exon_h5:
@@ -60,10 +66,12 @@ rule gtf2exon_h5:
       gtf = "resources/genome.gtf"
     output:
       h5 = "resources/exons_from_gtf.h5"
+    conda:
+      "../envs/hts.yaml"
     log:
       "logs/gtf2exon_h5.log"
     shell: """
-      scripts/gtf2exon_h5.py -g {input.gtf} -h5 {output.h5}
+      python scripts/gtf2exon_h5.py -g {input.gtf} -h5 {output.h5}
       """
 
 
@@ -73,12 +81,14 @@ rule getExons_arriba:
         h5 = "resources/exons_from_gtf.h5",
     output:
         "{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv",
+    conda:
+      "../envs/hts.yaml"
     #wildcard_constraints:
     #    sample = common_constraint
     log:
         "{runid}/logs/getExons_arriba/{sample}.log"
     shell:"""
-        scripts/fus_get_exonNo.py -i {input.tsv} -d {input.h5} > {output} 2> {log}
+        python scripts/fus_get_exonNo.py -i {input.tsv} -d {input.h5} > {output} 2> {log}
         """
 
 

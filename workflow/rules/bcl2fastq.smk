@@ -26,6 +26,8 @@ rule bcl2fq:
         "{runid}/results/bcl2fq/Reports/html/tree.html",
 #    wildcard_constraints:
 #        runid = "[0-9A-Za-z\/]+[^routine]"
+    conda:
+      "../envs/bcl2fastq.yaml"
     params:
         outdir = "{runid}/results/bcl2fq/",
         units = "{runid}/units.tsv"
@@ -49,6 +51,8 @@ rule cat_lanes:
         fq = expand(config["runid"] + "/results/bcl2fq/{{sample}}_{lane}_R{{read}}_001.fastq.gz", lane=config["lanes"])
     output:
         fq = temp("{runid}/results/bcl2fq/cat/{sample}_R{read}.fq.gz")
+    conda:
+      "../envs/hts.yaml"
     threads: 1
     resources:
         #mem_mb=100,
@@ -98,6 +102,8 @@ rule bbmerge_fqs:
         outu1 = temp("{runid}/results/bbmerge/outu/{sample}.1.fq.gz"),
         outu2 = temp("{runid}/results/bbmerge/outu/{sample}.2.fq.gz"),
         hist = "{runid}/results/bbmerge/{sample}.hist.txt"
+    conda:
+      "../envs/hts.yaml"
     wildcard_constraints:
         sample = common_constraint
     log: "{runid}/logs/bbmerge/{sample}.log"
