@@ -114,10 +114,15 @@ rule bed_to_interval_list:
 
 rule sort_bed:
   input:
-    config["bed"]
+    bed = config["bed"],
+    chroms = "resources/genome.txt"
   output:
     "{bed_file_stem}.srtd.bed"
+  conda:
+    "../envs/hts.yaml"
   log: "logs/sort_bed/{bed_file_stem}.log"
   shell:"""
-    sort -k1,1V -k2,2n -k3,3n {input} > {output}
+    bedtools sort -faidx {input.chroms} -i {input.bed} > {output} 2> {log}
     """
+    #sort -k1,1V -k2,2n -k3,3n {input} > {output}
+
