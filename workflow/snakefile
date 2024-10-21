@@ -40,7 +40,7 @@ rule all:
 	    #"{runid}/results/qc/multiqc_report.html"
 	    "resources/genome.gtf",
 	    multiext("resources/genome.fa", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai"),
-	    expand("{bed_file_stem}.srtd.bed", bed_file_stem= bed_file_stem),
+	    #expand("{bed_file_stem}.srtd.bed", bed_file_stem= bed_file_stem),
 	    directory("resources/star_genome"),
 	    expand("resources/{bed}_file_UMI_demo_data_hg38.interval_list", bed= ['target', 'probe']),
 	    ##

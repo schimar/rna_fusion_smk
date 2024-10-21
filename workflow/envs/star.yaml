@@ -5,7 +5,7 @@ channels:
     #- dranew
   - bih-cubi
 dependencies:
-  - star=2.7.10b 
+  - bioconda::star=2.7.10b 
     #  - ucsc-gtftogenepred 
     #  - gffread 
     #  - seaborn #=0.11.1

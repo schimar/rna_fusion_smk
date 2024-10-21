@@ -5,6 +5,7 @@ channels:
     #- dranew
 dependencies:
   - python=3.12.3
+  - snakemake-wrapper-utils
   - h5py
   - fastqc
   - multiqc
