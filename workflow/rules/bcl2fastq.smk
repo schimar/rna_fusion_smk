@@ -109,9 +109,9 @@ rule bbmerge_fqs:
     log: "{runid}/logs/bbmerge/{sample}.log"
     priority: 1
     resources:
-        mem_gb=56
+        mem_gb=60
     threads: 12
     shell:"""
-        bbmerge-auto.sh -Xmx56g in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
+        bbmerge-auto.sh -Xmx60g in1={input.fq1} in2={input.fq2} outm={output.out} outu1={output.outu1} outu2={output.outu2} ihist={output.hist} ecct extend2=20 iterations=5 > {log} 2>&1
         """
 
