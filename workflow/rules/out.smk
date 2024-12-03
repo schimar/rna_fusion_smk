@@ -12,7 +12,7 @@ rule rsync:
     #    "{runid}/logs/rsync.log"
     wildcard_constraints:
         sample = common_constraint,
-        analysis_path = ".*analysis_rna.*"
+        analysis_path = "analysis_rna.*"
     params:
         bcldir = config["bcldir"],
         runid = config['runid'],

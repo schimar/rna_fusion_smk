@@ -47,6 +47,56 @@ rule targetcov_perc:
         """
 
 
+rule clumpify_opt_dup:
+    input:
+        r1= "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        r2= "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz"
+    output:
+        r1= temp("{runid}/results/clumpify/opt/{sample}_R1.fq.gz"),  
+        r2= temp("{runid}/results/clumpify/opt/{sample}_R2.fq.gz"),  
+        stats= touch("{runid}/results/clumpify/opt/{sample}.clump.stats.txt")
+    conda:
+        "../envs/hts.yaml"
+    wildcard_constraints:
+        sample= common_constraint
+    log:
+        "{runid}/logs/clumpify/opt/{sample}.log"
+    params:
+      extra= "optical",
+      dupedist= 12000,   # for NovaSeq. If using NextSeq, then use 40
+      subs= 2
+    resources:
+        mem_gb= 31
+    threads: 12
+    shell:"""
+        clumpify.sh Xmx31g in1={input.r1} in2={input.r2} out1={output.r1} out2={output.r2} dupedist={params.dupedist} dedupe {params.extra} k=23 passes=2 subs={params.subs}  2> {log}
+        """
+
+rule clumpify_pcr_dup:
+    input:
+        r1= "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        r2= "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz"
+    output:
+        r1= temp("{runid}/results/clumpify/pcr/{sample}_R1.fq.gz"),  
+        r2= temp("{runid}/results/clumpify/pcr/{sample}_R2.fq.gz"),  
+        stats= touch("{runid}/results/clumpify/pcr/{sample}.clump.stats.txt")
+    conda:
+        "../envs/hts.yaml"
+    wildcard_constraints:
+        sample= common_constraint
+    log:
+        "{runid}/logs/clumpify/pcr/{sample}.log"
+    params:
+      extra= "",
+      subs= 2
+    resources:
+        mem_gb= 31
+    threads: 12
+    shell:"""
+        clumpify.sh Xmx31g in1={input.r1} in2={input.r2} out1={output.r1} out2={output.r2} dedupe {params.extra} k=23 passes=2 subs={params.subs}  2> {log}
+        """
+
+
 rule fastqc_bbmerged:
     input:
         "{runid}/results/bbmerge/{sample}.fq.gz"

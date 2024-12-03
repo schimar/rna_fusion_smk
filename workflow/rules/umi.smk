@@ -20,11 +20,11 @@ rule fq2ubam:
     conda:
       "../envs/umi.yaml"
     resources:
-        mem_gb = 4
+        mem_gb = 14
     log:
         "{runid}/logs/fgbio/fastq_to_ubam/{sample}.log"
     shell:
-        " fgbio -Xmx4g --compression 1 --async-io FastqToBam "
+        " fgbio -Xmx14g --compression 1 --async-io FastqToBam "
         "   --input {input.fq1} {input.fq2} "
         "   --read-structures {params.rs1} {params.rs2} "
         "   --sample {wildcards.sample} "
