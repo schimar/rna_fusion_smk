@@ -10,6 +10,8 @@ dependencies:
   - fastqc
   - multiqc
   - bbmap
+  - bwa-mem2
+  - bwa
   - pigz
   - sambamba #=0.6.8
   - gffutils #=0.10
@@ -29,3 +31,4 @@ dependencies:
   - pytools
   - deeptools
   - tpmcalculator
+  - bcftools

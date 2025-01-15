@@ -12,7 +12,7 @@ rule bcl_convert:
       "{runid}/logs/bcl_convert.log",
     threads: 56
     shell:"""
-      nohup bcl-convert -f --bcl-input-directory {input.bcldir} --output-directory {params.outdir} --sample-sheet {input.bcldir}/SampleSheet.csv --bcl-sampleproject-subdirectories false --bcl-num-parallel-tiles 1 --bcl-num-conversion-threads {threads} > {log} 2>&1
+      nohup bcl-convert -f --bcl-input-directory {input.bcldir} --output-directory {params.outdir} --sample-sheet {input.bcldir}/SampleSheet_rna.csv --bcl-sampleproject-subdirectories false --bcl-num-parallel-tiles 1 --bcl-num-conversion-threads {threads} > {log} 2>&1
       """
 # --shared-thread-odirect-output true 
 
