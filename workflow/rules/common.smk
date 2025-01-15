@@ -58,6 +58,7 @@ else:
   #lanes = ['L001' for x in lsidsL12]
   fq = ['/'.join([runid, 'results/bcl2fq', fqgz]) for fqgz in lsidsL12]
   df = pd.DataFrame({'sample_name': idkeysL12, 'unit_name': lanes, 'fq': fq})
+  df.sort_values(['sample_name', 'unit_name'], ascending= [True, True], inplace= True)
   df.to_csv('/'.join([runid, 'units.tsv']), sep= '\t')
   units = df
   validate(units, schema="../../config/schemas/units.schema.yaml")
