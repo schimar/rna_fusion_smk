@@ -221,8 +221,8 @@ rule bam2fq:
     input:
         "{runid}/results/reads/{sample}.cons.mapped.bam",
     output:
-        fastq1 = "{runid}/results/reads/cons/{sample}.cons.1.fq",
-        fastq2 = "{runid}/results/reads/cons/{sample}.cons.2.fq",       
+        fastq1 = temp("{runid}/results/reads/cons/{sample}.cons.1.fq"),
+        fastq2 = temp("{runid}/results/reads/cons/{sample}.cons.2.fq"),
     conda:
       "../envs/hts.yaml"
     wildcard_constraints:

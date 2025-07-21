@@ -148,7 +148,7 @@ common_constraint = r"(?!.*dedupe)[^/]+"
 # Workflow hooks
 # -----------------------------------------------------------------------------
 onstart:
-    shell("gitrev=$(git rev-parse HEAD) && echo \"--------------------------------------------- \n Running WES workflow, with \n git branch $gitrev \n log file in \n {log} \n & run data in \n {runid} \n  ---------------------------------------------\" 2>&1 | tee {log}")
+    shell("gitrev=$(git rev-parse HEAD) && echo \"--------------------------------------------- \n Running rna_fusion workflow, with \n git branch $gitrev \n log file in \n {log} \n & run data in \n {runid} \n  ---------------------------------------------\" 2>&1 | tee {log}")
 onsuccess:
     shell("cp -v {log} {runid}/logs/")
 onerror:

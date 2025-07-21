@@ -80,5 +80,3 @@ rule all:
 	    ##### rMats 
 	    #expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
 	    expand("{bcldir}{analysis_path}/run.done", runid= runid, bcldir= bcldir, analysis_path= analysis_path),
-
-
