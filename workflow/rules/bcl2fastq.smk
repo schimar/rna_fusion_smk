@@ -49,6 +49,8 @@ rule bcl2fq:
 rule cat_lanes:
     input:
         fq = expand(config["runid"] + "/results/bcl2fq/{{sample}}_{lane}_R{{read}}_001.fastq.gz", lane=config["lanes"])
+        # with 1 lane 
+        #fq = expand(config["runid"] + "/results/bcl2fq/{{sample}}_L001_R{{read}}_001.fastq.gz")
     output:
         fq = temp("{runid}/results/bcl2fq/cat/{sample}_R{read}.fq.gz")
     conda:
