@@ -5,10 +5,10 @@ ruleorder: call_consensus_reads > fq2ubam
 rule fq2ubam:
     """Generates a uBam from R1 and R2 fastq files."""
     input:
-        fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
-        #fq1 = "{runid}/results/bcl2fq/{sample}_R1_001.fastq.gz",
-        #fq2 = "{runid}/results/bcl2fq/{sample}_R2_001.fastq.gz",
+        #fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
+        #fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
+        fq1 = "{runid}/results/bcl2fq/{sample}_L001_R1_001.fastq.gz",
+        fq2 = "{runid}/results/bcl2fq/{sample}_L001_R2_001.fastq.gz",
 
         #fq1 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R1.fq.gz",
         #fq2 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R2.fq.gz",
@@ -19,6 +19,8 @@ rule fq2ubam:
         bam = temp("{runid}/results/reads/{sample}.unmapped.bam")
     conda:
       "../envs/umi.yaml"
+    wildcard_constraints:
+        sample= common_constraint
     resources:
         mem_gb = 14
     log:
