@@ -56,8 +56,8 @@ rule all:
         #expand("{runid}/results/clumpify/pcr/{sample}.clump.stats.txt", runid= runid, sample= idkeys),
         ## qc
         ##expand("{runid}/results/qc/bbmerge/fastqc/{sample}.html", runid= runid, sample= idkeys),      
-        expand("{runid}/results/qc/fastqc_multiqc_report.html", runid= runid),
-        expand("{runid}/results/qc/n10_cov/{sample}.n10.tsv", runid= runid, sample= idkeys),
+        #expand("{runid}/results/qc/fastqc_multiqc_report.html", runid= runid),
+        #expand("{runid}/results/qc/n10_cov/{sample}.n10.tsv", runid= runid, sample= idkeys),
         #expand("{runid}/results/qc/deeptools/cor_plot.png", runid= runid),
         #expand("{runid}/results/qc/deeptools/pca_plot.png", runid= runid),
         ####
