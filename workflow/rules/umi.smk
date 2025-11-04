@@ -1,26 +1,17 @@
 ruleorder: call_consensus_reads > fq2ubam
 
 
-
 rule fq2ubam:
     """Generates a uBam from R1 and R2 fastq files."""
     input:
-        fq1 = "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        fq2 = "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz",
-        #fq1 = "{runid}/results/bcl2fq/{sample}_L001_R1_001.fastq.gz",
-        #fq2 = "{runid}/results/bcl2fq/{sample}_L001_R2_001.fastq.gz",
-
-        #fq1 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        #fq2 = "/mnt/sda/rnaSeq/runs/231025/results/bcl2fq/cat/{sample}_R2.fq.gz",
-    params:
-        rs1 = r1_read_structure,
-        rs2 = r2_read_structure,
+        fq1 = "{runid}/results/reads/cat/{sample}_R1.fq.gz",
+        fq2 = "{runid}/results/reads/cat/{sample}_R2.fq.gz",
     output:
         bam = temp("{runid}/results/reads/{sample}.unmapped.bam")
+    wildcard_constraints:
+        sample= r"[^\.]+(?<!\.cons)"
     conda:
       "../envs/umi.yaml"
-    wildcard_constraints:
-        sample= common_constraint
     resources:
         mem_gb = 14
     log:
@@ -28,15 +19,39 @@ rule fq2ubam:
     shell:
         " fgbio -Xmx14g --compression 1 --async-io FastqToBam "
         "   --input {input.fq1} {input.fq2} "
-        "   --read-structures {params.rs1} {params.rs2} "
+        "   --read-structures +T +T "
         "   --sample {wildcards.sample} "
         "   --library {wildcards.sample} "
         "   --platform-unit flowcell.lane "
         "   --output {output.bam} &> {log} "
 
 
+rule extract_umis:
+    """Extract UMIs from reads into BAM tags (ZA, ZB, RX)."""
+    input:
+        bam = "{runid}/results/reads/{sample}.unmapped.bam"
+    output:
+        bam = temp("{runid}/results/reads/{sample}.umi_extracted.unmapped.bam")
+    conda:
+        "../envs/umi.yaml"
+    wildcard_constraints:
+        sample= r"[^\.]+(?<!\.cons)"
+    resources:
+        mem_gb = 8
+    log:
+        "{runid}/logs/fgbio/extract_umis/{sample}.log"
+    shell:
+        "fgbio -Xmx8g ExtractUmisFromBam "
+        "  --input {input.bam} "
+        "  --output {output.bam} "
+        "  --read-structure 5M2S+T 5M2S+T "
+        "  --molecular-index-tags ZA ZB "
+        "  --single-tag RX "
+        "  &> {log}"
+
+
 rule align_bam:
-    """Takes an unmapped BAM and generates an aligned BAM using bwa and ZipperBams."""
+    """Takes an unmapped BAM and generates an aligned BAM using bwa and ZipperBams. NOTE: this runs twice per sample, with {prefix}: 1) {sample}.umi_extracted & 2) {sample}.cons"""
     input:
         bam = "{runid}/results/reads/{prefix}.unmapped.bam",
         ref = "resources/genome.fa"
@@ -44,6 +59,8 @@ rule align_bam:
         bam = temp("{runid}/results/reads/{prefix}.mapped.bam")
     conda:
       "../envs/umi.yaml"
+    wildcard_constraints:
+        prefix= r"" 
     threads:
         16
     resources:
@@ -61,8 +78,8 @@ rule align_bam:
         "       --tags-to-reverse Consensus "
         "       --tags-to-revcomp Consensus "
         " ) &> {log}"
-        
-          
+
+
 rule flagstat_mapped:
     input:
         "{runid}/results/reads/{sample}.mapped.bam",
@@ -78,12 +95,14 @@ rule flagstat_mapped:
 rule group_reads:
     """Group the raw reads by UMI and position ready for consensus calling."""
     input:
-        bam = "{runid}/results/reads/{sample}.mapped.bam",
+        bam = "{runid}/results/reads/{sample}.umi_extracted.mapped.bam",
     output:
         bam = temp("{runid}/results/reads/{sample}.grouped.bam"),
         stats = "{runid}/results/reads/{sample}.grouped-family-sizes.txt"
     conda:
       "../envs/umi.yaml"
+    wildcard_constraints:
+        sample= r"[^\.]+(?<!\.cons)"
     params:
         allowed_edits = 1,
     threads:
@@ -95,7 +114,7 @@ rule group_reads:
     shell:
         "fgbio -Xmx12g --compression 1 --async-io GroupReadsByUmi "
         "  --input {input.bam} "
-        "  --strategy Adjacency "
+        "  --strategy adjacency "     #paired " 
         "  --edits {params.allowed_edits} "
         "  --output {output.bam} "
         "  --family-size-histogram {output.stats} "
@@ -103,15 +122,17 @@ rule group_reads:
 
 
 rule call_consensus_reads:
-    """Call consensus reads from the grouped reads."""
+    """Call consensus reads from the grouped reads using duplex strategy."""
     input:
         bam = "{runid}/results/reads/{sample}.grouped.bam",
     output:
         bam = temp("{runid}/results/reads/{sample}.cons.unmapped.bam"),
     conda:
       "../envs/umi.yaml"
+    wildcard_constraints:
+        sample= r"[^\.]+(?<!\.cons)"
     params:
-        min_reads = 1,
+        min_reads = 1,  # 2 1 1     # if using paired & CallDuplexConsensus
         min_base_qual = 20
     threads:
         4
@@ -120,10 +141,10 @@ rule call_consensus_reads:
     log:
         "{runid}/logs/fgbio/call_consensus_reads/{sample}.log"
     shell:
-        "fgbio -Xmx8g --compression 1 CallMolecularConsensusReads "
+        "fgbio -Xmx8g --compression 1 CallMolecularConsensusReads "     #CallDuplexConsensusReads " 
         "  --input {input.bam} "
         "  --output {output.bam} "
-        "  --min-reads {params.min_reads} "
+        "  --min-reads 1 "
         "  --min-input-base-quality {params.min_base_qual} "
         "  --threads {threads} "
         "  &> {log}"
@@ -139,8 +160,8 @@ rule filter_consensus_reads:
     conda:
       "../envs/umi.yaml"
     params:
-        min_reads = 3,
-        min_base_qual = 40,
+        min_reads = 1,
+        min_base_qual = 30, # 30 
         max_error_rate = 0.2
     threads:
         8
@@ -161,74 +182,17 @@ rule filter_consensus_reads:
         " ) &> {log} "
 
 
-rule collectHs_cons:
-    input:
-        bam = "{runid}/results/reads/{sample}.cons.mapped.bam",
-        bed = config['bed'],		#"resources/twist_rna_exome_target_regions_hg38_annotated.bed",
-        # target_file_UMI_demo_data_hg38.bed",
-        ref = "resources/genome.fa",
-        probes = "resources/probe_file_UMI_demo_data_hg38.interval_list",
-        targets = "resources/target_file_UMI_demo_data_hg38.interval_list",
-    output:
-        metrics = "{runid}/results/picard/metrics/cons/{sample}.metrics.tsv",
-        perTargetCov = "{runid}/results/picard/metrics/cons/{sample}.cov.bed",
-    conda:
-      "../envs/hts.yaml"
-    wildcard_constraints:
-        sample = common_constraint
-    log:
-        "{runid}/logs/collectHs/cons/{sample}.log",
-    resources:
-        mem_gb=4,
-    threads: 8
-    shell:
-        """
-        picard CollectHsMetrics -Xmx4g -I {input.bam} -O {output.metrics} -R {input.ref} --BAIT_INTERVALS {input.probes} --TARGET_INTERVALS {input.probes} --PER_TARGET_COVERAGE {output.perTargetCov} 2> {log}
-        """
-
-
-rule formatHs_cons:
-    input:
-        "{runid}/results/picard/metrics/cons/{sample}.metrics.tsv",
-    output:
-        "{runid}/results/picard/metrics/cons/{sample}.metricsFrmt.tsv",
-    conda:
-      "../envs/hts.yaml"
-    wildcard_constraints:
-        sample = common_constraint
-    log:
-        "{runid}/logs/collectHs/cons/{sample}.formatHs.log",
-    shell:
-        """
-        scripts/formatHs.sh {input} {runid} > {output} 2> {log}
-        """
-
-# for now, we'll omit removing duplicates at this stage, since it'll be done after star alignment
-rule sambamba_markdup:
-    input:
-        "{runid}/results/reads/{sample}.cons.mapped.bam"
-    output:
-        "{runid}/results/reads/{sample}.cons.mapped.mrkdup.bam",
-    conda:
-      "../envs/hts.yaml"
-    priority: 20
-    params:
-        extra="-r"  # optional parameters
-    log: "{runid}/logs/sambamba-markdup/{sample}.log"
-    threads: 8
-    wrapper:
-        "v1.31.1/bio/sambamba/markdup"
-
 rule bam2fq:
     input:
-        "{runid}/results/reads/{sample}.cons.mapped.bam",
+        #"{runid}/results/reads/{sample}.cons.mapped.bam"
+        "{runid}/results/reads/{sample}.cons.filtered.bam",
     output:
-        fastq1 = temp("{runid}/results/reads/cons/{sample}.cons.1.fq"),
-        fastq2 = temp("{runid}/results/reads/cons/{sample}.cons.2.fq"),
+        fastq1 = "{runid}/results/reads/cons/{sample}.cons.1.fq",
+        fastq2 = "{runid}/results/reads/cons/{sample}.cons.2.fq",       
     conda:
       "../envs/hts.yaml"
     wildcard_constraints:
-        sample = common_constraint,
+        sample = r"[^\.]+(?<!\.cons)"
     log:
         "{runid}/logs/samtools/bam2fq/{sample}.log",
     params:
@@ -237,7 +201,6 @@ rule bam2fq:
     threads: 8
     wrapper:
         "v2.1.1/bio/samtools/fastq/separate"
-
 
 
 rule map_star:
@@ -267,6 +230,7 @@ rule map_star:
     shell:"""
         STAR --runThreadN {threads} --genomeDir {input.idx} --readFilesIn {input.fq1} {input.fq2} {params.extra} --outFileNamePrefix {runid}/results/reads/star/{wildcards.sample}/ --outStd BAM_SortedByCoordinate --outSAMattrRGline ID:{rgid} SM:{params.smpl} LB:{params.pl} PU:{params.pu} > {output.aln} 2> {log}
         """
+
 
 rule star_index_dup:
     input:
@@ -299,95 +263,6 @@ rule star_markdup:
     threads: 8
     wrapper:
         "v2.2.1/bio/sambamba/markdup"
-
-rule picard_markdup:
-    input:
-      "{runid}/results/reads/star/{sample}.bam"
-    output:
-      bam = temp("{runid}/results/reads/star/mrkdup/picard/{sample}.bam"),
-      metrics = "{runid}/results/reads/star/mrkdup/picard/{sample}.txt"
-    conda:
-      "../envs/hts.yaml"
-    params:
-      rn_re = "'^([A-Z0-9]+):([0-9]+):([A-Z0-9]+):([0-9]+):([0-9]+):([0-9]+):([0-9]+) .*'"
-    log: "{runid}/logs/picard/markdup/{sample}.log"
-    threads: 2
-    shell:"""
-      picard MarkDuplicates I={input} O={output.bam} M={output.metrics} READ_NAME_REGEX={params.rn_re} OPTICAL_DUPLICATE_PIXEL_DISTANCE=100 2> {log}
-      """
-
-
-#rule filter_bam:
-#    input:
-#        "{runid}/results/reads/star/{sample}.bam",
-#    output:
-#        "{runid}/results/reads/star_fltrd/{sample}.bam",
-#    wildcard_constraints:
-#        sample = common_constraint
-#    log:
-#        "{runid}/logs/fltr_bam/{sample}.log"
-#    shell:"""
-#        samtools view -h {input} | awk 'length($10) > 40 || $1 ~ /^@/' | samtools view -bS - > {output}
-#        """
-
-rule tpmCalc:
-    input:
-        bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
-        gtf = "resources/genome.gtf",
-    output:
-        "{runid}/results/reads/star/mrkdup/tpm/{sample}_genes.out",
-    conda:
-      "../envs/hts.yaml"
-    params:
-	    outdir = "{runid}/results/reads/star/mrkdup/tpm"
-    log:
-        "{runid}/logs/TPMcalc/{sample}.log"
-    shell:"""
-        TPMCalculator -g {input.gtf} -b {input.bam} -o {params.outdir} 2> {log}
-        """
- 
-
-rule collectHs_star:
-    input:
-        bam = "{runid}/results/reads/star/{sample}.bam",
-        bed = config['bed'],		#"resources/twist_rna_exome_target_regions_hg38_annotated.bed",
-        # target_file_UMI_demo_data_hg38.bed",
-        ref = "resources/genome.fa",
-        probes = "resources/probe_file_UMI_demo_data_hg38.interval_list",
-        targets = "resources/target_file_UMI_demo_data_hg38.interval_list",
-    output:
-        metrics = "{runid}/results/picard/metrics/star/{sample}.metrics.tsv",
-        perTargetCov = "{runid}/results/picard/metrics/star/{sample}.cov.bed",
-    conda:
-      "../envs/hts.yaml"
-    wildcard_constraints:
-        sample = common_constraint
-    log:
-        "{runid}/logs/collectHs/star/{sample}.log",
-    resources:
-        mem_gb=8,
-    threads: 8
-    shell:
-        """
-        picard CollectHsMetrics -Xmx4g -I {input.bam} -O {output.metrics} -R {input.ref} --BAIT_INTERVALS {input.probes} --TARGET_INTERVALS {input.probes} --PER_TARGET_COVERAGE {output.perTargetCov} 2> {log}
-        """
-
-
-rule formatHs_star:
-    input:
-        "{runid}/results/picard/metrics/star/{sample}.metrics.tsv",
-    output:
-        "{runid}/results/picard/metrics/star/{sample}.metricsFrmt.tsv",
-    conda:
-      "../envs/hts.yaml"
-    wildcard_constraints:
-        sample = common_constraint
-    log:
-        "{runid}/logs/collectHs/star/{sample}.formatHs.log",
-    shell:
-        """
-        scripts/formatHs.sh {input} {runid} > {output} 2> {log}
-        """
 
 
 
