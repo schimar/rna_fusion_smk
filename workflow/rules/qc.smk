@@ -49,8 +49,8 @@ rule targetcov_perc:
 
 rule clumpify_opt_dup:
     input:
-        r1= "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        r2= "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz"
+        r1= "{runid}/results/reads/cat/{sample}_R1.fq.gz",
+        r2= "{runid}/results/reads/cat/{sample}_R2.fq.gz"
     output:
         r1= temp("{runid}/results/clumpify/opt/{sample}_R1.fq.gz"),  
         r2= temp("{runid}/results/clumpify/opt/{sample}_R2.fq.gz"),  
@@ -74,8 +74,8 @@ rule clumpify_opt_dup:
 
 rule clumpify_pcr_dup:
     input:
-        r1= "{runid}/results/bcl2fq/cat/{sample}_R1.fq.gz",
-        r2= "{runid}/results/bcl2fq/cat/{sample}_R2.fq.gz"
+        r1= "{runid}/results/reads/cat/{sample}_R1.fq.gz",
+        r2= "{runid}/results/reads/cat/{sample}_R2.fq.gz"
     output:
         r1= temp("{runid}/results/clumpify/pcr/{sample}_R1.fq.gz"),  
         r2= temp("{runid}/results/clumpify/pcr/{sample}_R2.fq.gz"),  
