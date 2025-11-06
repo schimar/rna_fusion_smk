@@ -13,7 +13,7 @@ import os.path
 import numpy as np
 #np.random.seed(42)
 import pandas as pd
-
+import os, time
 
 # Usage: scripts/clinExSkip.py -e exons.tsv -c ~/smk/rna_fusion_quant/workflow/resources/exon_targets.tsv
 
@@ -31,6 +31,8 @@ parser.add_argument("-c", "--clinex", dest="clinex", help="list of known exon sk
 #                    help="don't print status messages to stdout")
 
 args = parser.parse_args()
+while not os.path.exists(args.inex):
+    time.sleep(0.1)
 
 exon_file = args.inex
 clinex = args.clinex
@@ -68,10 +70,10 @@ if __name__ == "__main__":
 #    for key, value in clindict.items():
 #        print(key, value.split('\t'))
 
-
     with open(exon_file, 'rt') as exskip:
         #split exon_file into fusions.clinout and fusions.nonclinout, based on clindict
         ffstm = ".".join(exon_file.split('.')[0:3])
+        #ffstm = 'SE.MATS.JC'    # fixed value; avoid issues with variable exon_file formatting
         #print(".".join(ffstm))
         clinout = open(ffstm + ".clinout.tsv", 'w')
         nonclinout = open(ffstm + ".nonclinout.tsv", 'w')

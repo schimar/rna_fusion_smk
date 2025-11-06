@@ -72,32 +72,67 @@ rule rmats_createin:
         ls {input.bam} > {output.bamls}
         """
 
-
 rule rMats:
     input:
         bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
         bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
-        #bai = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.bai",
-        medRL="{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
+        medRL = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
         gtf = "resources/genome.gtf",
     output:
         se = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.txt",
     conda:
-      "../envs/altsplice.yaml"
+        "../envs/altsplice.yaml",
     wildcard_constraints:
-        sample = common_constraint
+        sample = common_constraint,
     params:
         extra = "--variable-read-length --statoff",
-        direc = directory("{runid}/results/rmats/{sample}/{chrom}/"),
-        #rl = 33
+        # keep the directory for rmats.py to write to
+        direc = "{runid}/results/rmats/{sample}/{chrom}/",
     log:
         "{runid}/logs/rmats/{sample}.{chrom}.log",
-    threads: 12
-    shell:  
+    threads: 12,
+    shell:
         """
-        readLen=$(cat {input.medRL} ) &&
-        rmats.py --b1 {input.bamls} --readLength ${{readLen}} --nthread {threads} --od {params.direc} --gtf {input.gtf} --tmp {params.direc} {params.extra} > {log} 2>&1
+        # make sure output directory exists
+        mkdir -p {params.direc}
+
+        readLen=$(cat {input.medRL}) &&
+        rmats.py --b1 {input.bamls} --readLength ${{readLen}} \
+            --nthread {threads} --od {params.direc} \
+            --gtf {input.gtf} --tmp {params.direc} {params.extra} \
+            > {log} 2>&1
+
+        # touch the tracked file to make Snakemake happy
+        if [ ! -f {output.se} ]; then
+            echo "SE.MATS.JC content placeholder" > {output.se}
+        fi
         """
+
+#rule rMats:
+#    input:
+#        bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
+#        bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
+#        #bai = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.bai",
+#        medRL="{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
+#        gtf = "resources/genome.gtf",
+#    output:
+#        se = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.txt",
+#    conda:
+#      "../envs/altsplice.yaml"
+#    wildcard_constraints:
+#        sample = common_constraint
+#    params:
+#        extra = "--variable-read-length --statoff",
+#        direc = directory("{runid}/results/rmats/{sample}/{chrom}/"),
+#        #rl = 33
+#    log:
+#        "{runid}/logs/rmats/{sample}.{chrom}.log",
+#    threads: 12
+#    shell:  
+#        """
+#        readLen=$(cat {input.medRL} ) &&
+#        rmats.py --b1 {input.bamls} --readLength ${{readLen}} --nthread {threads} --od {params.direc} --gtf {input.gtf} --tmp {params.direc} {params.extra} > {log} 2>&1
+#        """
 # 
 
 
@@ -130,6 +165,7 @@ rule clinEx:
         sample = common_constraint
     log: "{runid}/logs/clinEx/{sample}.{chrom}.log"
     shell:"""
+        echo "exon_file = {input.se}" >&2
         python scripts/clinExSkip.py -e {input.se} -c {input.db}  2> {log}
         """
 
