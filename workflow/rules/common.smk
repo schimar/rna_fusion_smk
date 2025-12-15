@@ -1,6 +1,7 @@
 import glob
 from pathlib import Path
 import os
+import shutil
 import re
 import pandas as pd
 from snakemake.utils import validate
@@ -151,5 +152,7 @@ onstart:
     shell("gitrev=$(git rev-parse HEAD) && echo \"--------------------------------------------- \n Running rna_fusion workflow, with \n git branch $gitrev \n log file in \n {log} \n & run data in \n {runid} \n  ---------------------------------------------\" 2>&1 | tee {log}")
 onsuccess:
     shell("cp -v {log} {runid}/logs/")
+onsuccess:
+    shutil.rmtree(".snakemake")
 onerror:
     shell("cp -v {log} {runid}/logs/")
