@@ -21,7 +21,7 @@ The SPEC exists to give a precise, verifiable contract for the change — the an
 - Drop the fgbio/UMI path; move the STAR rules into `mapping.smk` and `map_star` consumes the demuxed **gzipped** R1/R2 directly (`--readFilesCommand zcat`).
 - Emit **raw** Arriba, rMATS, and EGFRv3 outputs; keep the post-hoc filter rules defined but **inert** (not in the DAG).
 - Keep QC outputs in `run.done`.
-- Ensure compatibility with **Snakemake 9.19.0** (drop the top-level `report:` directive; keep `min_version("7.0.0")`).
+- Ensure compatibility with **Snakemake 9.19.0** (drop the top-level `report:` directive; keep `min_version("9.0.0")`).
 
 ### 1.2 Explicitly out of scope (non-goals — do not re-litigate)
 - No per-rule `docker run`; no Docker-outside-Docker / orchestrator-calls-docker.
