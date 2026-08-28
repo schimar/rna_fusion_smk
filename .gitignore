@@ -1,0 +1,6 @@
+workflow/resources/s2_gene_names.txt
+workflow/resources/s2_not_in_genome.tsv
+workflow/resources/s2_winters2018.tsv
+workflow/resources/s2_winters2018_original.tsv
+workflow/resources/winters_and_cegat_genes.tsv
+workflow/resources/winters_exonSkipDB.genes.txt
