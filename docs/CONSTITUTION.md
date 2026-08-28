@@ -1,0 +1,117 @@
+# WTS-Init — Design & Constitutional Specification (SPEC)
+
+Status: **ACCEPTED** — living document; changes are additive and reviewed.
+Branch target: `wts-init` (off clean `master` at `1538fb8`).
+Review/approval: this SPEC must be reviewed and approved before implementation begins; each implementation commit must reference the SPEC requirement(s) it satisfies.
+
+---
+
+## 0. Purpose
+
+Refactor the `rna_fusion` Snakemake RNA workflow into a **whole-transcriptome-sequencing (WTS) init** pipeline that runs entirely inside a single central Docker image (`ukwgenommedizin/rna_fusion:1.0.1`), drops the fgbio/UMI path, and emits raw fusion / alternative-splicing outputs without the post-hoc filtering rules.
+
+The SPEC exists to give a precise, verifiable contract for the change — the antithesis of ad-hoc "hand-wavey" edits that cause endless debugging rounds.
+
+## 1. Scope
+
+### 1.1 In scope
+- Instantiate the workflow under a **single central Docker image** containing Snakemake 9.19.0 + all required tools.
+- Provide a launcher script (`sub-smk-job.sh`) that runs Snakemake **inside** that image.
+- Read demultiplexed FASTQ via **`bcl-convert --no-lane-splitting true`** (drop `bcl2fastq`), with an in-rule **rename** to `{sample}.R{1,2}_001.fastq.gz`.
+- Drop the fgbio/UMI path; move the STAR rules into `mapping.smk` and `map_star` consumes the demuxed **gzipped** R1/R2 directly (`--readFilesCommand zcat`).
+- Emit **raw** Arriba, rMATS, and EGFRv3 outputs; keep the post-hoc filter rules defined but **inert** (not in the DAG).
+- Keep QC outputs in `run.done`.
+- Ensure compatibility with **Snakemake 9.19.0** (drop the top-level `report:` directive; keep `min_version("7.0.0")`).
+
+### 1.2 Explicitly out of scope (non-goals — do not re-litigate)
+- No per-rule `docker run`; no Docker-outside-Docker / orchestrator-calls-docker.
+- No `--use-conda` / `conda:` directives at runtime; no per-tool image split.
+- No Snakemake executor plugins; no SLURM/cluster profile. Local executor only.
+- **No wrapper → shell rewrites.** Wrapper rules invoke tools by name; those tools exist in the image and run as-is.
+- No deletion of dead rules/scripts in this branch (cleanup is a follow-up branch).
+- No change to `master`; work isolated to `wts-init`.
+
+## 2. Environment & Image Contract
+
+- The single image `ukwgenommedizin/rna_fusion:1.0.1` (fallback to `1.0.0`) provides, on `PATH`:
+  - snakemake 9.19.0, python3 3.12.14
+  - STAR 2.7.11b, arriba 2.5.1, bbmap 39.01 (bbmerge.sh/clumpify.sh)
+  - fastqc, bedtools, sambamba, bwa, bwa-mem2, samtools
+  - multiqc 1.35, rmats.py, egfr-v3-determiner 0.7.4, bcl-convert 4.5.4, fastp
+  - `fgbio.jar` and `picard.jar` under `/opt/tools/jars`
+- Absent from image (so must not be required): `bcl2fastq`, `cutadapt`, `picard`-on-PATH, `fgbio`-on-PATH (jars only).
+- Image default is overridable via env var `RNA_FUSION_IMAGE`.
+
+## 3. Execution Model
+
+### 3.1 Launcher — `sub-smk-job.sh` (repo root, executable)
+A single `docker run` executes Snakemake inside the central image and passes CLI args (including `--config`) straight through.
+
+Acceptance: `./sub-smk-job.sh -n --config runid=... bcldir=... analysis_path=...` performs a dry-run; no `--use-conda`, no per-rule docker, no SLURM.
+
+### 3.2 Mounts & user
+- Mount `/home`, `/mnt`, and the repo path (read/write for run outputs).
+- Run as invoking user: `-u $(id -u):$(id -g)` so outputs are owned by the caller.
+
+## 4. Demultiplexing & read handling
+
+### 4.1 `bcl_convert` rule (rewrite; keep; `bcl2fq` dropped)
+- Use `bcl-convert 4.5.4` with:
+  - `--bcl-input-directory {bcldir}`
+  - `--sample-sheet {bcldir}/SampleSheet_rna.csv`
+  - `--output-directory <fresh tmp dir>` (must not pre-exist; bcl-convert 4.x requirement)
+  - `--no-lane-splitting true`
+  - `--bcl-sampleproject-subdirectories false`
+  - `--bcl-num-parallel-tiles ...` (tune)
+- After bcl-convert returns, **rename loop** (same-filesystem `mv`, metadata-only): `tmp/{sample}_S*_R{1|2}_001.fastq.gz` → `{runid}/results/bcl2fq/{sample}.R{1|2}_001.fastq.gz`. Exactly one merged file per sample+direction is expected under no-lane-splitting.
+- Drop `bcl2fastq` rule, `bcl2fastq.yaml` env, and `cat_lanes`.
+
+Acceptance: demuxed files exist at `{runid}/results/bcl2fq/{sample}.R1_001.fastq.gz` and `.R2_001.fastq.gz`.
+
+### 4.2 `common.smk` units parsing
+- `detect_lanes_and_create_units`: parse `sample = f.rsplit(".R", 1)[0]` (strip `.R*_001.fastq.gz` suffix). One unit per sample (no lanes).
+- Warn if a SampleSheet `Sample_Name` contains a `.` (dot would break the parse split) — README note + runtime warning.
+
+## 5. Dropping UMI; adding `mapping.smk`
+
+- New `workflow/rules/mapping.smk` contains the 3 STAR rules moved from `umi.smk`: `map_star`, `star_index_dup`, `star_markdup`.
+- `map_star` inputs become the demuxed gz: `{runid}/results/bcl2fq/{sample}.R{1,2}_001.fastq.gz`, and STAR `extra` gains `--readFilesCommand zcat`.
+- `snakefile`: remove `include: "rules/umi.smk"`, add `include: "rules/mapping.smk"`. `umi.smk` stays on disk (un-included).
+- fgbio-specific QC targets trimmed from active DAG (`fastqc_cons`, `multiqc_cons`).
+
+Acceptance: `snakemake -n` produces no fgbio/UMI/consensus rules; STAR runs read the gz via zcat.
+
+## 6. Outputs — raw deliverables, filters inert
+
+### 6.1 Arriba
+- Active deliverable: raw `fusions.tsv` (+ `fusions.discarded.tsv`).
+- Rules `get_clinFuse`, `filter_arriba`, `getExons_arriba`, `gtf2exon_h5` stay **defined but unreachable** (not in `rule all`).
+
+### 6.2 rMATS
+- Active deliverable: raw per-chrom `{sample}/{chrom}/SE.MATS.JC.txt`.
+- Rules `clinEx`, `exonfltr`, `cat_exonSkippers`, `exonFinalOut` stay **defined but unreachable**.
+
+### 6.3 EGFR
+- `{sample}.egfr_v3.out` unchanged (already a leaf output).
+
+### 6.4 `rule all` / `out.smk` (rsync → `run.done`)
+- Repoint to raw deliverables + kept QC: `fastqc/multiqc`, `bcov`, `n10cov`.
+- Drop `.fltrd.ex` / `.exonSkip` references.
+
+## 7. Snakemake 9.19 compatibility
+- Drop the top-level `report: "report/workflow.rst"` directive (removed in SMK8+).
+- Keep `min_version("7.0.0")`.
+- Ignore `config/slurm/*` (not used; local executor).
+
+## 8. Validation / Definition of Done
+1. `git switch -c wts-init` (done) — first commit is THIS SPEC.
+2. `./sub-smk-job.sh -n --config ...` dry-run succeeds with no `--use-conda` warnings and no fgbio/UMI rules in the DAG.
+3. A small (1–2 sample) end-to-end run produces: demuxed `{sample}.R{1,2}_001.fastq.gz`, STAR BAM + `SJ.out.tab` + `mrkdup.bam`, arriba `fusions.tsv`(+`discarded.tsv`), rMATS `SE.MATS.JC.txt`, `egfr_v3.out`, QC outputs, and `{bcldir}{analysis_path}/run.done`.
+4. No `bcl2fastq`, `cat_lanes`, fgbio, or filter rules in the executed DAG.
+5. Incremental commits, each referencing its SPEC section(s).
+
+## 9. Open Decision Register (resolved where marked)
+- D1 `RNA_FUSION_IMAGE` default → `1.0.1` (RESOLVED).
+- D2 bcl-convert parallel-tiles value → tune, default from reference (~32) (PENDING measure at runtime).
+- D3 Dot-in-sample-name handling → warn + document (RESOLVED).
+- D4 QC set in `run.done` → fastqc/multiqc, bcov, n10cov (RESOLVED).
