@@ -17,7 +17,8 @@ bed_file = config['bed']
 bed_file_stem = bed_file.split('.')[0]
 r1_read_structure = config["r1_read_structure"]
 r2_read_structure = config["r2_read_structure"]
-units_wd = '/'.join([runid, config["units"]])
+samples_tsv = '/'.join([runid, 'samples.tsv'])
+sample_sheet = bcldir + '/SampleSheet_rna.csv'
 
 # Create necessary directories
 pr = Path('/'.join([runid, 'results/']))
@@ -25,120 +26,61 @@ pr.mkdir(parents=True, exist_ok=True)
 pl = Path('/'.join([runid, 'logs/']))
 pl.mkdir(parents=True, exist_ok=True)
 
-def detect_lanes_and_create_units(bcl2fq_path, output_path, file_pattern_suffix="R1_001.fastq.gz"):
+
+def parse_sample_sheet(sheet_path):
     """
-    Detect available lanes in the dataset and create a units.tsv file
-    
-    Parameters:
-    -----------
-    bcl2fq_path : str
-        Path to the bcl2fq output directory
-    output_path : str
-        Path where units.tsv will be saved
-    file_pattern_suffix : str
-        Suffix pattern to use for finding R1 files
-    
-    Returns:
-    --------
-    pandas.DataFrame
-        DataFrame containing sample information
+    Parse a SampleSheet CSV (v1 or v2) and return the ordered list of
+    Sample_ID values.
+
+    v1: header row has 'Sample_ID' at column 0.
+    v2 (e.g. NovaSeqX+): 'Sample_ID' may be in any column; the header row is
+    located by scanning for the row containing 'Sample_ID'.
     """
-    lsda = os.listdir(bcl2fq_path)
-    
-    # Find all R1 files (excluding Undetermined)
-    r1_files = [f for f in lsda if f.endswith(file_pattern_suffix) and 'Undetermined' not in f]
-    
-    if not r1_files:
-        print(f"Warning: No R1 files found with pattern '*{file_pattern_suffix}' in {bcl2fq_path}")
-        return pd.DataFrame(columns=['sample_name', 'unit_name', 'fq'])
-    
-    # Check which lanes are present in the dataset by examining all files
-    available_lanes = set()
-    for file in r1_files:
-        # Look for lane patterns L001, L002, L003, L004
-        lane_matches = re.findall('L00[1-4]', file)
-        if lane_matches:
-            available_lanes.update(lane_matches)
-    
-    # If no lanes detected or ambiguous, assume L001 only
-    if not available_lanes:
-        print("No lane information found in filenames, defaulting to L001")
-        lanes = ['L001' for _ in r1_files]
-    else:
-        # Extract lanes for each file
-        lanes = []
-        for file in r1_files:
-            lane_match = re.findall('L00[1-4]', file)
-            lanes.append(lane_match[0] if lane_match else 'L001')
-    
-    # Extract sample names from filenames
-    sample_names = ['_'.join(x.split('_')[0:2]) for x in r1_files]
-    
-    # Create full file paths
-    fq_paths = ['/'.join([runid, 'results/bcl2fq', fqgz]) for fqgz in r1_files]
-    
-    # Create DataFrame
-    df = pd.DataFrame({'sample_name': sample_names, 'unit_name': lanes, 'fq': fq_paths})
-    df.sort_values(['sample_name', 'unit_name'], ascending=[True, True], inplace=True)
-    
-    # Print information about detected lanes
-    detected_lanes = sorted(available_lanes)
-    print(f"Detected lanes: {', '.join(detected_lanes)}")
-    
-    # Save to file
-    df.to_csv(output_path, sep='\t', index=False)
-    
-    return df
+    sample_ids = []
+    if not os.path.isfile(sheet_path):
+        print(f"Warning: SampleSheet not found: {sheet_path}")
+        return sample_ids
+    col = None
+    with open(sheet_path) as fh:
+        for line in fh:
+            line = line.strip('\r\n')
+            if not line:
+                continue
+            cols = [c.strip() for c in line.split(',')]
+            if col is None:
+                # header row: the row that contains the 'Sample_ID' column
+                if 'Sample_ID' in cols:
+                    col = cols.index('Sample_ID')
+                continue
+            # data rows
+            if col < len(cols) and cols[col]:
+                sample_ids.append(cols[col])
+    print(f"Parsed {len(sample_ids)} sample(s) from {sheet_path}")
+    return sample_ids
+
 
 # -----------------------------------------------------------------------------
-# Load or create units file
+# Sample definition & selection
+# The SampleSheet is the source of truth (parsed at parse time). A sample is a
+# WTS sample iff its full Sample_ID contains the substring 'WTS'. No other part
+# of the ID is interpreted (kept whole, including any _S<n> suffix).
 # -----------------------------------------------------------------------------
-units_file_exists = Path(units_wd).is_file()
-units_file_has_data = False
+all_sample_ids = parse_sample_sheet(sample_sheet)
+wts_samples = [sid for sid in all_sample_ids if 'WTS' in sid]
 
-if units_file_exists:
-    # Check if the file has data beyond headers
-    try:
-        units_df = pd.read_csv(units_wd, sep="\t")
-        units_file_has_data = len(units_df) > 0
-    except:
-        units_file_has_data = False
+if not wts_samples:
+    print("WARNING: no WTS samples found in SampleSheet " + sample_sheet)
 
-if units_file_exists and units_file_has_data:
-    # File exists and has data
-    units = (pd.read_csv(units_wd, sep="\t", dtype={"sample_name": str, "unit_name": str})
-        .set_index(["sample_name", "unit_name"], drop=False)
-        .sort_index()
-    )
-    validate(units, schema="../../config/schemas/units.schema.yaml")
-else:
-    # File doesn't exist, is empty, or has only headers
-    # Create bcl2fq results directory if needed
-    pr = Path('/'.join([runid, 'results/bcl2fq/']))
-    pr.mkdir(parents=True, exist_ok=True)
-    
-    # Determine the appropriate file pattern suffix based on what's in the directory
-    bcl2fq_dir = '/'.join([runid, "results/bcl2fq/"])
-    
-    # First try with standard Illumina naming
-    file_pattern = "R1_001.fastq.gz"
-    
-    # If no files match the standard pattern, try the FDA challenge pattern
-    if not any(f.endswith(file_pattern) for f in os.listdir(bcl2fq_dir) if 'Undetermined' not in f):
-        file_pattern = "R1.fq.gz"
-    
-    # Detect lanes and create units file
-    units = detect_lanes_and_create_units(
-        bcl2fq_path=bcl2fq_dir,
-        output_path='/'.join([runid, 'units.tsv']),
-        file_pattern_suffix=file_pattern
-    )
-    
-    validate(units, schema="../../config/schemas/units.schema.yaml")
+idkeys = list(wts_samples)
 
-# Create samples dictionary and ID keys
-samples_dict = dict(zip(units['sample_name'], zip(units['fq'])))
-idkeys = list(samples_dict.keys())
+# Write the derived sample table (all samples + WTS flag) as a transparency
+# artifact. This is derived, NOT the source of truth.
+samples_df = pd.DataFrame({'sample_id': all_sample_ids})
+samples_df['is_wts'] = samples_df['sample_id'].apply(lambda s: 'WTS' in s)
+Path('/'.join([runid])).mkdir(parents=True, exist_ok=True)
+samples_df.to_csv(samples_tsv, sep='\t', index=False)
+print(f"WTS samples: {wts_samples}")
+print(f"sample table written to {samples_tsv}")
 
 # -----------------------------------------------------------------------------
 # Wildcard constraints

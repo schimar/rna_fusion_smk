@@ -1,23 +1,22 @@
 rule rsync:
     input:
-        fastqc = expand("{runid}/results/qc/fastqc_multiqc_report.html", runid= runid), 
-        rseqc = expand("{runid}/results/qc/rseqc_multiqc_report.html", runid= runid),
-        arriba = expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),#, unit=units.itertuples()),  #, sample= idkeys[0]),
-        rmats = expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys), #unit=units.itertuples()), #, sample= idkeys[0]), 
-        bcov = expand("{runid}/results/qc/bedtools/{sample}/bcov.tsv", runid= runid, sample= idkeys),
-        n10cov = expand("{runid}/results/qc/n10_cov/{sample}.n10.tsv", runid= runid, sample= idkeys),
+        fastqc = expand("{runid}/results/qc/fastqc_multiqc_report.html", runid= runid),
+        arriba = expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= wts_samples),
+        arriba_disc = expand("{runid}/results/arriba/{sample}/fusions.discarded.tsv", runid= runid, sample= wts_samples),
+        rmats = expand("{runid}/results/rmats/{sample}/SE.MATS.JC.txt", runid= runid, sample= wts_samples),
+        egfr = expand("{runid}/results/rmats/{sample}.egfr_v3.out", runid= runid, sample= wts_samples),
+        bcov = expand("{runid}/results/qc/bedtools/{sample}/bcov.tsv", runid= runid, sample= wts_samples),
+        n10cov = expand("{runid}/results/qc/n10_cov/{sample}.n10.tsv", runid= runid, sample= wts_samples),
+        clump  = expand("{runid}/results/clumpify/{mode}/{sample}.clump.stats.txt", runid= runid, sample= wts_samples, mode= ['opt', 'pcr']),
     output:
-        touch("{bcldir}{analysis_path}/run.done")
-    #log:
-    #    "{runid}/logs/rsync.log"
+        touch("{bcldir}{analysis_path}/run.done"),
     wildcard_constraints:
-        sample = common_constraint,
-        analysis_path = "analysis_rna.*"
+        analysis_path = "analysis_rna.*",
     params:
         bcldir = config["bcldir"],
         runid = config['runid'],
         final_dest = config['bcldir'] + config['analysis_path'],
-        log = config['bcldir'] + "{analysis_path}/logs/rsync.log"
+        log = config['bcldir'] + "{analysis_path}/logs/rsync.log",
     shell:"""
         rsync -rDvz {params.runid}/* {params.final_dest}/ --log-file={params.log}
         """

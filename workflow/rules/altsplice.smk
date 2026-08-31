@@ -54,42 +54,38 @@ rule sambamba_rmdup_sub:
 
 rule rmats_createin:
     input:
-        bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
-        #bam = "{runid}/results/reads/star/{sample}/chr7.bam",
+        bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
     output:
-        bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
-        medRL = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
-    conda:
-      "../envs/hts.yaml"
+        bamls = "{runid}/results/reads/star/mrkdup/{sample}.bam.list",
+        medRL = "{runid}/results/reads/star/mrkdup/{sample}.medianRL.txt",
     #wildcard_constraints:
     #    sample = common_constraint
-    log: "{runid}/logs/rmats_createin/{sample}.{chrom}.log"
+    log:
+        "{runid}/logs/rmats_createin/{sample}.log",
     shell:
         """
-        # get the median read length from bam 
+        # get the median read length from bam
         samtools view -F 4 {input.bam} | awk '{{print length($10)}}' | sort -u | awk '{{ a[i++]=$1; }} END {{ print a[int(i/2)]; }}' > {output.medRL}   &&
-        # 
+        #
         ls {input.bam} > {output.bamls}
         """
 
 rule rMats:
     input:
-        bam = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.rmdup.bam",
-        bamls = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.bam.list",
-        medRL = "{runid}/results/reads/star/mrkdup/{sample}/{chrom}.medianRL.txt",
+        bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        bamls = "{runid}/results/reads/star/mrkdup/{sample}.bam.list",
+        medRL = "{runid}/results/reads/star/mrkdup/{sample}.medianRL.txt",
         gtf = "resources/genome.gtf",
     output:
-        se = "{runid}/results/rmats/{sample}/{chrom}/SE.MATS.JC.txt",
-    conda:
-        "../envs/altsplice.yaml",
+        se = "{runid}/results/rmats/{sample}/SE.MATS.JC.txt",
     wildcard_constraints:
         sample = common_constraint,
     params:
         extra = "--variable-read-length --statoff",
         # keep the directory for rmats.py to write to
-        direc = "{runid}/results/rmats/{sample}/{chrom}/",
+        direc = "{runid}/results/rmats/{sample}/",
     log:
-        "{runid}/logs/rmats/{sample}.{chrom}.log",
+        "{runid}/logs/rmats/{sample}.log",
     threads: 12,
     shell:
         """

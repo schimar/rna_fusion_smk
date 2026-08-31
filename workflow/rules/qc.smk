@@ -49,22 +49,20 @@ rule targetcov_perc:
 
 rule clumpify_opt_dup:
     input:
-        r1= "{runid}/results/reads/cat/{sample}_R1.fq.gz",
-        r2= "{runid}/results/reads/cat/{sample}_R2.fq.gz"
+        r1= "{runid}/results/bcl2fq/{sample}.R1_001.fastq.gz",
+        r2= "{runid}/results/bcl2fq/{sample}.R2_001.fastq.gz"
     output:
-        r1= temp("{runid}/results/clumpify/opt/{sample}_R1.fq.gz"),  
-        r2= temp("{runid}/results/clumpify/opt/{sample}_R2.fq.gz"),  
+        r1= temp("{runid}/results/clumpify/opt/{sample}_R1.fq.gz"),
+        r2= temp("{runid}/results/clumpify/opt/{sample}_R2.fq.gz"),
         stats= touch("{runid}/results/clumpify/opt/{sample}.clump.stats.txt")
-    conda:
-        "../envs/hts.yaml"
     wildcard_constraints:
         sample= common_constraint
     log:
         "{runid}/logs/clumpify/opt/{sample}.log"
     params:
-      extra= "optical",
-      dupedist= 12000,   # for NovaSeq. If using NextSeq, then use 40
-      subs= 2
+        extra= "optical",
+        dupedist= 12000,   # for NovaSeq. If using NextSeq, then use 40
+        subs= 2
     resources:
         mem_gb= 31
     threads: 12
@@ -74,21 +72,19 @@ rule clumpify_opt_dup:
 
 rule clumpify_pcr_dup:
     input:
-        r1= "{runid}/results/reads/cat/{sample}_R1.fq.gz",
-        r2= "{runid}/results/reads/cat/{sample}_R2.fq.gz"
+        r1= "{runid}/results/bcl2fq/{sample}.R1_001.fastq.gz",
+        r2= "{runid}/results/bcl2fq/{sample}.R2_001.fastq.gz"
     output:
-        r1= temp("{runid}/results/clumpify/pcr/{sample}_R1.fq.gz"),  
-        r2= temp("{runid}/results/clumpify/pcr/{sample}_R2.fq.gz"),  
+        r1= temp("{runid}/results/clumpify/pcr/{sample}_R1.fq.gz"),
+        r2= temp("{runid}/results/clumpify/pcr/{sample}_R2.fq.gz"),
         stats= touch("{runid}/results/clumpify/pcr/{sample}.clump.stats.txt")
-    conda:
-        "../envs/hts.yaml"
     wildcard_constraints:
         sample= common_constraint
     log:
         "{runid}/logs/clumpify/pcr/{sample}.log"
     params:
-      extra= "",
-      subs= 2
+        extra= "",
+        subs= 2
     resources:
         mem_gb= 31
     threads: 12
@@ -339,44 +335,40 @@ rule rseqc_readgc:
 rule multiqcRSeQC:
     input:
         expand(
-            "{runid}/results/reads/star/{unit.sample_name}.bam",
-            unit=units.itertuples(), runid= runid,
+            "{runid}/results/reads/star/{sample}.bam",
+            sample= wts_samples, runid= runid,
         ),
         expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.junctionanno.junction.bed",
-            unit=units.itertuples(), runid= runid,
+            "{runid}/results/qc/rseqc/{sample}.junctionanno.junction.bed",
+            sample= wts_samples, runid= runid,
         ),
         expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.junctionsat.junctionSaturation_plot.pdf",
-            unit=units.itertuples(), runid= runid,
-        ),
-        #expand(
-        #    "{runid}/results/qc/rseqc/{unit.sample_name}.infer_experiment.txt",
-        #    unit=units.itertuples(), runid= runid,
-        #),
-        expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.stats.txt",
-            unit=units.itertuples(), runid= runid,
+            "{runid}/results/qc/rseqc/{sample}.junctionsat.junctionSaturation_plot.pdf",
+            sample= wts_samples, runid= runid,
         ),
         expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.inner_distance_freq.inner_distance.txt",
-            unit=units.itertuples(), runid= runid,
+            "{runid}/results/qc/rseqc/{sample}.stats.txt",
+            sample= wts_samples, runid= runid,
         ),
         expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.readdistribution.txt",
-            unit=units.itertuples(), runid= runid,
+            "{runid}/results/qc/rseqc/{sample}.inner_distance_freq.inner_distance.txt",
+            sample= wts_samples, runid= runid,
         ),
         expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.readdup.DupRate_plot.pdf",
-            unit=units.itertuples(), runid= runid,
+            "{runid}/results/qc/rseqc/{sample}.readdistribution.txt",
+            sample= wts_samples, runid= runid,
         ),
         expand(
-            "{runid}/results/qc/rseqc/{unit.sample_name}.readgc.GC_plot.pdf",
-            unit=units.itertuples(), runid= runid,
+            "{runid}/results/qc/rseqc/{sample}.readdup.DupRate_plot.pdf",
+            sample= wts_samples, runid= runid,
         ),
         expand(
-            "{runid}/logs/rseqc/rseqc_junction_annotation/{unit.sample_name}.log",
-            unit=units.itertuples(), runid= runid,
+            "{runid}/results/qc/rseqc/{sample}.readgc.GC_plot.pdf",
+            sample= wts_samples, runid= runid,
+        ),
+        expand(
+            "{runid}/logs/rseqc/rseqc_junction_annotation/{sample}.log",
+            sample= wts_samples, runid= runid,
         ),
     output:
         "{runid}/results/qc/rseqc_multiqc_report.html",

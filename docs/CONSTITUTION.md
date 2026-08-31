@@ -21,7 +21,7 @@ The SPEC exists to give a precise, verifiable contract for the change — the an
 - Drop the fgbio/UMI path; move the STAR rules into `mapping.smk` and `map_star` consumes the demuxed **gzipped** R1/R2 directly (`--readFilesCommand zcat`).
 - Emit **raw** Arriba, rMATS, and EGFRv3 outputs; keep the post-hoc filter rules defined but **inert** (not in the DAG).
 - Keep QC outputs in `run.done`.
-- Ensure compatibility with **Snakemake 9.19.0** (drop the top-level `report:` directive; keep `min_version("9.0.0")`).
+- Ensure compatibility with **Snakemake 9.19.0** (drop the top-level `report:` directive; keep `min_version("7.0.0")`).
 
 ### 1.2 Explicitly out of scope (non-goals — do not re-litigate)
 - No per-rule `docker run`; no Docker-outside-Docker / orchestrator-calls-docker.
@@ -68,9 +68,32 @@ Acceptance: `./sub-smk-job.sh -n --config runid=... bcldir=... analysis_path=...
 
 Acceptance: demuxed files exist at `{runid}/results/bcl2fq/{sample}.R1_001.fastq.gz` and `.R2_001.fastq.gz`.
 
-### 4.2 `common.smk` units parsing
-- `detect_lanes_and_create_units`: parse `sample = f.rsplit(".R", 1)[0]` (strip `.R*_001.fastq.gz` suffix). One unit per sample (no lanes).
-- Warn if a SampleSheet `Sample_Name` contains a `.` (dot would break the parse split) — README note + runtime warning.
+### 4.2 Sample definition & selection (replaces `units.tsv`)
+
+- **Source of truth = SampleSheet** (`{bcldir}/SampleSheet_rna.csv`), read at **parse time**.
+- Support **both v1 and v2** sheet layouts:
+  - v1: header row contains `Sample_ID` at column 0.
+  - v2 (NovaSeqX+): locate `Sample_ID` by header name (may be any column).
+  - Robust approach (same as vrc reference): scan lines for the header row containing `Sample_ID`, then collect non-empty values in that column.
+- **Routing key = full `Sample_ID` substring match.** Sample is **WTS** iff `"WTS" in sample_id`. Do **not** interpret any other part of the ID (patient, project, `_S<n>`, etc.) — those are opaque.
+- **`Sample_ID` is used whole as the single identifier everywhere** (wildcard `{sample}`, fastq paths, downstream outputs). Example: `B-WTS26-0031_Pat26-3689_26-004199-B-I-I_S1` (kept as one ID; `_S<n>` is the internal-control suffix and is retained).
+- `wts_samples` = the list of matching IDs; `idkeys` = `wts_samples`; all downstream `expand(...)` and wildcard rules use it.
+- The derived sample table is written to `<runid>/samples.tsv` for transparency/validation (derived artifact, not source of truth).
+
+Acceptance: `snakemake -n` builds the full DAG (bcl-convert → mapping → QC → fusions/altsplice) in **one** invocation, targeting only `wts_samples`, with no two-phase bcl-convert hack.
+
+### 4.3 `bcl_convert` — WTS-only DAG, all-sample physical demux
+- `rule bcl_convert` declares **outputs only for `wts_samples`** (predicted paths):
+  ```
+  output: expand("{runid}/results/bcl2fq/{sample}.R{read}_001.fastq.gz", sample=wts_samples, read=[1,2])
+  ```
+- **Physically**, `bcl-convert` still demuxes **all** samples in the sheet (`--no-lane-splitting true`), and the rename loop moves **all** produced fastqs out of the fresh tmp dir to `{runid}/results/bcl2fq/` — so non-WTS demux is preserved on disk (consumed later by the large workflow), even though Snakemake does not track it.
+- Declared outputs drive job creation/ordering; the DAG is fully known at parse time; downstream rules reference the predicted fastq paths directly → **single-run execution**.
+
+### 4.4 `common.smk` units parsing
+- Replace `detect_lanes_and_create_units` (file-scan → parse-time table): remove `units.tsv` dependency.
+- Remove `units` key from `config.yaml`; `units.schema.yaml` stays on disk but unused.
+- Warn if a `Sample_ID` contains a `.` (would break later path parsing) — README note + runtime warning.
 
 ## 5. Dropping UMI; adding `mapping.smk`
 

@@ -10,11 +10,6 @@ bed: "resources/twist_rna_exome_target_regions_hg38_annotated.bed"
 
 #samples: "../config/samples.tsv"
 
-units: "units.tsv"
-
-lanes: ['L001','L002']
-#fqDir: "/mnt/illumina/230209_A01272_0035_BHTVFGDRX2"
-
 # NOTE: eventually, get these values from one of the input files??
 runid: "rnaSeq"
 bcldir: "dummy_A01358"

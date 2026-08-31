@@ -8,25 +8,14 @@ min_version("7.0.0")
 configfile: "../config/config.yaml"
 
 
-report: "report/workflow.rst"
-
-
-##### setup singularity #####
-
-
-# this container defines the underlying OS for each job when using the workflow
-# with --use-conda --use-singularity
-# container: "docker://continuumio/miniconda3"
-
-
 ##### load rules #####
 
 
 include: "rules/common.smk"
-include: "rules/bcl2fastq.smk"
+include: "rules/bcl_convert.smk"
 include: "rules/ref.smk"
 include: "rules/qc.smk"
-include: "rules/umi.smk"
+include: "rules/mapping.smk"
 include: "rules/fusion.smk"
 include: "rules/altsplice.smk"
 include: "rules/out.smk"
@@ -37,47 +26,18 @@ include: "rules/out.smk"
 rule all:
     input:
         "resources/genome.fa",
-        #"{runid}/results/qc/multiqc_report.html"
         "resources/genome.gtf",
-        multiext("resources/genome.fa", ".amb", ".ann", ".bwt", ".pac", ".sa", ".fai"),
-        #expand("{bed_file_stem}.srtd.bed", bed_file_stem= bed_file_stem),
-        #directory("resources/star_genome"),
-        #expand("resources/{bed}_file_UMI_demo_data_hg38.interval_list", bed= ['target', 'probe']),
-        ##
-        ## bcl_convert
-        #expand("{runid}/results/bcl2fq/Logs/FastqComplete.txt", runid= runid),
-        ## bcl2fastq
-        #expand("{runid}/results/bcl2fq/Reports/html/tree.html", runid= runid),
-        ##
-        ## bbmerge cat 
-        ###expand("{runid}/results/bbmerge/{sample}.fq.gz", runid= runid, sample= idkeys),
-        ## clumpify duplicates 
-        ##expand("{runid}/results/clumpify/opt/{sample}.clump.stats.txt", runid= runid, sample= idkeys),
-        ##expand("{runid}/results/clumpify/pcr/{sample}.clump.stats.txt", runid= runid, sample= idkeys),
-        ### qc
-        ###expand("{runid}/results/qc/bbmerge/fastqc/{sample}.html", runid= runid, sample= idkeys),      
-        #expand("{runid}/results/qc/fastqc_multiqc_report.html", runid= runid),
-        #expand("{runid}/results/qc/n10_cov/{sample}.n10.tsv", runid= runid, sample= idkeys),
-        ##expand("{runid}/results/qc/deeptools/cor_plot.png", runid= runid),
-        ##expand("{runid}/results/qc/deeptools/pca_plot.png", runid= runid),
-        #####
-        ##### fgbio fq2cons
-        ######expand("{runid}/results/picard/metrics/{pref}/{sample}.metricsFrmt.tsv", runid= runid, pref= ['cons', 'star'], sample= idkeys),
-        ##expand("{runid}/results/picard/metrics/star/{sample}.metricsFrmt.tsv", runid= runid, sample= idkeys),
-        ######expand("{runid}/results/fq2cons/{sample}.cons.mapped.mrkdup.bam", runid= runid, sample= idkeys[0]),
-        ######expand("{runid}/results/reads/fstat/{sample}.mapped.fstat", runid= runid, sample= idkeys),
-        ##### 
-        ##### picard markdup metrics
-        ###expand("{runid}/results/reads/star/mrkdup/picard/{sample}.txt", runid= runid, sample= idkeys),
-        ##### TPM read quant
-        ###expand("{runid}/results/reads/star/mrkdup/tpm/{sample}_genes.out", runid= runid, sample= idkeys),
-        ##### bedtools coverage & percentage across target region
-        #expand("{runid}/results/qc/bedtools/{sample}/bcov.tsv", runid= runid, sample= idkeys),
-        ##expand("{runid}/results/qc/bedtools/{sample}/bcov.perc.tsv", runid= runid, sample= idkeys),
-        ##### fusions & exon skipping
-        ######expand("{runid}/results/arriba/{sample}/fusions.{prefix}.fltrd.tsv", runid= runid, sample= idkeys, prefix= ['clinout', 'nonclinout']),
-        #expand("{runid}/results/arriba/{sample}/fusions.clinout.fltrd.ex.tsv", runid= runid, sample= idkeys),
-        #expand("{runid}/results/qc/rseqc_multiqc_report.html", runid= runid),
-        ###### rMats 
-        ##expand("{runid}/results/rmats/{sample}.exonSkip.tsv", runid= runid, sample= idkeys, chrom= ['chr7', 'chr17', 'chrX']),
-        expand("{bcldir}{analysis_path}/run.done", runid= runid, bcldir= bcldir, analysis_path= analysis_path),
+        expand("{runid}/results/bcl2fq/{sample}.{read}_001.fastq.gz", runid=runid, sample=wts_samples, read=["R1", "R2"]),
+        # QC (kept in run.done)
+        expand("{runid}/results/qc/fastqc_multiqc_report.html", runid=runid),
+        expand("{runid}/results/qc/bedtools/{sample}/bcov.tsv", runid=runid, sample=wts_samples),
+        expand("{runid}/results/qc/n10_cov/{sample}.n10.tsv", runid=runid, sample=wts_samples),
+        # duplicate-rate QC (optical + PCR)
+        expand("{runid}/results/clumpify/{mode}/{sample}.clump.stats.txt", runid=runid, sample=wts_samples, mode=["opt", "pcr"]),
+        # raw deliverables
+        expand("{runid}/results/arriba/{sample}/fusions.tsv", runid=runid, sample=wts_samples),
+        expand("{runid}/results/arriba/{sample}/fusions.discarded.tsv", runid=runid, sample=wts_samples),
+        expand("{runid}/results/rmats/{sample}/SE.MATS.JC.txt", runid=runid, sample=wts_samples),
+        expand("{runid}/results/rmats/{sample}.egfr_v3.out", runid=runid, sample=wts_samples),
+        # final target
+        expand("{bcldir}{analysis_path}/run.done", runid=runid, bcldir=bcldir, analysis_path=analysis_path),
