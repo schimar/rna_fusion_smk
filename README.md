@@ -39,6 +39,22 @@ Make sure you have all of the necessary resource files copied into the
 rsync -avzP /mnt/routine/pipelines/shared_resources/rna_v1/* resources/
 ```
 
+### Reference genome
+
+The reference genome is selected in `config/config.yaml` via the `ref` key
+(file stem). The default is
+`GRCh38_GIABv3_no_alt_analysis_set_maskedGRC_decoys_MAP2K3_KMT2C_KCNJ18`, so
+`resources/` must contain, named after that stem:
+
+- `<ref>.fasta` — reference sequence
+- `<ref>.gtf` — annotation
+- `<ref>.txt` — chromosome names/sizes (used by `bedtools sort -faidx` / `-g`)
+- `star_<ref>/` — STAR index (built by the workflow's `star_index` rule)
+
+The arriba blacklist is build-specific and set via `arriba_blacklist`.
+To run a different genome, provide the files under the new stem and set
+`ref:` (and `arriba_blacklist:`) accordingly.
+
 ### Docker image
 
 The image must exist on the host (pull once before running):
@@ -112,9 +128,9 @@ preserved in the delivered results.
 
 ## other useful features
 
-### get the directed acyclic graph (DAG) as pdf:
+### get the rulegraph (preferred over the full DAG) as png:
 ```
-../sub-smk-job.sh -n --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> analysis_path=analysis_rna --dag --quiet | dot -Tpng > dag.png
+../sub-smk-job.sh -n --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> analysis_path=analysis_rna --rulegraph --quiet | dot -Tpng > rulegraph.png
 ```
 
 ### if you had to cancel a run or if there was an error, append ``--rerun-incomplete`` to the respective command

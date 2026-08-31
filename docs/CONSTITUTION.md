@@ -170,3 +170,24 @@ builds: colocated in `resources/`).
 - Integrity sidecars (`.size`, `.sha256`) — DEFERRED to a later branch.
 - Old-path rules (`umi.smk`, `sub_chr` chain, filter rules, rseqc/deeptools)
   are inert and keep their old paths (cleanup branch).
+
+## 11. Amendment B — configurable reference genome
+
+- The reference genome is selected in `config.yaml` via a single `ref` key =
+  file stem under `workflow/resources/`. Derived names:
+  `{ref}.fasta`, `{ref}.gtf`, `{ref}.txt` (chrom sizes for bedtools),
+  `{ref}.dict`, `{ref}.fasta.fai`, and STAR index dir `resources/star_{ref}/`.
+- Default (`D8`, RESOLVED):
+  `GRCh38_GIABv3_no_alt_analysis_set_maskedGRC_decoys_MAP2K3_KMT2C_KCNJ18`.
+- The arriba blacklist is build-specific → new config key `arriba_blacklist`
+  (default `resources/blacklist_hg38_GRCh38_v2.3.0.tsv`).
+- Globals defined once in `common.smk` (`ref`, `genome_fa`, `genome_gtf`,
+  `genome_txt`, `genome_dict`, `genome_fai`, `star_idx`,
+  `arriba_blacklist`); all active rules (`star_index`, `sort_bed`,
+  `map_star`, `arriba`, `rMats`, `targetcov_bed`, `rule all`) consume the
+  globals. Inert legacy rules keep literal old paths (cleanup branch).
+- The old `ref: {species, release, build}` download settings are preserved in
+  config as `legacy_ref:` (unused).
+- DAG/rulegraph image artifacts (`workflow/dag*.png`, `workflow/rulegraph*.png`)
+  are git-ignored; going forward only the **rulegraph** is generated (`D9`,
+  RESOLVED — user preference over the full DAG).

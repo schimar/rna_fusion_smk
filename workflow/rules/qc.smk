@@ -3,7 +3,7 @@ rule targetcov_bed:
     input:
         bam= "{runid}/results/bam/{sample}.bam",
         bed= config["bed"].split('.')[0] + ".srtd.bed",     #"resources/twist_rna_exome_target_regions_hg38_annotated.srtd.bed",
-        genord="resources/genome.txt"
+        genord=genome_txt
     output:
         "{runid}/results/quality_control/bam/{sample}.bcov.tsv"
     log: "{runid}/results/quality_control/bam/{sample}.targetcov_bed.log"

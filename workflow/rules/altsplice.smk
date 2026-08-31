@@ -73,7 +73,7 @@ rule rMats:
         bam = "{runid}/results/bam/{sample}.bam",
         bamls = "{runid}/results/splicing/{sample}.bam.list",
         medRL = "{runid}/results/splicing/{sample}.medianRL.txt",
-        gtf = "resources/genome.gtf",
+        gtf = genome_gtf,
     output:
         se = "{runid}/results/splicing/{sample}.SE.MATS.JC.txt",
     wildcard_constraints:

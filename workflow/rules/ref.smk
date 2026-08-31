@@ -31,9 +31,9 @@
 
 rule genome_faidx:
     input:
-        "resources/genome.fa",
+        genome_fa,
     output:
-        "resources/genome.fa.fai",
+        genome_fai,
     log:
         "resources/genome_faidx.log",
     cache: True
@@ -43,9 +43,9 @@ rule genome_faidx:
 
 rule bwa_index:
     input:
-        "resources/genome.fa",
+        genome_fa,
     output:
-        multiext("resources/genome.fa", ".0123", ".amb", ".ann", ".bwt.2bit.64", ".pac"),
+        multiext(genome_fa, ".0123", ".amb", ".ann", ".bwt.2bit.64", ".pac"),
     log:
         "resources/bwa_index.log",
     resources:
@@ -57,13 +57,13 @@ rule bwa_index:
 
 rule star_index:
     input:
-        fasta="resources/genome.fa",
-        annotation="resources/genome.gtf",
+        fasta=genome_fa,
+        annotation=genome_gtf,
     output:
-        directory("resources/star_genome"),
+        directory(star_idx),
     threads: 8
     params:
-      extra=lambda wc, input:"--sjdbGTFfile resources/genome.gtf --sjdbOverhang 100",
+      extra=lambda wc, input: f"--sjdbGTFfile {genome_gtf} --sjdbOverhang 100",
     log:
         "resources/star_index.log",
     cache: True
@@ -75,9 +75,9 @@ rule star_index:
 
 rule create_dict:
     input:
-        "resources/genome.fa",
+        genome_fa,
     output:
-        "resources/genome.dict",
+        genome_dict,
     log:
         "resources/create_dict.log",
     params:
@@ -95,7 +95,7 @@ rule create_dict:
 rule bed_to_interval_list:
     input:
         bed="resources/{bed}_file_UMI_demo_data_hg38.bed",
-        dict="resources/genome.dict",
+        dict=genome_dict,
     output:
         "resources/{bed}_file_UMI_demo_data_hg38.interval_list",
     log:
@@ -115,7 +115,7 @@ rule bed_to_interval_list:
 rule sort_bed:
   input:
     bed = config["bed"],
-    chroms = "resources/genome.txt"
+    chroms = genome_txt
   output:
     "{bed_file_stem}.srtd.bed"
   log: "{bed_file_stem}.sort_bed.log"

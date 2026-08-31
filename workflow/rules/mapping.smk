@@ -10,8 +10,8 @@ rule map_star:
     input:
         fq1 = "{runid}/results/fastq/{sample}.R1_001.fastq.gz",
         fq2 = "{runid}/results/fastq/{sample}.R2_001.fastq.gz",
-        idx = "resources/star_genome",
-        gtf = "resources/genome.gtf",
+        idx = star_idx,
+        gtf = genome_gtf,
     output:
         aln = temp("{runid}/results/bam/{sample}.star.bam"),
         sj  = "{runid}/results/bam/{sample}.star/SJ.out.tab",

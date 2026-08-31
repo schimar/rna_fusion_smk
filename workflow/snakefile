@@ -25,8 +25,8 @@ include: "rules/out.smk"
 
 rule all:
     input:
-        "resources/genome.fa",
-        "resources/genome.gtf",
+        genome_fa,
+        genome_gtf,
         expand("{runid}/results/fastq/{sample}.{read}_001.fastq.gz", runid=runid, sample=wts_samples, read=["R1", "R2"]),
         # QC (kept in run.done)
         expand("{runid}/results/quality_control/fastq/multiqc_report.html", runid=runid),

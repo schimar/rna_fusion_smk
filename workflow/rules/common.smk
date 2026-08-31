@@ -15,6 +15,18 @@ analysis_path = config['analysis_path']
 rgid = bcldir.split('_')[1]  # config['rgID']
 bed_file = config['bed']
 bed_file_stem = bed_file.split('.')[0]
+
+# Reference genome (configurable via config.yaml 'ref' = file stem):
+#   resources/{ref}.fasta | .gtf | .txt (chrom sizes) | .dict | .fasta.fai
+#   star index dir: resources/star_{ref}/
+ref = config['ref']
+genome_fa = f"resources/{ref}.fasta"
+genome_gtf = f"resources/{ref}.gtf"
+genome_txt = f"resources/{ref}.txt"
+genome_dict = f"resources/{ref}.dict"
+genome_fai = f"resources/{ref}.fasta.fai"
+star_idx = f"resources/star_{ref}"
+arriba_blacklist = config['arriba_blacklist']
 r1_read_structure = config["r1_read_structure"]
 r2_read_structure = config["r2_read_structure"]
 samples_tsv = '/'.join([runid, 'samples.tsv'])
