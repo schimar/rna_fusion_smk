@@ -85,6 +85,31 @@ The workflow finishes when `{bcldir}/{analysis_path}/run.done` exists
 - A derived `samples.tsv` (sample_id + is_wts) is written into `runid/` for
   transparency.
 
+## Results layout (checkpoint files)
+
+Results are written in a **checkpoint-file layout** (aligned with the varCAD
+workflow): one top-level directory per file type, the sample identity lives in
+the **filename**, QC mirrors the type of the file it was derived from, and each
+rule's log is written **next to its output** as `{output}.{rule}.log`
+(universal rules like `bcl_convert`/`multiqc` get `{dir}/{rule}.log`;
+reference-build logs stay colocated in `resources/`).
+
+```
+{runid}/results/
+  fastq/     {sample}.R{1,2}_001.fastq.gz (+ Reports/ Stats/ InterOp/ RunInfo.xml RunParameters.xml)
+  bam/       {sample}.bam | {sample}.bam.bai | {sample}.star/SJ.out.tab
+  fusions/   {sample}.fusions.tsv | {sample}.fusions.discarded.tsv (+ other arriba artifacts)
+  splicing/  {sample}.SE.MATS.JC.txt | {sample}.egfr_v3.out
+  quality_control/
+    fastq/   {sample}.bbmerge.hist.txt | {sample}.clump.{opt,pcr}.stats.txt | multiqc_report.html
+    bam/     {sample}.bcov.tsv | {sample}.n10.tsv
+```
+
+The alignment checkpoint is a **BAM** for now (STAR's native output; a CRAM
+checkpoint may be added later). The final `rsync` simply mirrors
+`{runid}/results/` into `{bcldir}{analysis_path}/`, so this layout is
+preserved in the delivered results.
+
 ## other useful features
 
 ### get the directed acyclic graph (DAG) as pdf:

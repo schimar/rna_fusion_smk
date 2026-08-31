@@ -1,14 +1,12 @@
 
 rule targetcov_bed:
     input:
-        bam= "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        bam= "{runid}/results/bam/{sample}.bam",
         bed= config["bed"].split('.')[0] + ".srtd.bed",     #"resources/twist_rna_exome_target_regions_hg38_annotated.srtd.bed",
         genord="resources/genome.txt"
     output:
-        "{runid}/results/qc/bedtools/{sample}/bcov.tsv"
-    conda:
-      "../envs/hts.yaml"
-    log: "{runid}/logs/bedtools/{sample}.cov.log"
+        "{runid}/results/quality_control/bam/{sample}.bcov.tsv"
+    log: "{runid}/results/quality_control/bam/{sample}.targetcov_bed.log"
     threads: 57
     resources:
         mem_gb = 242
@@ -20,13 +18,11 @@ rule targetcov_bed:
 
 rule cov_n10:
     input:
-        cov = "{runid}/results/qc/bedtools/{sample}/bcov.tsv",
+        cov = "{runid}/results/quality_control/bam/{sample}.bcov.tsv",
         genes = "resources/winters_and_cegat_genes.tsv"
     output:
-        "{runid}/results/qc/n10_cov/{sample}.n10.tsv"
-    conda:
-      "../envs/hts.yaml"
-    log: "{runid}/logs/bedtools/{sample}.cov_n10.log"
+        "{runid}/results/quality_control/bam/{sample}.n10.tsv"
+    log: "{runid}/results/quality_control/bam/{sample}.cov_n10.log"
     threads: 6
     shell: """
         python scripts/clinFuseCov.py -c {input.cov} -d {input.genes} > {output} 2> {log}
@@ -49,16 +45,16 @@ rule targetcov_perc:
 
 rule clumpify_opt_dup:
     input:
-        r1= "{runid}/results/bcl2fq/{sample}.R1_001.fastq.gz",
-        r2= "{runid}/results/bcl2fq/{sample}.R2_001.fastq.gz"
+        r1= "{runid}/results/fastq/{sample}.R1_001.fastq.gz",
+        r2= "{runid}/results/fastq/{sample}.R2_001.fastq.gz"
     output:
-        r1= temp("{runid}/results/clumpify/opt/{sample}_R1.fq.gz"),
-        r2= temp("{runid}/results/clumpify/opt/{sample}_R2.fq.gz"),
-        stats= touch("{runid}/results/clumpify/opt/{sample}.clump.stats.txt")
+        r1= temp("{runid}/results/quality_control/fastq/{sample}.clump.opt.R1.fq.gz"),
+        r2= temp("{runid}/results/quality_control/fastq/{sample}.clump.opt.R2.fq.gz"),
+        stats= touch("{runid}/results/quality_control/fastq/{sample}.clump.opt.stats.txt")
     wildcard_constraints:
         sample= common_constraint
     log:
-        "{runid}/logs/clumpify/opt/{sample}.log"
+        "{runid}/results/quality_control/fastq/{sample}.clumpify_opt.log"
     params:
         extra= "optical",
         dupedist= 12000,   # for NovaSeq. If using NextSeq, then use 40
@@ -72,16 +68,16 @@ rule clumpify_opt_dup:
 
 rule clumpify_pcr_dup:
     input:
-        r1= "{runid}/results/bcl2fq/{sample}.R1_001.fastq.gz",
-        r2= "{runid}/results/bcl2fq/{sample}.R2_001.fastq.gz"
+        r1= "{runid}/results/fastq/{sample}.R1_001.fastq.gz",
+        r2= "{runid}/results/fastq/{sample}.R2_001.fastq.gz"
     output:
-        r1= temp("{runid}/results/clumpify/pcr/{sample}_R1.fq.gz"),
-        r2= temp("{runid}/results/clumpify/pcr/{sample}_R2.fq.gz"),
-        stats= touch("{runid}/results/clumpify/pcr/{sample}.clump.stats.txt")
+        r1= temp("{runid}/results/quality_control/fastq/{sample}.clump.pcr.R1.fq.gz"),
+        r2= temp("{runid}/results/quality_control/fastq/{sample}.clump.pcr.R2.fq.gz"),
+        stats= touch("{runid}/results/quality_control/fastq/{sample}.clump.pcr.stats.txt")
     wildcard_constraints:
         sample= common_constraint
     log:
-        "{runid}/logs/clumpify/pcr/{sample}.log"
+        "{runid}/results/quality_control/fastq/{sample}.clumpify_pcr.log"
     params:
         extra= "",
         subs= 2
@@ -95,16 +91,14 @@ rule clumpify_pcr_dup:
 
 rule fastqc_bbmerged:
     input:
-        "{runid}/results/bbmerge/{sample}.fq.gz"
+        "{runid}/results/quality_control/fastq/{sample}.bbmerge.fq.gz"
     output:
-        html="{runid}/results/qc/bbmerge/fastqc/{sample}.html",
-        zip="{runid}/results/qc/bbmerge/fastqc/{sample}_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
-    conda:
-      "../envs/hts.yaml"
+        html="{runid}/results/quality_control/fastq/{sample}.bbmerge_fastqc.html",
+        zip="{runid}/results/quality_control/fastq/{sample}.bbmerge_fastqc.zip" # the suffix _fastqc.zip is necessary for multiqc to find the file. If not using multiqc, you are free to choose an arbitrary filename
     params:
         extra = "--quiet"
     log:
-        "{runid}/logs/qc/fastqc_bbmerge/{sample}.log"
+        "{runid}/results/quality_control/fastq/{sample}.fastqc_bbmerged.log"
     threads: 1
     resources:
         mem_mb = 1024
@@ -114,15 +108,13 @@ rule fastqc_bbmerged:
 
 rule multiqc_bbmerged:
     input:
-        expand("{runid}/results/qc/bbmerge/fastqc/{sample}.html", runid= runid, sample= idkeys)
+        expand("{runid}/results/quality_control/fastq/{sample}.bbmerge_fastqc.html", runid= runid, sample= idkeys)
     output:
-        "{runid}/results/qc/fastqc_multiqc_report.html"
-    conda:
-      "../envs/hts.yaml"
+        "{runid}/results/quality_control/fastq/multiqc_report.html"
     params:
         extra="--zip-data-dir"
     log:
-        "{runid}/logs/qc/multiqc_bbmerged.log"
+        "{runid}/results/quality_control/fastq/multiqc_bbmerged.log"
     wrapper:
         "v2.12.0/bio/multiqc"
 

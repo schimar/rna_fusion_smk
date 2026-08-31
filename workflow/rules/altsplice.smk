@@ -3,15 +3,13 @@ ruleorder: samtools_index > egfr_v3
 
 rule samtools_index:
     input:
-        "{runid}/results/reads/star/mrkdup/{sample}.bam", 
+        "{runid}/results/bam/{sample}.bam", 
     output:
-      "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
-    conda:
-      "../envs/hts.yaml"
+      "{runid}/results/bam/{sample}.bam.bai",
     wildcard_constraints:
         sample = common_constraint
     log:
-      "{runid}/logs/samtools_index/{sample}.log",
+      "{runid}/results/bam/{sample}.samtools_index.log",
     params:
         extra="",  # optional params string
     threads: 9  # This value - 1 will be sent to -@
@@ -54,14 +52,14 @@ rule sambamba_rmdup_sub:
 
 rule rmats_createin:
     input:
-        bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        bam = "{runid}/results/bam/{sample}.bam",
     output:
-        bamls = "{runid}/results/reads/star/mrkdup/{sample}.bam.list",
-        medRL = "{runid}/results/reads/star/mrkdup/{sample}.medianRL.txt",
+        bamls = temp("{runid}/results/splicing/{sample}.bam.list"),
+        medRL = temp("{runid}/results/splicing/{sample}.medianRL.txt"),
     #wildcard_constraints:
     #    sample = common_constraint
     log:
-        "{runid}/logs/rmats_createin/{sample}.log",
+        "{runid}/results/splicing/{sample}.rmats_createin.log",
     shell:
         """
         # get the median read length from bam
@@ -72,20 +70,22 @@ rule rmats_createin:
 
 rule rMats:
     input:
-        bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
-        bamls = "{runid}/results/reads/star/mrkdup/{sample}.bam.list",
-        medRL = "{runid}/results/reads/star/mrkdup/{sample}.medianRL.txt",
+        bam = "{runid}/results/bam/{sample}.bam",
+        bamls = "{runid}/results/splicing/{sample}.bam.list",
+        medRL = "{runid}/results/splicing/{sample}.medianRL.txt",
         gtf = "resources/genome.gtf",
     output:
-        se = "{runid}/results/rmats/{sample}/SE.MATS.JC.txt",
+        se = "{runid}/results/splicing/{sample}.SE.MATS.JC.txt",
     wildcard_constraints:
         sample = common_constraint,
     params:
         extra = "--variable-read-length --statoff",
-        # keep the directory for rmats.py to write to
-        direc = "{runid}/results/rmats/{sample}/",
+        # rmats.py writes a flat SE.MATS.JC.txt into its -od directory; give it
+        # a per-sample scratch dir and move the result to the sample-tagged
+        # checkpoint file afterwards
+        direc = "{runid}/results/splicing/.rmats_{sample}/",
     log:
-        "{runid}/logs/rmats/{sample}.log",
+        "{runid}/results/splicing/{sample}.rMats.log",
     threads: 12,
     shell:
         """
@@ -96,12 +96,11 @@ rule rMats:
         rmats.py --b1 {input.bamls} --readLength ${{readLen}} \
             --nthread {threads} --od {params.direc} \
             --gtf {input.gtf} --tmp {params.direc} {params.extra} \
-            > {log} 2>&1
+            > {log} 2>&1 &&
 
-        # touch the tracked file to make Snakemake happy
-        if [ ! -f {output.se} ]; then
-            echo "SE.MATS.JC content placeholder" > {output.se}
-        fi
+        # move the flat rmats output to the sample-tagged checkpoint file
+        mv {params.direc}/SE.MATS.JC.txt {output.se} &&
+        rm -rf {params.direc}
         """
 
 #rule rMats:
@@ -201,13 +200,11 @@ rule cat_exonSkippers:
 
 rule egfr_v3:
     input:
-        bam = "{runid}/results/reads/star/mrkdup/{sample}.bam",
-        bai = "{runid}/results/reads/star/mrkdup/{sample}.bam.bai",
+        bam = "{runid}/results/bam/{sample}.bam",
+        bai = "{runid}/results/bam/{sample}.bam.bai",
     output:
-        "{runid}/results/rmats/{sample}.egfr_v3.out"
-    conda:
-      "../envs/altsplice.yaml"
-    log: "{runid}/logs/egfr_v3/{sample}.log"
+        "{runid}/results/splicing/{sample}.egfr_v3.out"
+    log: "{runid}/results/splicing/{sample}.egfr_v3.log"
     shell: """
         egfr-v3-determiner -r hg38 {input.bam} -w all -v all > {output} 2> {log}
         """

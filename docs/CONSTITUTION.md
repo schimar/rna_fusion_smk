@@ -138,3 +138,35 @@ Acceptance: `snakemake -n` produces no fgbio/UMI/consensus rules; STAR runs read
 - D2 bcl-convert parallel-tiles value → tune, default from reference (~32) (PENDING measure at runtime).
 - D3 Dot-in-sample-name handling → warn + document (RESOLVED).
 - D4 QC set in `run.done` → fastqc/multiqc, bcov, n10cov (RESOLVED).
+
+## 10. Amendment A — checkpoint-file results layout (SUPERSEDES §6.1–6.4 paths)
+
+All results move from tool-centric dirs to a **checkpoint-file layout**
+(aligned with the varCAD workflow): top-level dir = checkpoint file type,
+sample identity lives in the filename, QC mirrors its source file type under
+`quality_control/{type}/`, and logs are **colocated with their output** as
+`{output_file}.{rule}.log` (universal rules: `{dir}/{rule}.log`; reference
+builds: colocated in `resources/`).
+
+| Checkpoint | Path |
+|---|---|
+| fastq | `results/fastq/{sample}.R{1,2}_001.fastq.gz` (+ `Reports/`, `Stats/`, `InterOp/`, `RunInfo.xml`, `RunParameters.xml`) |
+| alignment | `results/bam/{sample}.bam` + `.bam.bai` (STAR aux in `bam/{sample}.star/`) |
+| fusions | `results/fusions/{sample}.fusions.tsv` / `.discarded.tsv` (+ other arriba artifacts) |
+| splicing | `results/splicing/{sample}.SE.MATS.JC.txt` / `{sample}.egfr_v3.out` |
+| QC | `results/quality_control/fastq/{sample}.bbmerge.hist.txt`, `{sample}.clump.{opt,pcr}.stats.txt`, `multiqc_report.html`; `results/quality_control/bam/{sample}.bcov.tsv`, `{sample}.n10.tsv` |
+
+- D5 Alignment checkpoint format → **BAM now, CRAM later** (RESOLVED). The raw
+  STAR alignment is a temp `bam/{sample}.star.bam`; `bam/{sample}.bam` is the
+  markdup checkpoint consumed downstream.
+- D6 Arriba `fusions.vcf.gz` location → **`fusions/`** together with the TSVs
+  (RESOLVED; arriba artifacts stay together).
+- D7 rMATS/EGFR outputs → both under **`splicing/`** (RESOLVED). `rMats` writes
+  into a per-sample scratch dir `.rmats_{sample}/` and the result is moved to
+  the sample-tagged `splicing/{sample}.SE.MATS.JC.txt` (rmats.py writes a flat
+  filename); the placeholder-touch fallback was removed.
+- `out.smk` rsync now mirrors `{runid}/results/` → `{bcldir}{analysis_path}/`
+  (varCAD ExportFolder equivalent), preserving the checkpoint layout.
+- Integrity sidecars (`.size`, `.sha256`) — DEFERRED to a later branch.
+- Old-path rules (`umi.smk`, `sub_chr` chain, filter rules, rseqc/deeptools)
+  are inert and keep their old paths (cleanup branch).

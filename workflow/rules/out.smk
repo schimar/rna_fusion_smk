@@ -1,13 +1,13 @@
 rule rsync:
     input:
-        fastqc = expand("{runid}/results/qc/fastqc_multiqc_report.html", runid= runid),
-        arriba = expand("{runid}/results/arriba/{sample}/fusions.tsv", runid= runid, sample= wts_samples),
-        arriba_disc = expand("{runid}/results/arriba/{sample}/fusions.discarded.tsv", runid= runid, sample= wts_samples),
-        rmats = expand("{runid}/results/rmats/{sample}/SE.MATS.JC.txt", runid= runid, sample= wts_samples),
-        egfr = expand("{runid}/results/rmats/{sample}.egfr_v3.out", runid= runid, sample= wts_samples),
-        bcov = expand("{runid}/results/qc/bedtools/{sample}/bcov.tsv", runid= runid, sample= wts_samples),
-        n10cov = expand("{runid}/results/qc/n10_cov/{sample}.n10.tsv", runid= runid, sample= wts_samples),
-        clump  = expand("{runid}/results/clumpify/{mode}/{sample}.clump.stats.txt", runid= runid, sample= wts_samples, mode= ['opt', 'pcr']),
+        multiqc = expand("{runid}/results/quality_control/fastq/multiqc_report.html", runid= runid),
+        fusions = expand("{runid}/results/fusions/{sample}.fusions.tsv", runid= runid, sample= wts_samples),
+        fusions_disc = expand("{runid}/results/fusions/{sample}.fusions.discarded.tsv", runid= runid, sample= wts_samples),
+        splicing = expand("{runid}/results/splicing/{sample}.SE.MATS.JC.txt", runid= runid, sample= wts_samples),
+        egfr = expand("{runid}/results/splicing/{sample}.egfr_v3.out", runid= runid, sample= wts_samples),
+        bcov = expand("{runid}/results/quality_control/bam/{sample}.bcov.tsv", runid= runid, sample= wts_samples),
+        n10cov = expand("{runid}/results/quality_control/bam/{sample}.n10.tsv", runid= runid, sample= wts_samples),
+        clump  = expand("{runid}/results/quality_control/fastq/{sample}.clump.{mode}.stats.txt", runid= runid, sample= wts_samples, mode= ['opt', 'pcr']),
     output:
         touch("{bcldir}{analysis_path}/run.done"),
     wildcard_constraints:
@@ -16,9 +16,10 @@ rule rsync:
         bcldir = config["bcldir"],
         runid = config['runid'],
         final_dest = config['bcldir'] + config['analysis_path'],
-        log = config['bcldir'] + "{analysis_path}/logs/rsync.log",
+        log = config['bcldir'] + config['analysis_path'] + "/rsync.log",
     shell:"""
-        rsync -rDvz {params.runid}/* {params.final_dest}/ --log-file={params.log}
+        mkdir -p {params.final_dest} &&
+        rsync -rDvz {params.runid}/results/ {params.final_dest}/ --log-file={params.log}
         """
 
  ##dt=$(date '+%d%m%Y_%H%M')

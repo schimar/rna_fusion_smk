@@ -2,19 +2,19 @@
 # Read mapping with STAR (whole-transcriptome / fusion-ready alignment).
 #
 # Consumes the demuxed gzipped fastqs directly (bcl_convert output:
-# {runid}/results/bcl2fq/{sample}.R{1,2}_001.fastq.gz). Reads are gzipped, so
+# {runid}/results/fastq/{sample}.R{1,2}_001.fastq.gz). Reads are gzipped, so
 # STAR is given --readFilesCommand zcat.
 # -----------------------------------------------------------------------------
 
 rule map_star:
     input:
-        fq1 = "{runid}/results/bcl2fq/{sample}.R1_001.fastq.gz",
-        fq2 = "{runid}/results/bcl2fq/{sample}.R2_001.fastq.gz",
+        fq1 = "{runid}/results/fastq/{sample}.R1_001.fastq.gz",
+        fq2 = "{runid}/results/fastq/{sample}.R2_001.fastq.gz",
         idx = "resources/star_genome",
         gtf = "resources/genome.gtf",
     output:
-        aln = temp("{runid}/results/reads/star/{sample}.bam"),
-        sj  = "{runid}/results/reads/star/{sample}/SJ.out.tab",
+        aln = temp("{runid}/results/bam/{sample}.star.bam"),
+        sj  = "{runid}/results/bam/{sample}.star/SJ.out.tab",
     params:
         smpl= "{sample}",
         lib = "Library1",
@@ -34,7 +34,7 @@ rule map_star:
                "--alignInsertionFlush Right "
                "--alignSplicedMateMapLminOverLmate 0 --alignSplicedMateMapLmin 30"),
     log:
-        "{runid}/logs/star/{sample}.log",
+        "{runid}/results/bam/{sample}.map_star.log",
     threads: 24
     wildcard_constraints:
         sample = common_constraint,
@@ -42,7 +42,7 @@ rule map_star:
         """
         STAR --runThreadN {threads} --genomeDir {input.idx} \
             --readFilesIn {input.fq1} {input.fq2} {params.extra} \
-            --outFileNamePrefix {runid}/results/reads/star/{wildcards.sample}/ \
+            --outFileNamePrefix {runid}/results/bam/{wildcards.sample}.star/ \
             --outStd BAM_SortedByCoordinate \
             --outSAMattrRGline ID:{rgid} SM:{params.smpl} LB:{params.pl} PU:{params.pu} \
             > {output.aln} 2> {log}
@@ -51,13 +51,13 @@ rule map_star:
 
 rule star_index_dup:
     input:
-        "{runid}/results/reads/star/{sample}.bam",
+        "{runid}/results/bam/{sample}.star.bam",
     output:
-        "{runid}/results/reads/star/{sample}.bam.bai",
+        "{runid}/results/bam/{sample}.star.bam.bai",
     wildcard_constraints:
         sample = common_constraint,
     log:
-        "{runid}/logs/star_index_dup/{sample}.log",
+        "{runid}/results/bam/{sample}.star_index_dup.log",
     shell:
         """
         samtools index {input} > {log} 2>&1
@@ -66,15 +66,15 @@ rule star_index_dup:
 
 rule star_markdup:
     input:
-        "{runid}/results/reads/star/{sample}.bam",
+        "{runid}/results/bam/{sample}.star.bam",
     output:
-        "{runid}/results/reads/star/mrkdup/{sample}.bam",
+        "{runid}/results/bam/{sample}.bam",
     wildcard_constraints:
         sample = common_constraint,
     priority: 20
     threads: 8
     log:
-        "{runid}/logs/star_markdup/{sample}.log",
+        "{runid}/results/bam/{sample}.star_markdup.log",
     shell:
         """
         sambamba markdup -t {threads} --overflow-list-size 2000000 \

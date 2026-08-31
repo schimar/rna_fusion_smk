@@ -1,7 +1,7 @@
 
 rule arriba:
     input:
-        bam="{runid}/results/reads/star/mrkdup/{sample}.bam",
+        bam="{runid}/results/bam/{sample}.bam",
         genome="resources/genome.fa",
         annotation="resources/genome.gtf",
         # optional: # A custom tsv containing identified artifacts, such as read-through fusions of neighbouring genes.
@@ -11,11 +11,9 @@ rule arriba:
         # see https://arriba.readthedocs.io/en/latest/input-files/#blacklist
         custom_blacklist = "resources/blacklist_hg38_GRCh38_v2.3.0.tsv",  #[],
     output:
-        fusions="{runid}/results/arriba/{sample}/fusions.tsv",
-        discarded="{runid}/results/arriba/{sample}/fusions.discarded.tsv",
-        #done="{runid}/results/arriba/{sample}/arriba.done",
-    conda:
-      "../envs/star.yaml"
+        fusions="{runid}/results/fusions/{sample}.fusions.tsv",
+        discarded="{runid}/results/fusions/{sample}.fusions.discarded.tsv",
+        #done="{runid}/results/fusions/{sample}.arriba.done",
     params:
         # required if blacklist or known_fusions is set
         genome_build="GRCh38",
@@ -23,7 +21,7 @@ rule arriba:
         default_known_fusions=True,
         extra="-u",   #alignIntronMax",
     log:
-        "{runid}/logs/arriba/{sample}.log",
+        "{runid}/results/fusions/{sample}.arriba.log",
     threads: 1
     wrapper:
         "v1.23.4/bio/arriba"

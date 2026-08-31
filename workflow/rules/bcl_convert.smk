@@ -4,7 +4,7 @@
 # - bcl-convert demuxes ALL samples in the SampleSheet (incl. non-WTS), but
 #   this workflow declares outputs ONLY for the WTS samples (wts_samples).
 # - After conversion, ALL produced fastqs are renamed/moved out of the fresh
-#   tmp dir into the final bcl2fq/ directory (so non-WTS demux is preserved
+#   tmp dir into the final fastq/ directory (so non-WTS demux is preserved
 #   on disk for the future full workflow even though it is not tracked here).
 # - Final naming: {sample}.R{1,2}_001.fastq.gz
 #   (bcl-convert emits {sample}_S<index>_R{1,2}_001.fastq.gz; the trailing
@@ -16,14 +16,14 @@ rule bcl_convert:
     input:
         sheet= bcldir + "/SampleSheet_rna.csv",
     output:
-        expand("{runid}/results/bcl2fq/{sample}.{read}_001.fastq.gz",
+        expand("{runid}/results/fastq/{sample}.{read}_001.fastq.gz",
                runid= runid, sample= wts_samples, read=["R1", "R2"]),
     params:
         bcldir= bcldir,
-        outdir= runid + "/results/bcl2fq/",
-        bcl_tmp= runid + "/results/bcl2fq/.tmp_bcl",
+        outdir= runid + "/results/fastq/",
+        bcl_tmp= runid + "/results/fastq/.tmp_bcl",
     log:
-        runid + "/logs/bcl_convert.log",
+        runid + "/results/fastq/bcl_convert.log",
     threads: 56
     shell:
         """
@@ -49,7 +49,11 @@ rule bcl_convert:
         #   SAMPLE_S<index>_R<read>_001.fastq.gz  ->  SAMPLE.R<read>_001.fastq.gz
         python3 scripts/rename_bcl_fastqs.py {params.bcl_tmp} {params.outdir}
 
-        # remove the tmp dir (Reports etc. are regenerated on demand)
+        # keep demux metadata alongside the fastqs (checkpoint convention)
+        cp -r {params.bcl_tmp}/Reports {params.bcl_tmp}/Stats {params.outdir} 2>/dev/null || true
+        cp {params.bcldir}/RunInfo.xml {params.bcldir}/RunParameters.xml {params.outdir} 2>/dev/null || true
+
+        # remove the tmp dir
         rm -rf {params.bcl_tmp}
         """
 
@@ -60,17 +64,17 @@ rule bcl_convert:
 # -----------------------------------------------------------------------------
 rule bbmerge_fqs:
     input:
-        fq1 = "{runid}/results/bcl2fq/{sample}.R1_001.fastq.gz",
-        fq2 = "{runid}/results/bcl2fq/{sample}.R2_001.fastq.gz",
+        fq1 = "{runid}/results/fastq/{sample}.R1_001.fastq.gz",
+        fq2 = "{runid}/results/fastq/{sample}.R2_001.fastq.gz",
     output:
-        out   = temp("{runid}/results/bbmerge/{sample}.fq.gz"),
-        outu1 = temp("{runid}/results/bbmerge/outu/{sample}.1.fq.gz"),
-        outu2 = temp("{runid}/results/bbmerge/outu/{sample}.2.fq.gz"),
-        hist  = "{runid}/results/bbmerge/{sample}.hist.txt",
+        out   = temp("{runid}/results/quality_control/fastq/{sample}.bbmerge.fq.gz"),
+        outu1 = temp("{runid}/results/quality_control/fastq/{sample}.bbmerge.unmerged.1.fq.gz"),
+        outu2 = temp("{runid}/results/quality_control/fastq/{sample}.bbmerge.unmerged.2.fq.gz"),
+        hist  = "{runid}/results/quality_control/fastq/{sample}.bbmerge.hist.txt",
     wildcard_constraints:
         sample = common_constraint,
     log:
-        "{runid}/logs/bbmerge/{sample}.log",
+        "{runid}/results/quality_control/fastq/{sample}.bbmerge_fqs.log",
     priority: 1
     threads: 12
     shell:
