@@ -14,7 +14,8 @@
 
 rule bcl_convert:
     input:
-        sheet= bcldir + "/SampleSheet_rna.csv",
+        sheet=sample_sheet,
+        samples=samples_tsv,
     output:
         expand("{runid}/results/fastq/{sample}.{read}_001.fastq.gz",
                runid= runid, sample= wts_samples, read=["R1", "R2"]),

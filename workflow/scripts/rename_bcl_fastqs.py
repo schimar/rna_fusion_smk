@@ -29,20 +29,30 @@ def main() -> int:
     bcl_tmp, outdir = sys.argv[1], sys.argv[2]
     os.makedirs(outdir, exist_ok=True)
 
-    moved = 0
-    for fq in sorted(glob.glob(os.path.join(bcl_tmp, "*.fastq.gz"))):
+    fastqs = sorted(glob.glob(os.path.join(bcl_tmp, "*.fastq.gz")))
+    moves = []
+    errors = []
+    for fq in fastqs:
         base = os.path.basename(fq)
         m = PATTERN.match(base)
         if not m:
-            print(f"warning: unexpected fastq name {base!r}; leaving in tmp dir")
+            errors.append(f"unexpected fastq name {base!r}")
             continue
         dest = os.path.join(outdir, f"{m.group(1)}.R{m.group(2)}_001.fastq.gz")
         if os.path.exists(dest):
-            print(f"warning: {dest} already exists; skipping")
+            errors.append(f"destination already exists: {dest}")
             continue
+        moves.append((fq, dest))
+
+    if errors:
+        for error in errors:
+            print(f"error: {error}", file=sys.stderr)
+        print("no fastq files were moved; preserving bcl-convert output", file=sys.stderr)
+        return 1
+
+    for fq, dest in moves:
         os.replace(fq, dest)
-        moved += 1
-    print(f"moved {moved} fastq files into {outdir}")
+    print(f"moved {len(moves)} fastq files into {outdir}")
     return 0
 
 

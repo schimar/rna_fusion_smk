@@ -1,4 +1,5 @@
 import glob
+import csv
 from pathlib import Path
 import os
 import shutil
@@ -12,7 +13,7 @@ from snakemake.utils import validate
 runid = config['runid']
 bcldir = config['bcldir']
 analysis_path = config['analysis_path']
-rgid = bcldir.split('_')[1]  # config['rgID']
+rgid = config.get('rgid') or Path(bcldir).name
 bed_file = config['bed']
 bed_file_stem = bed_file.split('.')[0]
 
@@ -29,13 +30,7 @@ star_idx = f"resources/star_{ref}"
 #r1_read_structure = config["r1_read_structure"]
 #r2_read_structure = config["r2_read_structure"]
 samples_tsv = '/'.join([runid, 'samples.tsv'])
-sample_sheet = bcldir + '/SampleSheet_rna.csv'
-
-# Create necessary directories
-pr = Path('/'.join([runid, 'results/']))
-pr.mkdir(parents=True, exist_ok=True)
-pl = Path('/'.join([runid, 'logs/']))
-pl.mkdir(parents=True, exist_ok=True)
+sample_sheet = config.get('sample_sheet') or bcldir + '/SampleSheet.csv'
 
 
 def parse_sample_sheet(sheet_path):
@@ -52,12 +47,11 @@ def parse_sample_sheet(sheet_path):
         print(f"Warning: SampleSheet not found: {sheet_path}")
         return sample_ids
     col = None
-    with open(sheet_path) as fh:
-        for line in fh:
-            line = line.strip('\r\n')
-            if not line:
+    with open(sheet_path, newline="") as fh:
+        for row in csv.reader(fh):
+            cols = [cell.strip() for cell in row]
+            if not any(cols):
                 continue
-            cols = [c.strip() for c in line.split(',')]
             if col is None:
                 # header row: the row that contains the 'Sample_ID' column
                 if 'Sample_ID' in cols:
@@ -88,10 +82,15 @@ idkeys = list(wts_samples)
 # artifact. This is derived, NOT the source of truth.
 samples_df = pd.DataFrame({'sample_id': all_sample_ids})
 samples_df['is_wts'] = samples_df['sample_id'].apply(lambda s: 'WTS' in s)
-Path('/'.join([runid])).mkdir(parents=True, exist_ok=True)
-samples_df.to_csv(samples_tsv, sep='\t', index=False)
 print(f"WTS samples: {wts_samples}")
-print(f"sample table written to {samples_tsv}")
+
+
+rule write_samples_table:
+    output:
+        samples_tsv,
+    run:
+        Path(output[0]).parent.mkdir(parents=True, exist_ok=True)
+        samples_df.to_csv(output[0], sep='\t', index=False)
 
 # -----------------------------------------------------------------------------
 # Wildcard constraints

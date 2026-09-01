@@ -20,6 +20,10 @@ ref: "GRCh38_GIABv3_no_alt_analysis_set_maskedGRC_decoys_MAP2K3_KMT2C_KCNJ18"
 # NOTE: eventually, get these values from one of the input files??
 runid: "rnaSeq"
 bcldir: "dummy_A01358"
+# Optional: defaults to the bcldir basename when omitted.
+# rgid: "A01358"
+# Optional: defaults to <bcldir>/SampleSheet.csv when omitted.
+# sample_sheet: "/path/to/SampleSheet.csv"
 analysis_path: "analysis_rna"   # output will be rsync'd to {bcldir}/analysis_rna/ (see also out.smk and common.smk)
 #rgID: "A01358"
 r1_read_structure: "5M2S+T"  #"8M+T"

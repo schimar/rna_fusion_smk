@@ -18,7 +18,7 @@ is not used.
 ## Prerequisites before running the workflow
 
 - A NovaSeq run folder (`bcldir`) containing the BCL data and a
-  `SampleSheet_rna.csv`
+  `SampleSheet.csv`, or a separate SampleSheet path supplied as `sample_sheet`
 - `runid`: where to write results (consider local SSD)
 - The resource/reference files in `workflow/resources/` (genome, indices, bed,
   gene lists). See below.
@@ -69,19 +69,21 @@ You need the following info:
 
 - `runid`: where to write results (consider local SSD)
 - `bcldir`: location of the NovaSeq run folder (final output is copied back there)
-- `SampleSheet_rna.csv` in `bcldir`
+- `rgid` (optional): read-group ID; defaults to the `bcldir` basename
+- `sample_sheet` (optional): path to the SampleSheet; defaults to
+  `<bcldir>/SampleSheet.csv`
 
 ### 2) perform a dry-run
 
 ```
 cd <repo>/workflow
-../sub-smk-job.sh -n --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> analysis_path=analysis_rna
+../sub-smk-job.sh -n --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> sample_sheet=<PATH/TO/SampleSheet.csv> analysis_path=analysis_rna
 ```
 
 ### 3) run the workflow
 
 ```
-../sub-smk-job.sh -j50 --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> analysis_path=analysis_rna
+../sub-smk-job.sh -j50 --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> sample_sheet=<PATH/TO/SampleSheet.csv> analysis_path=analysis_rna
 ```
 
 The workflow finishes when `{bcldir}/{analysis_path}/run.done` exists
@@ -89,8 +91,9 @@ The workflow finishes when `{bcldir}/{analysis_path}/run.done` exists
 
 ## Sample definition
 
-- The `SampleSheet_rna.csv` in `bcldir` is the source of truth for the sample
-  list (both v1 and v2 sheet layouts are supported).
+- The `sample_sheet` config value, or `<bcldir>/SampleSheet.csv` by default,
+  is the source of truth for the sample list (both v1 and v2 sheet layouts are
+  supported).
 - A sample is treated as a WTS sample iff its full `Sample_ID` contains `WTS`.
   The rest of the ID (patient identifiers, `_S<n>` suffix, ...) is not
   interpreted.

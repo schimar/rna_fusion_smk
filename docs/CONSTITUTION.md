@@ -58,7 +58,7 @@ Acceptance: `./sub-smk-job.sh -n --config runid=... bcldir=... analysis_path=...
 ### 4.1 `bcl_convert` rule (rewrite; keep; `bcl2fq` dropped)
 - Use `bcl-convert 4.5.4` with:
   - `--bcl-input-directory {bcldir}`
-  - `--sample-sheet {bcldir}/SampleSheet_rna.csv`
+  - `--sample-sheet {sample_sheet}` (defaults to `{bcldir}/SampleSheet.csv`)
   - `--output-directory <fresh tmp dir>` (must not pre-exist; bcl-convert 4.x requirement)
   - `--no-lane-splitting true`
   - `--bcl-sampleproject-subdirectories false`
@@ -70,7 +70,8 @@ Acceptance: demuxed files exist at `{runid}/results/bcl2fq/{sample}.R1_001.fastq
 
 ### 4.2 Sample definition & selection (replaces `units.tsv`)
 
-- **Source of truth = SampleSheet** (`{bcldir}/SampleSheet_rna.csv`), read at **parse time**.
+- **Source of truth = SampleSheet** (`{sample_sheet}`, defaulting to
+  `{bcldir}/SampleSheet.csv`), read at **parse time**.
 - Support **both v1 and v2** sheet layouts:
   - v1: header row contains `Sample_ID` at column 0.
   - v2 (NovaSeqX+): locate `Sample_ID` by header name (may be any column).

@@ -27,6 +27,7 @@ rule all:
     input:
         genome_fa,
         genome_gtf,
+        samples_tsv,
         expand("{runid}/results/fastq/{sample}.{read}_001.fastq.gz", runid=runid, sample=wts_samples, read=["R1", "R2"]),
         # QC (kept in run.done)
         expand("{runid}/results/quality_control/fastq/multiqc_report.html", runid=runid),
