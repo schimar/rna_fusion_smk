@@ -6,7 +6,7 @@ gtf: "/home/schimar/bio/ref/GCF_000001405.25_GRCh37.p13_genomic.gtf"
 
 splicingTargets: "../config/splicingTargets.tsv"
 
-bed: "resources/twist_rna_exome_target_regions_hg38_annotated.bed"
+bed: "resources/twist_rna_exome_target_regions_hg38_annotated.bed"   # deprecated/inert (SPEC §12.2: no capture-design BED; see qc.smk targetcov_bed/cov_n10, ref.smk sort_bed)
 
 # ---------------------------------------------------------------------------
 # Reference genome: file stem of the reference set in workflow/resources/

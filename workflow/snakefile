@@ -30,8 +30,6 @@ rule all:
         expand("{runid}/results/fastq/{sample}.{read}_001.fastq.gz", runid=runid, sample=wts_samples, read=["R1", "R2"]),
         # QC (kept in run.done)
         expand("{runid}/results/quality_control/fastq/multiqc_report.html", runid=runid),
-        expand("{runid}/results/quality_control/bam/{sample}.bcov.tsv", runid=runid, sample=wts_samples),
-        expand("{runid}/results/quality_control/bam/{sample}.n10.tsv", runid=runid, sample=wts_samples),
         # duplicate-rate QC (optical + PCR)
         expand("{runid}/results/quality_control/fastq/{sample}.clump.{mode}.stats.txt", runid=runid, sample=wts_samples, mode=["opt", "pcr"]),
         # raw deliverables
