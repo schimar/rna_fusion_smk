@@ -191,3 +191,85 @@ builds: colocated in `resources/`).
 - DAG/rulegraph image artifacts (`workflow/dag*.png`, `workflow/rulegraph*.png`)
   are git-ignored; going forward only the **rulegraph** is generated (`D9`,
   RESOLVED — user preference over the full DAG).
+
+## 12. Amendment C — QC (no capture design; transcript-space QC)
+
+### 12.1 Reference data
+- The genome FASTA and GTF used anywhere in the pipeline MUST originate from
+  the same annotation source and release. Mixed sources (e.g. GENCODE GTF with
+  an Ensembl FASTA) or mixed patch levels are prohibited. The single `ref`
+  stem in config keeps the fasta/gtf as one pair from
+  `resources/{ref}.fasta` / `{ref}.gtf`.
+- Transcript accessions (MANE Select / MANE Plus Clinical) MUST be derived by
+  parsing the tag attribute directly from the GTF in active use. Hardcoding
+  transcript accessions from external references, memory, or prior lookups is
+  prohibited.
+
+### 12.2 QC BED files
+- This workflow has no single capture-design BED. Three BED artifacts are
+  sourced directly from the in-use GTF via `gffread --bed`:
+  1. Whole-transcriptome gene model (BED12) — genome-wide read distribution
+     and all §8/§12.4 modules.
+  2. HBA/HBB MANE-transcript subset (BED12) — globin-specific read
+     distribution (one **aggregate** result across the globin BED, not
+     per-gene).
+  3. rRNA loci (BED3/BED6, flat intervals) — rRNA contamination fraction.
+- One further BED artifact is **DERIVED** (not independently sourced) from the
+  whole-transcriptome BED12 by flattening exon blocks and merging overlaps into
+  flat BED3 intervals — used for transcriptome coverage-depth metrics
+  (§11/§12.5). It MUST be generated from the whole-transcriptome BED12, not via
+  a separate GTF conversion.
+- `gffread --bed` is the canonical method for all GTF→BED12 conversion in this
+  pipeline. No other conversion path (e.g. `gtfToGenePred` + `genePredToBed`)
+  may be used for this purpose.
+
+### 12.3 QC tooling
+- RSeQC `read_distribution.py` is the tool of record for whole-transcriptome
+  and HBA/HBB read-distribution QC. Picard `CollectRnaSeqMetrics` MUST NOT be
+  used for RNA-seq QC metrics in this pipeline.
+- rRNA contamination is measured by read overlap against the rRNA BED
+  (`bedtools coverage` or `samtools view -c -L`), never via
+  `read_distribution.py`.
+- Each `read_distribution.py` invocation reports one aggregate result across
+  its entire input BED. Per-gene granularity requires one single-transcript
+  BED and one invocation per gene — an aggregate BED12 covering multiple genes
+  MUST NOT be presented as a per-gene result.
+
+### 12.4 RSeQC module assignment (deferred to next increment)
+- Consume the whole-transcriptome BED12 (§12.2-1), no additional BED introduced:
+  `geneBody_coverage.py`, `inner_distance.py`, `infer_experiment.py`,
+  `junction_annotation.py`, `junction_saturation.py`.
+- Require BAM input only, no BED: `read_duplication.py`, `read_GC.py`,
+  `bam_stat.py`.
+- `inner_distance.py` applies only to paired-end runs and MUST be conditionally
+  skipped for single-end runs, not executed unconditionally.
+
+### 12.5 Transcriptome coverage-depth (deferred to next increment)
+- Produced by deeptools `plotCoverage`/`multiBamSummary`, run against the
+  derived flat exonic-regions BED3 (§12.2-derived), never against the
+  whole-transcriptome BED12 directly (block structure is not honored in that
+  mode and would fold intronic bases into gene-level regions).
+
+### 12.6 On-target removal
+- `sort_bed` / `targetcov_bed` / `cov_n10` are removed from the active DAG
+  (defined but inert); `config["bed"]` (capture panel) is deprecated/inert.
+
+### 12.7 Implementation mapping — this round
+- Ref-build / cacheable (under `resources/`, ref-generalized):
+  - `gffread --bed {ref}.gtf` → whole-transcriptome BED12
+    (`annotation_{ref}.bed`);
+  - MANE-parse `{ref}.gtf` tags → HBA/HBB subset → gffread → globin BED12
+    (`globin_{ref}.bed`);
+  - rRNA loci from `{ref}.gtf` → flat BED6 (`rrna_{ref}.bed`), with a
+    **warn-if-zero-features** guard.
+  - `flatten_exonic_bed` (derived flat BED3) is **defined in §11/§12.5,
+    implemented in the next increment** (kept out of this commit).
+- Per-sample (under `quality_control/bam/`, colocated logs, no `conda:`):
+  `rseqc_readdis` (WTS gene model), `rseqc_readdis_globin` (aggregate),
+  `rrna_contamination`; `multiqcRSeQC` rewired to this active set.
+- `flatten_exonic_bed`/flat-BED + all §12.4/§12.5 modules → **next increment**.
+- **Globin selection fallback chain** (from the in-use GTF tags, in order):
+  `MANE_Select`/`MANE_Plus_Clinical` first, `Ensembl_canonical` second, bare
+  `gene_name ∈ {HBA1,HBA2,HBB}` last — with a loud log on the bare-gene_name
+  path (the only one that can multiply transcripts per gene). Still tag-derived
+  (no hardcoded accessions).
