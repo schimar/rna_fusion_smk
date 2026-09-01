@@ -124,3 +124,53 @@ rule sort_bed:
     """
     #sort -k1,1V -k2,2n -k3,3n {input} > {output}
 
+
+# -----------------------------------------------------------------------------
+# QC reference-build BEDs (SPEC §12; all derived from the in-use {ref}.gtf —
+# see CONSTITUTION §12.2/§12.3/§12.4 for the rules). Cacheable.
+rule gtf2bed_wts:
+    input:
+        gtf=genome_gtf,
+    output:
+        "resources/annotation_{ref}.bed",
+    log:
+        "resources/annotation_{ref}.bed.gtf2bed_wts.log",
+    cache: True,
+    shell:
+        """
+        gffread --bed {input.gtf} -o {output} > {log} 2>&1
+        """
+
+
+# HBA/HBB MANE-transcript subset (aggregate BED12; one read_distribution result
+# over it, never per-gene — SPEC §12.2-2/§12.3)
+rule sub_mane_globin:
+    input:
+        gtf=genome_gtf,
+    output:
+        bed="resources/globin_{ref}.bed",
+        subset=temp("resources/globin_{ref}.subset.gtf"),
+    log:
+        "resources/globin_{ref}.bed.sub_mane_globin.log",
+    shell:
+        """
+        python3 scripts/sub_mane_globin.py -g {input.gtf} -o {output.subset} > {log} 2>&1 &&
+        gffread --bed {output.subset} -o {output.bed} >> {log} 2>&1
+        """
+
+
+# rRNA loci (flat BED6, overlapping intervals merged; warn-if-zero guard —
+# SPEC §12.2-3/§12.3)
+rule rRNA_bed:
+    input:
+        gtf=genome_gtf,
+    output:
+        "resources/rrna_{ref}.bed",
+    log:
+        "resources/rrna_{ref}.bed.rRNA_bed.log",
+    cache: True,
+    shell:
+        """
+        python3 scripts/gtf_to_rrna_bed.py -g {input.gtf} -o {output} > {log} 2>&1
+        """
+
