@@ -32,6 +32,18 @@ rule all:
         expand("{runid}/results/quality_control/fastq/multiqc_report.html", runid=runid),
         # duplicate-rate QC (optical + PCR)
         expand("{runid}/results/quality_control/fastq/{sample}.clump.{mode}.stats.txt", runid=runid, sample=wts_samples, mode=["opt", "pcr"]),
+        # transcript-space QC
+        expand("{runid}/results/quality_control/bam/{sample}.read_distribution.txt", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/multiqc_rrna_contamination.json", runid=runid),
+        expand("{runid}/results/quality_control/bam/{sample}.bam_stat.txt", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.infer_experiment.txt", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.inner_distance.txt", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.junction_annotation.bed", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.junction_saturation.pdf", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.read_duplication.pdf", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.read_gc.pdf", runid=runid, sample=wts_samples),
         # raw deliverables
         expand("{runid}/results/fusions/{sample}.fusions.tsv", runid=runid, sample=wts_samples),
         expand("{runid}/results/fusions/{sample}.fusions.discarded.tsv", runid=runid, sample=wts_samples),

@@ -26,9 +26,8 @@ genome_txt = f"resources/{ref}.txt"
 genome_dict = f"resources/{ref}.dict"
 genome_fai = f"resources/{ref}.fasta.fai"
 star_idx = f"resources/star_{ref}"
-arriba_blacklist = config['arriba_blacklist']
-r1_read_structure = config["r1_read_structure"]
-r2_read_structure = config["r2_read_structure"]
+#r1_read_structure = config["r1_read_structure"]
+#r2_read_structure = config["r2_read_structure"]
 samples_tsv = '/'.join([runid, 'samples.tsv'])
 sample_sheet = bcldir + '/SampleSheet_rna.csv'
 

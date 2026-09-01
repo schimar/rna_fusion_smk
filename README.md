@@ -51,9 +51,8 @@ The reference genome is selected in `config/config.yaml` via the `ref` key
 - `<ref>.txt` — chromosome names/sizes (used by `bedtools sort -faidx` / `-g`)
 - `star_<ref>/` — STAR index (built by the workflow's `star_index` rule)
 
-The arriba blacklist is build-specific and set via `arriba_blacklist`.
-To run a different genome, provide the files under the new stem and set
-`ref:` (and `arriba_blacklist:`) accordingly.
+Arriba selects its bundled, version-matched blacklist from `genome_build`.
+To run a different genome, provide the files under the new stem and set `ref:`.
 
 ### Docker image
 

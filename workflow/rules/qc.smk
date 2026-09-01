@@ -108,7 +108,17 @@ rule fastqc_bbmerged:
 
 rule multiqc_bbmerged:
     input:
-        expand("{runid}/results/quality_control/fastq/{sample}.bbmerge_fastqc.html", runid= runid, sample= idkeys)
+        fastqc=expand("{runid}/results/quality_control/fastq/{sample}.bbmerge_fastqc.html", runid=runid, sample=idkeys),
+        read_distribution=expand("{runid}/results/quality_control/bam/{sample}.read_distribution.txt", runid=runid, sample=idkeys),
+        globin_read_distribution=expand("{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt", runid=runid, sample=idkeys),
+        bam_stat=expand("{runid}/results/quality_control/bam/{sample}.bam_stat.txt", runid=runid, sample=idkeys),
+        infer_experiment=expand("{runid}/results/quality_control/bam/{sample}.infer_experiment.txt", runid=runid, sample=idkeys),
+        inner_distance=expand("{runid}/results/quality_control/bam/{sample}.inner_distance.txt", runid=runid, sample=idkeys),
+        junction_annotation=expand("{runid}/results/quality_control/bam/{sample}.junction_annotation.bed", runid=runid, sample=idkeys),
+        junction_saturation=expand("{runid}/results/quality_control/bam/{sample}.junction_saturation.pdf", runid=runid, sample=idkeys),
+        read_duplication=expand("{runid}/results/quality_control/bam/{sample}.read_duplication.pdf", runid=runid, sample=idkeys),
+        read_gc=expand("{runid}/results/quality_control/bam/{sample}.read_gc.pdf", runid=runid, sample=idkeys),
+        rrna_custom_content="{runid}/results/quality_control/bam/multiqc_rrna_contamination.json",
     output:
         "{runid}/results/quality_control/fastq/multiqc_report.html"
     params:
@@ -117,6 +127,168 @@ rule multiqc_bbmerged:
         "{runid}/results/quality_control/fastq/multiqc_bbmerged.log"
     wrapper:
         "v2.12.0/bio/multiqc"
+
+
+rule rseqc_read_distribution:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+        bed=f"resources/annotation_{ref}.bed",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.read_distribution.txt",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.read_distribution.log",
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
+
+
+rule rseqc_globin_read_distribution:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+        bed=f"resources/globin_{ref}.bed",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.globin.read_distribution.log",
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
+
+
+rule rrna_contamination:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+        bed=f"resources/rrna_{ref}.bed",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.rrna_contamination.log",
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        """
+        mapped=$(samtools view -c -F 2308 {input.bam})
+        rrna=$(samtools view -c -F 2308 -L {input.bed} {input.bam})
+        awk -v sample='{wildcards.sample}' -v mapped="$mapped" -v rrna="$rrna" \
+            'BEGIN {{ fraction = mapped ? (100 * rrna / mapped) : 0; print "sample\\trrna_reads\\tmapped_primary_reads\\trrna_fraction_percent"; print sample "\\t" rrna "\\t" mapped "\\t" fraction }}' \
+            > {output} 2> {log}
+        """
+
+
+rule rrna_multiqc_content:
+    input:
+        expand("{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv", runid=runid, sample=idkeys),
+    output:
+        "{runid}/results/quality_control/bam/multiqc_rrna_contamination.json",
+    script:
+        "../scripts/rrna_multiqc.py"
+
+
+rule rseqc_bam_stat:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.bam_stat.txt",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.bam_stat.log",
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "bam_stat.py -i {input.bam} > {output} 2> {log}"
+
+
+rule rseqc_infer_experiment:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+        bed=f"resources/annotation_{ref}.bed",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.infer_experiment.txt",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.infer_experiment.log",
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "infer_experiment.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
+
+
+rule rseqc_inner_distance:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+        bed=f"resources/annotation_{ref}.bed",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.inner_distance.txt",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.inner_distance.log",
+    params:
+        prefix=lambda wildcards, output: output[0].replace(".txt", ""),
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "inner_distance.py -r {input.bed} -i {input.bam} -o {params.prefix} > {log} 2>&1"
+
+
+rule rseqc_junction_annotation:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+        bed=f"resources/annotation_{ref}.bed",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.junction_annotation.bed",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.junction_annotation.log",
+    params:
+        prefix=lambda wildcards, output: output[0].replace(".bed", ""),
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "junction_annotation.py -q 255 -i {input.bam} -r {input.bed} -o {params.prefix} > {log} 2>&1"
+
+
+rule rseqc_junction_saturation:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+        bed=f"resources/annotation_{ref}.bed",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.junction_saturation.pdf",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.junction_saturation.log",
+    params:
+        prefix=lambda wildcards, output: output[0].replace(".pdf", ""),
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "junction_saturation.py -q 255 -i {input.bam} -r {input.bed} -o {params.prefix} > {log} 2>&1"
+
+
+rule rseqc_read_duplication:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.read_duplication.pdf",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.read_duplication.log",
+    params:
+        prefix=lambda wildcards, output: output[0].replace(".pdf", ""),
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "read_duplication.py -i {input.bam} -o {params.prefix} > {log} 2>&1"
+
+
+rule rseqc_read_gc:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.read_gc.pdf",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.read_gc.log",
+    params:
+        prefix=lambda wildcards, output: output[0].replace(".pdf", ""),
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "read_GC.py -i {input.bam} -o {params.prefix} > {log} 2>&1"
 
 
 
@@ -159,220 +331,6 @@ rule multiqc_cons:
 
 
 
-
-
-## RSEQC
-
-
-rule rseqc_gtf2bed:
-    input:
-        "resources/genome.gtf",
-    output:
-        bed="{runid}/results/qc/rseqc/annotation.bed",
-        db="{runid}/results/qc/rseqc/annotation.db",
-    conda:
-      "../envs/hts.yaml"
-    log:
-        "{runid}/logs/rseqc/rseqc_gtf2bed.log",
-    script:
-        "../scripts/gtf2bed.py"
-
-
-rule rseqc_junction_annotation:
-    input:
-        bam="{runid}/results/reads/star/{sample}.bam",
-        bai="{runid}/results/reads/star/{sample}.bam.bai",
-        bed="resources/annotation.bed", #"{runid}/results/qc/rseqc/annotation.bed",
-    output:
-        "{runid}/results/qc/rseqc/{sample}.junctionanno.junction.bed",
-    conda:
-      "../envs/hts.yaml"
-    priority: 1
-    log:
-        "{runid}/logs/rseqc/rseqc_junction_annotation/{sample}.log",
-    params:
-        extra=r"-q 255",  # STAR uses 255 as a score for unique mappers
-        prefix=lambda w, output: output[0].replace(".junction.bed", ""),
-    #conda:
-    #    "../envs/rseqc.yaml"
-    shell:
-        "junction_annotation.py {params.extra} -i {input.bam} -r {input.bed} -o {params.prefix} > {log[0]} 2>&1"
-
-
-rule rseqc_junction_saturation:
-    input:
-        bam="{runid}/results/reads/star/{sample}.bam",
-        bed="resources/annotation.bed",  #"{runid}/results/qc/rseqc/annotation.bed",
-    output:
-        "{runid}/results/qc/rseqc/{sample}.junctionsat.junctionSaturation_plot.pdf",
-    conda:
-      "../envs/hts.yaml"
-    priority: 1
-    log:
-        "{runid}/logs/rseqc/rseqc_junction_saturation/{sample}.log",
-    params:
-        extra=r"-q 255",
-        prefix=lambda w, output: output[0].replace(".junctionSaturation_plot.pdf", ""),
-    #conda:
-    #    "../envs/rseqc.yaml"
-    shell:
-        "junction_saturation.py {params.extra} -i {input.bam} -r {input.bed} -o {params.prefix} > {log} 2>&1"
-
-
-rule rseqc_stat:
-    input:
-        bam="{runid}/results/reads/star/{sample}.bam",
-    output:
-        "{runid}/results/qc/rseqc/{sample}.stats.txt",
-    conda:
-      "../envs/hts.yaml"
-    priority: 1
-    log:
-        "{runid}/logs/rseqc/rseqc_stat/{sample}.log",
-    #conda:
-    #    "../envs/rseqc.yaml"
-    shell:
-        "bam_stat.py -i {input} > {output} 2> {log}"
-
-
-rule rseqc_infer:
-    input:
-        bam="{runid}/results/reads/star/{sample}.bam",
-        bed="resources/annotation.bed",   #"{runid}/results/qc/rseqc/annotation.bed",
-    output:
-        "{runid}/results/qc/rseqc/{sample}.infer_experiment.txt",
-    conda:
-      "../envs/hts.yaml"
-    priority: 1
-    log:
-        "{runid}/logs/rseqc/rseqc_infer/{sample}.log",
-    #conda:
-    #    "../envs/rseqc.yaml"
-    shell:
-        "infer_experiment.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
-
-
-rule rseqc_innerdis:
-    input:
-        bam="{runid}/results/reads/star/{sample}.bam",
-        bed="resources/annotation.bed",   #"{runid}/results/qc/rseqc/annotation.bed",
-    output:
-        "{runid}/results/qc/rseqc/{sample}.inner_distance_freq.inner_distance.txt",
-    conda:
-      "../envs/hts.yaml"
-    priority: 1
-    log:
-        "{runid}/logs/rseqc/rseqc_innerdis/{sample}.log",
-    params:
-        prefix=lambda w, output: output[0].replace(".inner_distance.txt", ""),
-    #conda:
-    #    "../envs/rseqc.yaml"
-    shell:
-        "inner_distance.py -r {input.bed} -i {input.bam} -o {params.prefix} > {log} 2>&1"
-
-
-rule rseqc_readdis:
-    input:
-        bam="{runid}/results/reads/star/{sample}.bam",
-        bed="resources/annotation.bed",     #"{runid}/results/qc/rseqc/annotation.bed",
-    output:
-        "{runid}/results/qc/rseqc/{sample}.readdistribution.txt",
-    conda:
-      "../envs/hts.yaml"
-    priority: 1
-    log:
-        "{runid}/logs/rseqc/rseqc_readdis/{sample}.log",
-    #conda:
-    #     "../envs/rseqc.yaml"
-    shell:
-        "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
-
-
-rule rseqc_readdup:
-    input:
-        "{runid}/results/reads/star/{sample}.bam",
-    output:
-        "{runid}/results/qc/rseqc/{sample}.readdup.DupRate_plot.pdf",
-    conda:
-      "../envs/hts.yaml"
-    priority: 1
-    log:
-        "{runid}/logs/rseqc/rseqc_readdup/{sample}.log",
-    params:
-        prefix=lambda w, output: output[0].replace(".DupRate_plot.pdf", ""),
-    #conda:
-    #    "../envs/rseqc.yaml"
-    shell:
-        "read_duplication.py -i {input} -o {params.prefix} > {log} 2>&1"
-
-
-rule rseqc_readgc:
-    input:
-        "{runid}/results/reads/star/{sample}.bam",
-    output:
-        "{runid}/results/qc/rseqc/{sample}.readgc.GC_plot.pdf",
-    conda:
-      "../envs/hts.yaml"
-    priority: 1
-    log:
-        "{runid}/logs/rseqc/rseqc_readgc/{sample}.log",
-    params:
-        prefix=lambda w, output: output[0].replace(".GC_plot.pdf", ""),
-    #conda:
-    #    "../envs/rseqc.yaml"
-    shell:
-        "read_GC.py -i {input} -o {params.prefix} > {log} 2>&1"
-
-
-rule multiqcRSeQC:
-    input:
-        expand(
-            "{runid}/results/reads/star/{sample}.bam",
-            sample= wts_samples, runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{sample}.junctionanno.junction.bed",
-            sample= wts_samples, runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{sample}.junctionsat.junctionSaturation_plot.pdf",
-            sample= wts_samples, runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{sample}.stats.txt",
-            sample= wts_samples, runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{sample}.inner_distance_freq.inner_distance.txt",
-            sample= wts_samples, runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{sample}.readdistribution.txt",
-            sample= wts_samples, runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{sample}.readdup.DupRate_plot.pdf",
-            sample= wts_samples, runid= runid,
-        ),
-        expand(
-            "{runid}/results/qc/rseqc/{sample}.readgc.GC_plot.pdf",
-            sample= wts_samples, runid= runid,
-        ),
-        expand(
-            "{runid}/logs/rseqc/rseqc_junction_annotation/{sample}.log",
-            sample= wts_samples, runid= runid,
-        ),
-    output:
-        "{runid}/results/qc/rseqc_multiqc_report.html",
-    conda:
-      "../envs/hts.yaml"
-    params:
-        extra= "",
-        #use_input_files_only= True,
-    log:
-        "{runid}/logs/rseqc_multiqc.log",
-    wrapper:
-        "v1.23.1/bio/multiqc"
 
 
 rule deeptools_multiBamSummary:

@@ -179,11 +179,10 @@ builds: colocated in `resources/`).
   `{ref}.dict`, `{ref}.fasta.fai`, and STAR index dir `resources/star_{ref}/`.
 - Default (`D8`, RESOLVED):
   `GRCh38_GIABv3_no_alt_analysis_set_maskedGRC_decoys_MAP2K3_KMT2C_KCNJ18`.
-- The arriba blacklist is build-specific → new config key `arriba_blacklist`
-  (default `resources/blacklist_hg38_GRCh38_v2.3.0.tsv`).
+- Arriba selects its bundled, version-matched blacklist from the configured
+  `genome_build`; no image-internal package path is configured.
 - Globals defined once in `common.smk` (`ref`, `genome_fa`, `genome_gtf`,
-  `genome_txt`, `genome_dict`, `genome_fai`, `star_idx`,
-  `arriba_blacklist`); all active rules (`star_index`, `sort_bed`,
+  `genome_txt`, `genome_dict`, `genome_fai`, `star_idx`); all active rules (`star_index`, `sort_bed`,
   `map_star`, `arriba`, `rMats`, `targetcov_bed`, `rule all`) consume the
   globals. Inert legacy rules keep literal old paths (cleanup branch).
 - The old `ref: {species, release, build}` download settings are preserved in

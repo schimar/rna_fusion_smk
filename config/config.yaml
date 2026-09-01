@@ -13,9 +13,7 @@ bed: "resources/twist_rna_exome_target_regions_hg38_annotated.bed"   # deprecate
 #   fasta:  resources/{ref}.fasta      gtf:  resources/{ref}.gtf
 #   chroms: resources/{ref}.txt        dict: resources/{ref}.dict
 #   star index dir: resources/star_{ref}/ (built by star_index)
-# The arriba blacklist is build-specific; set it via 'arriba_blacklist'.
 ref: "GRCh38_GIABv3_no_alt_analysis_set_maskedGRC_decoys_MAP2K3_KMT2C_KCNJ18"
-arriba_blacklist: "resources/blacklist_hg38_GRCh38_v2.3.0.tsv"
 
 #samples: "../config/samples.tsv"
 
