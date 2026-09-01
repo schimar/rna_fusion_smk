@@ -36,6 +36,7 @@ rule all:
         # transcript-space QC
         expand("{runid}/results/quality_control/bam/{sample}.read_distribution.txt", runid=runid, sample=wts_samples),
         expand("{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt", runid=runid, sample=wts_samples),
+        expand("{runid}/results/quality_control/bam/{sample}.mane.readdistribution.txt", runid=runid, sample=wts_samples),
         expand("{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv", runid=runid, sample=wts_samples),
         expand("{runid}/results/quality_control/bam/multiqc_rrna_contamination.json", runid=runid),
         expand("{runid}/results/quality_control/bam/{sample}.bam_stat.txt", runid=runid, sample=wts_samples),

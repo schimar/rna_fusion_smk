@@ -111,6 +111,7 @@ rule multiqc_bbmerged:
         fastqc=expand("{runid}/results/quality_control/fastq/{sample}.bbmerge_fastqc.html", runid=runid, sample=idkeys),
         read_distribution=expand("{runid}/results/quality_control/bam/{sample}.read_distribution.txt", runid=runid, sample=idkeys),
         globin_read_distribution=expand("{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt", runid=runid, sample=idkeys),
+        mane_read_distribution=expand("{runid}/results/quality_control/bam/{sample}.mane.readdistribution.txt", runid=runid, sample=idkeys),
         bam_stat=expand("{runid}/results/quality_control/bam/{sample}.bam_stat.txt", runid=runid, sample=idkeys),
         infer_experiment=expand("{runid}/results/quality_control/bam/{sample}.infer_experiment.txt", runid=runid, sample=idkeys),
         inner_distance=expand("{runid}/results/quality_control/bam/{sample}.inner_distance.txt", runid=runid, sample=idkeys),
@@ -151,6 +152,20 @@ rule rseqc_globin_read_distribution:
         "{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt",
     log:
         "{runid}/results/quality_control/bam/{sample}.globin.read_distribution.log",
+    wildcard_constraints:
+        sample=common_constraint,
+    shell:
+        "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
+
+
+rule rseqc_readdis_mane:
+    input:
+        bam="{runid}/results/bam/{sample}.bam",
+        bed=f"resources/mane_{ref}.bed",
+    output:
+        "{runid}/results/quality_control/bam/{sample}.mane.readdistribution.txt",
+    log:
+        "{runid}/results/quality_control/bam/{sample}.mane.readdistribution.log",
     wildcard_constraints:
         sample=common_constraint,
     shell:

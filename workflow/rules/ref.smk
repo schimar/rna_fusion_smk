@@ -159,6 +159,23 @@ rule sub_mane_globin:
         """
 
 
+# Genome-wide MANE-tagged transcript subset (aggregate BED12 for clinical
+# canonical transcript-space read distribution).
+rule mane_bed:
+    input:
+        gtf=genome_gtf,
+    output:
+        bed="resources/mane_{ref}.bed",
+        subset=temp("resources/mane_{ref}.subset.gtf"),
+    log:
+        "resources/mane_{ref}.bed.mane_bed.log",
+    shell:
+        """
+        python3 scripts/filter_mane_transcripts.py -g {input.gtf} -o {output.subset} > {log} 2>&1 &&
+        gffread --bed {output.subset} -o {output.bed} >> {log} 2>&1
+        """
+
+
 # rRNA loci (flat BED6, overlapping intervals merged; warn-if-zero guard —
 # SPEC §12.2-3/§12.3)
 rule rRNA_bed:

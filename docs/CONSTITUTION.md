@@ -230,3 +230,9 @@ from the in-use GTF; none hardcode accessions.
   exonic BED3).
 - This round's multiqc report is intentionally thinner than the eventual
   target; the deferral is a deliberate smaller-commit trade-off, not a gap.
+
+### 12.7 MANE transcript-space read distribution
+- Build `resources/mane_{ref}.bed` from every genome-wide transcript tagged
+  `MANE_Select` or `MANE_Plus_Clinical`; warn if the in-use GTF has none.
+- Run a third aggregate `read_distribution.py` report against that BED for
+  each sample, alongside the whole-transcriptome and globin reports.

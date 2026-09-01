@@ -8,6 +8,7 @@ rule rsync:
         clump  = expand("{runid}/results/quality_control/fastq/{sample}.clump.{mode}.stats.txt", runid= runid, sample= wts_samples, mode= ['opt', 'pcr']),
         read_distribution = expand("{runid}/results/quality_control/bam/{sample}.read_distribution.txt", runid=runid, sample=wts_samples),
         globin_read_distribution = expand("{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt", runid=runid, sample=wts_samples),
+        mane_read_distribution = expand("{runid}/results/quality_control/bam/{sample}.mane.readdistribution.txt", runid=runid, sample=wts_samples),
         rrna_contamination = expand("{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv", runid=runid, sample=wts_samples),
         rrna_custom_content = expand("{runid}/results/quality_control/bam/multiqc_rrna_contamination.json", runid=runid),
         bam_stat = expand("{runid}/results/quality_control/bam/{sample}.bam_stat.txt", runid=runid, sample=wts_samples),
