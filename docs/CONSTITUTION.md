@@ -213,3 +213,20 @@ GTF tags in this order: `MANE_Select`/`MANE_Plus_Clinical` first,
 bare-`gene_name` fallback MUST log loudly — it is the only path that can
 select multiple transcripts per gene. All three paths remain tag-derived
 from the in-use GTF; none hardcode accessions.
+
+### 12.5 MultiQC content — this round
+- In the report: `read_distribution.py` (whole-transcriptome), `read_distribution.py`
+  (globin aggregate), rRNA contamination fraction.
+- MultiQC natively parses the two RSeQC read_distribution logs. The rRNA
+  fraction is a custom overlap check (bedtools coverage / samtools view -c -L),
+  not a native RSeQC module — it MUST be surfaced via a MultiQC **custom-content**
+  section (JSON/YAML sidecar), not assumed to auto-parse.
+
+### 12.6 Deferred to next increment (per ADR-010)
+- BAM-only RSeQC modules: `read_duplication.py`, `read_GC.py`, `bam_stat.py`.
+- BED12-dependent trio: `inner_distance.py`, `infer_experiment.py`,
+  `junction_annotation.py`, `junction_saturation.py`.
+- deeptools `plotCoverage`/`multiBamSummary` coverage-depth (vs derived flat
+  exonic BED3).
+- This round's multiqc report is intentionally thinner than the eventual
+  target; the deferral is a deliberate smaller-commit trade-off, not a gap.
