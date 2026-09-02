@@ -156,8 +156,6 @@ rule rseqc_globin_read_distribution:
         sample=common_constraint,
     shell:
         "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
-
-
 rule rseqc_readdis_mane:
     input:
         bam="{runid}/results/bam/{sample}.bam",
@@ -170,6 +168,7 @@ rule rseqc_readdis_mane:
         sample=common_constraint,
     shell:
         "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
+
 
 
 rule rrna_contamination:
