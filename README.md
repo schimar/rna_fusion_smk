@@ -74,6 +74,8 @@ You need the following info:
 - `rgid` (optional): read-group ID; defaults to the `bcldir` basename
 - `sample_sheet` (optional): path to the SampleSheet; defaults to
   `<bcldir>/SampleSheet.csv`
+- `lane_splitting` (optional): `false` by default; set `true` only for a
+  lane-split bcl-convert run
 
 ### 2) perform a dry-run
 

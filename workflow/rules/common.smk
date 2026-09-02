@@ -39,6 +39,7 @@ sample_sheet = (
     if os.path.isabs(sample_sheet_config)
     else os.path.join(bcldir, sample_sheet_config)
 )
+no_lane_splitting = str(not config.get('lane_splitting', False)).lower()
 
 
 def parse_sample_sheet(sheet_path):

@@ -23,6 +23,7 @@ rule bcl_convert:
         bcldir= bcldir,
         outdir= runid + "/results/fastq/",
         bcl_tmp= runid + "/results/fastq/.tmp_bcl",
+        no_lane_splitting=no_lane_splitting,
     log:
         runid + "/results/fastq/bcl_convert.log",
     threads: 56
@@ -39,7 +40,7 @@ rule bcl_convert:
             --bcl-input-directory {params.bcldir} \
             --sample-sheet {input.sheet} \
             --output-directory {params.bcl_tmp} \
-            --no-lane-splitting true \
+            --no-lane-splitting {params.no_lane_splitting} \
             --bcl-sampleproject-subdirectories false \
             --sample-name-column-enabled false \
             --bcl-num-parallel-tiles 32 \

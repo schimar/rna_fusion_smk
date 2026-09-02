@@ -24,6 +24,8 @@ bcldir: "dummy_A01358"
 # rgid: "A01358"
 # Relative paths are resolved beneath bcldir; absolute paths are used as-is.
 sample_sheet: "SampleSheet.csv"
+# Keep bcl-convert output merged across lanes unless explicitly overridden.
+lane_splitting: false
 # Optional: defaults to /home/schilling_m1/smb/Analyses/00_Tests/vc_rna/<bcldir basename>.
 # final_dest: "/path/to/delivery"
 analysis_path: "analysis_rna"
