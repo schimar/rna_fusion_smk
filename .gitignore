@@ -1,5 +1,7 @@
 workflow/.snakemake/
 workflow/resources/*
 !workflow/resources/.keep
+!workflow/resources/logs/
+!workflow/resources/logs/.keep
 workflow/dag*.png
 workflow/rulegraph*.png

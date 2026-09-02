@@ -35,7 +35,7 @@ rule genome_faidx:
     output:
         genome_fai,
     log:
-        "resources/genome_faidx.log",
+        "resources/logs/genome_faidx.log",
     cache: True
     wrapper:
         "0.77.0/bio/samtools/faidx"
@@ -47,7 +47,7 @@ rule bwa_index:
     output:
         multiext(genome_fa, ".0123", ".amb", ".ann", ".bwt.2bit.64", ".pac"),
     log:
-        "resources/bwa_index.log",
+        "resources/logs/bwa_index.log",
     resources:
         mem_mb=369000,
     cache: True
@@ -65,7 +65,7 @@ rule star_index:
     params:
       extra=lambda wc, input: f"--sjdbGTFfile {genome_gtf} --sjdbOverhang 100",
     log:
-        "resources/star_index.log",
+        "resources/logs/star_index.log",
     cache: True
     wrapper:
         "v1.28.0/bio/star/index"  
@@ -79,7 +79,7 @@ rule create_dict:
     output:
         genome_dict,
     log:
-        "resources/create_dict.log",
+        "resources/logs/create_dict.log",
     params:
         extra="",  # opti.ASM852v1onal: extra arguments for picard.
     # optional specification of memory usage of the JVM that snakemake will respect with global
@@ -99,7 +99,7 @@ rule bed_to_interval_list:
     output:
         "resources/{bed}_file_UMI_demo_data_hg38.interval_list",
     log:
-        "resources/{bed}_file_UMI_demo_data_hg38.log",
+        "resources/logs/{bed}_file_UMI_demo_data_hg38.log",
     params:
         # optional parameters
         extra="--SORT true",  # sort output interval list before writing
@@ -135,7 +135,7 @@ rule normalize_gtf_contigs:
     output:
         genome_gtf,
     log:
-        f"resources/{ref}.normalized.gtf.normalize_gtf_contigs.log",
+        f"resources/logs/{ref}.normalized.gtf.normalize_gtf_contigs.log",
     shell:
         "python3 scripts/normalize_gtf_contigs.py -g {input.gtf} -f {input.fasta} -o {output} 2> {log}"
 
@@ -146,7 +146,7 @@ rule gtf2bed_wts:
     output:
         "resources/annotation_{ref}.bed",
     log:
-        "resources/annotation_{ref}.bed.gtf2bed_wts.log",
+        "resources/logs/annotation_{ref}.bed.gtf2bed_wts.log",
     cache: True,
     shell:
         """
@@ -163,7 +163,7 @@ rule sub_mane_globin:
         bed="resources/globin_{ref}.bed",
         subset=temp("resources/globin_{ref}.subset.gtf"),
     log:
-        "resources/globin_{ref}.bed.sub_mane_globin.log",
+        "resources/logs/globin_{ref}.bed.sub_mane_globin.log",
     shell:
         """
         python3 scripts/sub_mane_globin.py -g {input.gtf} -o {output.subset} > {log} 2>&1 &&
@@ -180,7 +180,7 @@ rule mane_bed:
         bed="resources/mane_{ref}.bed",
         subset=temp("resources/mane_{ref}.subset.gtf"),
     log:
-        "resources/mane_{ref}.bed.mane_bed.log",
+        "resources/logs/mane_{ref}.bed.mane_bed.log",
     shell:
         """
         python3 scripts/filter_mane_transcripts.py -g {input.gtf} -o {output.subset} > {log} 2>&1 &&
@@ -196,7 +196,7 @@ rule rRNA_bed:
     output:
         "resources/rrna_{ref}.bed",
     log:
-        "resources/rrna_{ref}.bed.rRNA_bed.log",
+        "resources/logs/rrna_{ref}.bed.rRNA_bed.log",
     cache: True,
     shell:
         """
