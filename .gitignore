@@ -5,3 +5,4 @@ workflow/resources/*
 !workflow/resources/logs/.keep
 workflow/dag*.png
 workflow/rulegraph*.png
+__pycache__/
