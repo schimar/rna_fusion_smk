@@ -42,7 +42,6 @@ rule bcl_convert:
             --output-directory {params.bcl_tmp} \
             --no-lane-splitting {params.no_lane_splitting} \
             --bcl-sampleproject-subdirectories false \
-            --sample-name-column-enabled false \
             --bcl-num-parallel-tiles 32 \
             --bcl-num-conversion-threads {threads} \
             > {log} 2>&1
