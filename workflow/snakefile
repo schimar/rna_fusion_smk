@@ -52,4 +52,4 @@ rule all:
         expand("{runid}/results/splicing/{sample}.SE.MATS.JC.txt", runid=runid, sample=wts_samples),
         expand("{runid}/results/splicing/{sample}.egfr_v3.out", runid=runid, sample=wts_samples),
         # final target
-        expand("{bcldir}{analysis_path}/run.done", runid=runid, bcldir=bcldir, analysis_path=analysis_path),
+        f"{final_dest}/run.done",

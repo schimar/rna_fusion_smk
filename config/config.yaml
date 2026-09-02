@@ -22,9 +22,11 @@ runid: "rnaSeq"
 bcldir: "dummy_A01358"
 # Optional: defaults to the bcldir basename when omitted.
 # rgid: "A01358"
-# Optional: defaults to <bcldir>/SampleSheet.csv when omitted.
-# sample_sheet: "/path/to/SampleSheet.csv"
-analysis_path: "analysis_rna"   # output will be rsync'd to {bcldir}/analysis_rna/ (see also out.smk and common.smk)
+# Relative paths are resolved beneath bcldir; absolute paths are used as-is.
+sample_sheet: "SampleSheet.csv"
+# Optional: defaults to /home/schilling_m1/smb/Analyses/00_Tests/vc_rna/<bcldir basename>.
+# final_dest: "/path/to/delivery"
+analysis_path: "analysis_rna"
 #rgID: "A01358"
 r1_read_structure: "5M2S+T"  #"8M+T"
 r2_read_structure: "5M2S+T"  #"8M+T"

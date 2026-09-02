@@ -69,6 +69,8 @@ You need the following info:
 
 - `runid`: where to write results (consider local SSD)
 - `bcldir`: location of the NovaSeq run folder (final output is copied back there)
+- `final_dest` (optional): destination directory for delivered results; defaults to
+  `/home/schilling_m1/smb/Analyses/00_Tests/vc_rna/<bcldir basename>`
 - `rgid` (optional): read-group ID; defaults to the `bcldir` basename
 - `sample_sheet` (optional): path to the SampleSheet; defaults to
   `<bcldir>/SampleSheet.csv`
@@ -77,17 +79,17 @@ You need the following info:
 
 ```
 cd <repo>/workflow
-../sub-smk-job.sh -n --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> sample_sheet=<PATH/TO/SampleSheet.csv> analysis_path=analysis_rna
+../sub-smk-job.sh -n --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> sample_sheet=<PATH/TO/SampleSheet.csv> final_dest=<PATH/TO/final_dest>
 ```
 
 ### 3) run the workflow
 
 ```
-../sub-smk-job.sh -j50 --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> sample_sheet=<PATH/TO/SampleSheet.csv> analysis_path=analysis_rna
+../sub-smk-job.sh -j50 --config runid=<PATH/TO/runid> bcldir=<PATH/TO/bcldir/> sample_sheet=<PATH/TO/SampleSheet.csv> final_dest=<PATH/TO/final_dest>
 ```
 
-The workflow finishes when `{bcldir}/{analysis_path}/run.done` exists
-(results are rsync'd back to `bcldir`).
+The workflow finishes when `{final_dest}/run.done` exists. Results are rsync'd
+to `final_dest`.
 
 ## Sample definition
 
@@ -125,7 +127,7 @@ reference-build logs stay colocated in `resources/`).
 
 The alignment checkpoint is a **BAM** for now (STAR's native output; a CRAM
 checkpoint may be added later). The final `rsync` simply mirrors
-`{runid}/results/` into `{bcldir}{analysis_path}/`, so this layout is
+`{runid}/results/` into `{final_dest}/`, so this layout is
 preserved in the delivered results.
 
 ## other useful features

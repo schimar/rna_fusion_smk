@@ -47,7 +47,7 @@ The SPEC exists to give a precise, verifiable contract for the change — the an
 ### 3.1 Launcher — `sub-smk-job.sh` (repo root, executable)
 A single `docker run` executes Snakemake inside the central image and passes CLI args (including `--config`) straight through.
 
-Acceptance: `./sub-smk-job.sh -n --config runid=... bcldir=... analysis_path=...` performs a dry-run; no `--use-conda`, no per-rule docker, no SLURM.
+Acceptance: `./sub-smk-job.sh -n --config runid=... bcldir=... final_dest=...` performs a dry-run; no `--use-conda`, no per-rule docker, no SLURM.
 
 ### 3.2 Mounts & user
 - Mount `/home`, `/mnt`, and the repo path (read/write for run outputs).
@@ -130,7 +130,7 @@ Acceptance: `snakemake -n` produces no fgbio/UMI/consensus rules; STAR runs read
 ## 8. Validation / Definition of Done
 1. `git switch -c wts-init` (done) — first commit is THIS SPEC.
 2. `./sub-smk-job.sh -n --config ...` dry-run succeeds with no `--use-conda` warnings and no fgbio/UMI rules in the DAG.
-3. A small (1–2 sample) end-to-end run produces: demuxed `{sample}.R{1,2}_001.fastq.gz`, STAR BAM + `SJ.out.tab` + `mrkdup.bam`, arriba `fusions.tsv`(+`discarded.tsv`), rMATS `SE.MATS.JC.txt`, `egfr_v3.out`, QC outputs, and `{bcldir}{analysis_path}/run.done`.
+3. A small (1–2 sample) end-to-end run produces: demuxed `{sample}.R{1,2}_001.fastq.gz`, STAR BAM + `SJ.out.tab` + `mrkdup.bam`, arriba `fusions.tsv`(+`discarded.tsv`), rMATS `SE.MATS.JC.txt`, `egfr_v3.out`, QC outputs, and `{final_dest}/run.done`.
 4. No `bcl2fastq`, `cat_lanes`, fgbio, or filter rules in the executed DAG.
 5. Incremental commits, each referencing its SPEC section(s).
 
@@ -166,7 +166,7 @@ builds: colocated in `resources/`).
   into a per-sample scratch dir `.rmats_{sample}/` and the result is moved to
   the sample-tagged `splicing/{sample}.SE.MATS.JC.txt` (rmats.py writes a flat
   filename); the placeholder-touch fallback was removed.
-- `out.smk` rsync now mirrors `{runid}/results/` → `{bcldir}{analysis_path}/`
+- `out.smk` rsync now mirrors `{runid}/results/` → `{final_dest}/`
   (varCAD ExportFolder equivalent), preserving the checkpoint layout.
 - Integrity sidecars (`.size`, `.sha256`) — DEFERRED to a later branch.
 - Old-path rules (`umi.smk`, `sub_chr` chain, filter rules, rseqc/deeptools)

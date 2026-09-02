@@ -13,6 +13,9 @@ from snakemake.utils import validate
 runid = config['runid']
 bcldir = config['bcldir']
 analysis_path = config['analysis_path']
+final_dest = config.get('final_dest') or (
+    "/home/schilling_m1/smb/Analyses/00_Tests/vc_rna/" + Path(bcldir).name
+)
 rgid = config.get('rgid') or Path(bcldir).name
 bed_file = config['bed']
 bed_file_stem = bed_file.split('.')[0]
@@ -30,7 +33,12 @@ star_idx = f"resources/star_{ref}"
 #r1_read_structure = config["r1_read_structure"]
 #r2_read_structure = config["r2_read_structure"]
 samples_tsv = '/'.join([runid, 'samples.tsv'])
-sample_sheet = config.get('sample_sheet') or bcldir + '/SampleSheet.csv'
+sample_sheet_config = config.get('sample_sheet') or 'SampleSheet.csv'
+sample_sheet = (
+    sample_sheet_config
+    if os.path.isabs(sample_sheet_config)
+    else os.path.join(bcldir, sample_sheet_config)
+)
 
 
 def parse_sample_sheet(sheet_path):

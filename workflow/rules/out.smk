@@ -19,14 +19,11 @@ rule rsync:
         read_duplication = expand("{runid}/results/quality_control/bam/{sample}.read_duplication.pdf", runid=runid, sample=wts_samples),
         read_gc = expand("{runid}/results/quality_control/bam/{sample}.read_gc.pdf", runid=runid, sample=wts_samples),
     output:
-        touch("{bcldir}{analysis_path}/run.done"),
-    wildcard_constraints:
-        analysis_path = "analysis_rna.*",
+        touch(f"{final_dest}/run.done"),
     params:
-        bcldir = config["bcldir"],
         runid = config['runid'],
-        final_dest = config['bcldir'] + config['analysis_path'],
-        log = config['bcldir'] + config['analysis_path'] + "/rsync.log",
+        final_dest = final_dest,
+        log = final_dest + "/rsync.log",
     shell:"""
         mkdir -p {params.final_dest} &&
         rsync -rDvz {params.runid}/results/ {params.final_dest}/ --log-file={params.log}
