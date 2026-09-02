@@ -76,7 +76,8 @@ You need the following info:
 - `sample_sheet` (optional): path to the SampleSheet; defaults to
   `<bcldir>/SampleSheet.csv`
 - `lane_splitting` (optional): `false` by default; set `true` only for a
-  lane-split bcl-convert run
+  lane-split bcl-convert run. Each WTS SampleSheet row then becomes a separate
+  `<full Sample_ID>_L###` analysis unit; lanes are not merged.
 
 ### 2) perform a dry-run
 

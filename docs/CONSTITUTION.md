@@ -91,6 +91,14 @@ Acceptance: `snakemake -n` builds the full DAG (bcl-convert → mapping → QC �
 - **Physically**, `bcl-convert` still demuxes **all** samples in the sheet (`--no-lane-splitting true`), and the rename loop moves **all** produced fastqs out of the fresh tmp dir to `{runid}/results/bcl2fq/` — so non-WTS demux is preserved on disk (consumed later by the large workflow), even though Snakemake does not track it.
 - Declared outputs drive job creation/ordering; the DAG is fully known at parse time; downstream rules reference the predicted fastq paths directly → **single-run execution**.
 
+### 4.3.1 Lane-split test runs
+- `lane_splitting: false` remains the default and yields one workflow unit per
+  full `Sample_ID`.
+- With `lane_splitting: true`, each `Lane` value becomes a separate workflow
+  unit named `<full Sample_ID>_L###`. The full opaque `Sample_ID`, including
+  any existing `_L...` portion, is preserved; the appended suffix identifies
+  the bcl-convert sequencer lane. Lanes are not merged.
+
 ### 4.4 `common.smk` units parsing
 - Replace `detect_lanes_and_create_units` (file-scan → parse-time table): remove `units.tsv` dependency.
 - Remove `units` key from `config.yaml`; `units.schema.yaml` stays on disk but unused.
