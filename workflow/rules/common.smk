@@ -10,8 +10,8 @@ from snakemake.utils import validate
 # -----------------------------------------------------------------------------
 # Configuration variables
 # -----------------------------------------------------------------------------
-runid = config['runid']
 bcldir = config['bcldir']
+runid = config.get('runid') or Path(bcldir).name
 analysis_path = config['analysis_path']
 final_dest = config.get('final_dest') or (
     "/home/schilling_m1/smb/Analyses/00_Tests/vc_rna/" + Path(bcldir).name

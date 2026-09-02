@@ -17,9 +17,9 @@ ref: "GRCh38_GIABv3_no_alt_analysis_set_maskedGRC_decoys_MAP2K3_KMT2C_KCNJ18"
 
 #samples: "../config/samples.tsv"
 
-# NOTE: eventually, get these values from one of the input files??
-runid: "rnaSeq"
 bcldir: "dummy_A01358"
+# Optional: defaults to the bcldir basename.
+# runid: "/path/to/run-output"
 # Optional: defaults to the bcldir basename when omitted.
 # rgid: "A01358"
 # Relative paths are resolved beneath bcldir; absolute paths are used as-is.

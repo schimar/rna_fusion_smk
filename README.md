@@ -19,7 +19,8 @@ is not used.
 
 - A NovaSeq run folder (`bcldir`) containing the BCL data and a
   `SampleSheet.csv`, or a separate SampleSheet path supplied as `sample_sheet`
-- `runid`: where to write results (consider local SSD)
+- `runid` (optional): workflow output directory; defaults to the `bcldir`
+  basename (consider an explicit local-SSD path for larger runs)
 - The resource/reference files in `workflow/resources/` (genome, indices, bed,
   gene lists). See below.
 
