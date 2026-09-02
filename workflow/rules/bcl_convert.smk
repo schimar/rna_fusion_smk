@@ -26,7 +26,7 @@ rule bcl_convert:
         no_lane_splitting=no_lane_splitting,
     log:
         runid + "/results/fastq/bcl_convert.log",
-    threads: 56
+    threads: 128
     shell:
         """
         set -eo pipefail
