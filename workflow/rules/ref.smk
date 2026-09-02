@@ -62,13 +62,15 @@ rule star_index:
     output:
         directory(star_idx),
     threads: 8
+    resources:
+        mem_gb=32,
     params:
       extra=lambda wc, input: f"--sjdbGTFfile {genome_gtf} --sjdbOverhang 100",
     log:
         "resources/logs/star_index.log",
     cache: True
     wrapper:
-        "v1.28.0/bio/star/index"  
+        "v3.3.7/bio/star/index"  
         #"0.77.0/bio/star/index"
 
 
