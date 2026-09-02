@@ -62,6 +62,9 @@ def parse_sample_sheet(sheet_path):
             cols = [cell.strip() for cell in row]
             if not any(cols):
                 continue
+            if len(cols) == 1 and cols[0].startswith("[") and cols[0].endswith("]"):
+                current_block = None
+                continue
             if 'Sample_ID' in cols:
                 current_block = {
                     "column": cols.index('Sample_ID'),
