@@ -128,6 +128,18 @@ rule sort_bed:
 # -----------------------------------------------------------------------------
 # QC reference-build BEDs (SPEC §12; all derived from the in-use {ref}.gtf —
 # see CONSTITUTION §12.2/§12.3/§12.4 for the rules). Cacheable.
+rule normalize_gtf_contigs:
+    input:
+        gtf=genome_gtf_source,
+        fasta=genome_fa,
+    output:
+        genome_gtf,
+    log:
+        f"resources/{ref}.normalized.gtf.normalize_gtf_contigs.log",
+    shell:
+        "python3 scripts/normalize_gtf_contigs.py -g {input.gtf} -f {input.fasta} -o {output} 2> {log}"
+
+
 rule gtf2bed_wts:
     input:
         gtf=genome_gtf,

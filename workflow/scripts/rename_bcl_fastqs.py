@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Rename bcl-convert fastq outputs.
 
-bcl-convert emits files named  <sample>_S<index>_R<read>_001.fastq.gz
-(trailing _S<index>_R<read>_001.fastq.gz is appended by bcl-convert).
+bcl-convert emits files named either:
+    <sample>_S<index>_R<read>_001.fastq.gz
+    <sample>_S<index>_L<lane>_R<read>_001.fastq.gz
 
 This script moves ALL demuxed fastqs (including non-WTS samples) out of the
-fresh tmp dir into the final fastq dir, renaming them to
-  <sample>.R<read>_001.fastq.gz
+fresh tmp dir into the final fastq dir, renaming them to either
+    <sample>.R<read>_001.fastq.gz
+    <sample>_L<lane>.R<read>_001.fastq.gz
 so that a later `rm -rf tmp` does not destroy demultiplexed data that other
 (parts of future) workflows may still need.
 
@@ -19,7 +21,7 @@ import os
 import re
 import sys
 
-PATTERN = re.compile(r"^(.*)_S[0-9]+_R([12])_001\.fastq\.gz$")
+PATTERN = re.compile(r"^(.*)_S[0-9]+(_L[0-9]+)?_R([12])_001\.fastq\.gz$")
 
 
 def main() -> int:
@@ -38,7 +40,8 @@ def main() -> int:
         if not m:
             errors.append(f"unexpected fastq name {base!r}")
             continue
-        dest = os.path.join(outdir, f"{m.group(1)}.R{m.group(2)}_001.fastq.gz")
+        lane = m.group(2) or ""
+        dest = os.path.join(outdir, f"{m.group(1)}{lane}.R{m.group(3)}_001.fastq.gz")
         if os.path.exists(dest):
             errors.append(f"destination already exists: {dest}")
             continue

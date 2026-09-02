@@ -199,6 +199,10 @@ The single `ref` stem in config keeps FASTA/GTF as one pair from
 `resources/{ref}.fasta` / `{ref}.gtf`. See §1–2 for the underlying
 consistency and no-hardcoding rules (unchanged).
 
+The workflow normalizes the source GTF's contig names against the configured
+FASTA before STAR and annotation-derived QC consume it. This supports Ensembl
+names such as `1` and `MT` with a `chr1`/`chrM` FASTA.
+
 ### 12.2 On-target removal
 `sort_bed` / `targetcov_bed` / `cov_n10` are removed from the active DAG
 (defined but inert); `config["bed"]` (capture panel) is deprecated/inert.

@@ -25,7 +25,8 @@ bed_file_stem = bed_file.split('.')[0]
 #   star index dir: resources/star_{ref}/
 ref = config['ref']
 genome_fa = f"resources/{ref}.fasta"
-genome_gtf = f"resources/{ref}.gtf"
+genome_gtf_source = f"resources/{ref}.gtf"
+genome_gtf = f"resources/{ref}.normalized.gtf"
 genome_txt = f"resources/{ref}.txt"
 genome_dict = f"resources/{ref}.dict"
 genome_fai = f"resources/{ref}.fasta.fai"
@@ -51,24 +52,39 @@ def parse_sample_sheet(sheet_path):
     v2 (e.g. NovaSeqX+): 'Sample_ID' may be in any column; the header row is
     located by scanning for the row containing 'Sample_ID'.
     """
-    sample_ids = []
     if not os.path.isfile(sheet_path):
         print(f"Warning: SampleSheet not found: {sheet_path}")
-        return sample_ids
-    col = None
+        return []
+    blocks = []
+    current_block = None
     with open(sheet_path, newline="") as fh:
         for row in csv.reader(fh):
             cols = [cell.strip() for cell in row]
             if not any(cols):
                 continue
-            if col is None:
-                # header row: the row that contains the 'Sample_ID' column
-                if 'Sample_ID' in cols:
-                    col = cols.index('Sample_ID')
+            if 'Sample_ID' in cols:
+                current_block = {
+                    "column": cols.index('Sample_ID'),
+                    "sample_ids": [],
+                }
+                blocks.append(current_block)
                 continue
-            # data rows
-            if col < len(cols) and cols[col]:
-                sample_ids.append(cols[col])
+
+            if current_block is None:
+                continue
+            column = current_block["column"]
+            if column < len(cols) and cols[column]:
+                current_block["sample_ids"].append(cols[column])
+
+    if not blocks:
+        print(f"Warning: Sample_ID header not found in {sheet_path}")
+        return []
+
+    selected_block = max(
+        blocks,
+        key=lambda block: sum('WTS' in sample_id for sample_id in block["sample_ids"]),
+    )
+    sample_ids = selected_block["sample_ids"]
     print(f"Parsed {len(sample_ids)} sample(s) from {sheet_path}")
     return sample_ids
 

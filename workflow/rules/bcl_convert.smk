@@ -48,7 +48,8 @@ rule bcl_convert:
             > {log} 2>&1
 
         # Rename ALL demuxed fastqs into final dir:
-        #   SAMPLE_S<index>_R<read>_001.fastq.gz  ->  SAMPLE.R<read>_001.fastq.gz
+        #   SAMPLE_S<index>[_L<lane>]_R<read>_001.fastq.gz
+        #       -> SAMPLE[_L<lane>].R<read>_001.fastq.gz
         python3 scripts/rename_bcl_fastqs.py {params.bcl_tmp} {params.outdir}
 
         # keep demux metadata alongside the fastqs (checkpoint convention)
