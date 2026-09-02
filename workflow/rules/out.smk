@@ -21,7 +21,7 @@ rule rsync:
     output:
         touch(f"{final_dest}/run.done"),
     params:
-        runid = config['runid'],
+        runid = runid,
         final_dest = final_dest,
         log = final_dest + "/rsync.log",
     shell:"""
