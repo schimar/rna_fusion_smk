@@ -3,6 +3,7 @@ rule rsync:
         multiqc = expand("{runid}/results/quality_control/fastq/multiqc_report.html", runid= runid),
         fusions = expand("{runid}/results/fusions/{sample}.fusions.tsv", runid= runid, sample= wts_samples),
         fusions_disc = expand("{runid}/results/fusions/{sample}.fusions.discarded.tsv", runid= runid, sample= wts_samples),
+        fusions_pdf  = expand("{runid}/results/fusions/{sample}_fusions.pdf", runid= runid, sample= wts_samples),
         splicing = expand("{runid}/results/splicing/{sample}.SE.MATS.JC.txt", runid= runid, sample= wts_samples),
         egfr = expand("{runid}/results/splicing/{sample}.egfr_v3.out", runid= runid, sample= wts_samples),
         clump  = expand("{runid}/results/quality_control/fastq/{sample}.clump.{mode}.stats.txt", runid= runid, sample= wts_samples, mode= ['opt', 'pcr']),

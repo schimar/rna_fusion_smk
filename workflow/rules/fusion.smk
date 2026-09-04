@@ -20,6 +20,32 @@ rule arriba:
         "v1.23.4/bio/arriba"
 
 
+rule arriba_draw_fusions:
+    """Render fusion visualizations with arriba's draw_fusions.R.
+
+    Draws gene structures, breakpoint positions, and (when alignments are
+    provided) read-coverage panels supporting each fusion.
+    """
+    input:
+        fusions = "{runid}/results/fusions/{sample}.fusions.tsv",
+        gtf     = "resources/genome.gtf",
+        bam     = "{runid}/results/bam/{sample}.bam",
+    output:
+        pdf = "{runid}/results/fusions/{sample}_fusions.pdf",
+    log:
+        "{runid}/logs/arriba_draw_fusions/{sample}.log",
+    threads: 1
+    shell:
+        """
+        draw_fusions.R \
+            --fusions {input.fusions} \
+            --annotation {input.gtf} \
+            --output {output.pdf} \
+            --alignments {input.bam} \
+            > {log} 2>&1
+        """
+
+
 rule get_clinFuse:
     input:
         fus = "{runid}/results/arriba/{sample}/fusions.tsv",

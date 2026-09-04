@@ -12,7 +12,7 @@
 # ---------------------------------------------------------------------------
 set -euo pipefail
 
-IMG="${RNA_FUSION_IMAGE:-ukwgenommedizin/rna_fusion:1.0.1}"
+IMG="${RNA_FUSION_IMAGE:-ukwgenommedizin/rna_fusion:1.0.3}"
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 exec docker run --rm \
