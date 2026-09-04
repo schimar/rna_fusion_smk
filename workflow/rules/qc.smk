@@ -119,7 +119,7 @@ rule multiqc_bbmerged:
         junction_saturation=expand("{runid}/results/quality_control/bam/{sample}.junction_saturation.pdf", runid=runid, sample=idkeys),
         read_duplication=expand("{runid}/results/quality_control/bam/{sample}.read_duplication.pdf", runid=runid, sample=idkeys),
         read_gc=expand("{runid}/results/quality_control/bam/{sample}.read_gc.pdf", runid=runid, sample=idkeys),
-        rrna_custom_content="{runid}/results/quality_control/bam/multiqc_rrna_contamination.json",
+        rrna_custom_content="{runid}/results/quality_control/bam/rrna_contamination_mqc.json",
     output:
         "{runid}/results/quality_control/fastq/multiqc_report.html"
     params:
@@ -174,6 +174,7 @@ rule rseqc_readdis_mane:
 rule rrna_contamination:
     input:
         bam="{runid}/results/bam/{sample}.bam",
+        idx="{runid}/results/bam/{sample}.bam.bai",
         bed=f"resources/rrna_{ref}.bed",
     output:
         "{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv",
@@ -195,7 +196,7 @@ rule rrna_multiqc_content:
     input:
         expand("{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv", runid=runid, sample=idkeys),
     output:
-        "{runid}/results/quality_control/bam/multiqc_rrna_contamination.json",
+        "{runid}/results/quality_control/bam/rrna_contamination_mqc.json",
     script:
         "../scripts/rrna_multiqc.py"
 

@@ -11,7 +11,7 @@ rule rsync:
         globin_read_distribution = expand("{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt", runid=runid, sample=wts_samples),
         mane_read_distribution = expand("{runid}/results/quality_control/bam/{sample}.mane.readdistribution.txt", runid=runid, sample=wts_samples),
         rrna_contamination = expand("{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv", runid=runid, sample=wts_samples),
-        rrna_custom_content = expand("{runid}/results/quality_control/bam/multiqc_rrna_contamination.json", runid=runid),
+        rrna_custom_content = expand("{runid}/results/quality_control/bam/rrna_contamination_mqc.json", runid=runid),
         bam_stat = expand("{runid}/results/quality_control/bam/{sample}.bam_stat.txt", runid=runid, sample=wts_samples),
         infer_experiment = expand("{runid}/results/quality_control/bam/{sample}.infer_experiment.txt", runid=runid, sample=wts_samples),
         inner_distance = expand("{runid}/results/quality_control/bam/{sample}.inner_distance.txt", runid=runid, sample=wts_samples),

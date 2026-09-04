@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create a MultiQC custom-content table from per-sample rRNA QC results."""
+"""Create a MultiQC custom-content General Stats block from per-sample rRNA QC results."""
 import csv
 import json
 
@@ -11,22 +11,23 @@ for path in snakemake.input:
     if row is None:
         continue
     data[row["sample"]] = {
-        "rRNA fraction (%)": float(row["rrna_fraction_percent"]),
-        "rRNA reads": int(row["rrna_reads"]),
-        "Primary mapped reads": int(row["mapped_primary_reads"]),
+        "rrna_fraction_pct": float(row["rrna_fraction_percent"]),
+        "rrna_reads": int(row["rrna_reads"]),
+        "mapped_primary_reads": int(row["mapped_primary_reads"]),
     }
 
 content = {
     "id": "rrna_contamination",
     "section_name": "rRNA contamination",
     "description": "Primary mapped alignments overlapping rRNA loci.",
-    "plot_type": "table",
-    "pconfig": {
-        "id": "rrna_contamination_table",
-        "headers": {
-            "rRNA fraction (%)": {"format": "{:.2f}"},
-            "rRNA reads": {"format": "{:,d}"},
-            "Primary mapped reads": {"format": "{:,d}"},
+    "plot_type": "generalstats",
+    "headers": {
+        "rrna_fraction_pct": {"title": "rRNA fraction (%)", "format": "{:.2f}"},
+        "rrna_reads": {"title": "rRNA reads", "format": "{:,d}", "hidden": True},
+        "mapped_primary_reads": {
+            "title": "Primary mapped reads",
+            "format": "{:,d}",
+            "hidden": True,
         },
     },
     "data": data,
