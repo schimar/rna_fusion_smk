@@ -103,7 +103,7 @@ rule fastqc_bbmerged:
     resources:
         mem_mb = 1024
     wrapper:
-        "v2.1.1/bio/fastqc"
+        "v9.15.0/bio/fastqc"
 
 
 rule multiqc_bbmerged:
@@ -322,7 +322,7 @@ rule fastqc_cons:
     resources:
         mem_mb = 1024
     wrapper:
-        "v2.1.1/bio/fastqc"
+        "v9.15.0/bio/fastqc"
 
 
 
