@@ -241,7 +241,10 @@ rule rseqc_inner_distance:
     wildcard_constraints:
         sample=common_constraint,
     shell:
-        "inner_distance.py -r {input.bed} -i {input.bam} -o {params.prefix} > {log} 2>&1"
+        """
+        inner_distance.py -r {input.bed} -i {input.bam} -o {params.prefix} > {log} 2>&1
+        mv {params.prefix}.inner_distance.txt {output}
+        """
 
 
 rule rseqc_junction_annotation:
@@ -257,7 +260,10 @@ rule rseqc_junction_annotation:
     wildcard_constraints:
         sample=common_constraint,
     shell:
-        "junction_annotation.py -q 255 -i {input.bam} -r {input.bed} -o {params.prefix} > {log} 2>&1"
+        """
+        junction_annotation.py -q 255 -i {input.bam} -r {input.bed} -o {params.prefix} > {log} 2>&1
+        mv {params.prefix}.junction.bed {output}
+        """
 
 
 rule rseqc_junction_saturation:
@@ -273,7 +279,10 @@ rule rseqc_junction_saturation:
     wildcard_constraints:
         sample=common_constraint,
     shell:
-        "junction_saturation.py -q 255 -i {input.bam} -r {input.bed} -o {params.prefix} > {log} 2>&1"
+        """
+        junction_saturation.py -q 255 -i {input.bam} -r {input.bed} -o {params.prefix} > {log} 2>&1
+        mv {params.prefix}.junctionSaturation_plot.pdf {output}
+        """
 
 
 rule rseqc_read_duplication:
@@ -288,7 +297,10 @@ rule rseqc_read_duplication:
     wildcard_constraints:
         sample=common_constraint,
     shell:
-        "read_duplication.py -i {input.bam} -o {params.prefix} > {log} 2>&1"
+        """
+        read_duplication.py -i {input.bam} -o {params.prefix} > {log} 2>&1
+        mv {params.prefix}.DupRate_plot.pdf {output}
+        """
 
 
 rule rseqc_read_gc:
@@ -303,7 +315,10 @@ rule rseqc_read_gc:
     wildcard_constraints:
         sample=common_constraint,
     shell:
-        "read_GC.py -i {input.bam} -o {params.prefix} > {log} 2>&1"
+        """
+        read_GC.py -i {input.bam} -o {params.prefix} > {log} 2>&1
+        mv {params.prefix}.GC_plot.pdf {output}
+        """
 
 
 
