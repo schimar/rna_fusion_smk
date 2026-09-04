@@ -34,7 +34,7 @@ rule arriba_draw_fusions:
     """
     input:
         fusions = "{runid}/results/fusions/{sample}.fusions.tsv",
-        gtf     = "resources/genome.gtf",
+        gtf     = genome_gtf,
         bam     = "{runid}/results/bam/{sample}.bam",
     output:
         pdf = "{runid}/results/fusions/{sample}_fusions.pdf",
