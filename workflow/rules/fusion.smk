@@ -41,13 +41,14 @@ rule arriba:
 rule arriba_draw_fusions:
     """Render fusion visualizations with arriba's draw_fusions.R.
 
-    Draws gene structures, breakpoint positions, and (when alignments are
-    provided) read-coverage panels supporting each fusion.
+    Draws gene structures, breakpoint positions, and supporting read counts
+    per fusion. Read-coverage panels (--alignments) are disabled until the
+    image ships R/GenomicAlignments (draw_fusions.R hard-fails without it);
+    ideogram/circos/domains panels additionally need GenomicRanges/circlize.
     """
     input:
         fusions = "{runid}/results/fusions/{sample}.fusions.tsv",
         gtf     = genome_gtf,
-        bam     = "{runid}/results/bam/{sample}.bam",
     output:
         pdf = "{runid}/results/fusions/{sample}_fusions.pdf",
     log:
@@ -56,10 +57,9 @@ rule arriba_draw_fusions:
     shell:
         """
         draw_fusions.R \
-            --fusions {input.fusions} \
-            --annotation {input.gtf} \
-            --output {output.pdf} \
-            --alignments {input.bam} \
+            --fusions={input.fusions} \
+            --annotation={input.gtf} \
+            --output={output.pdf} \
             > {log} 2>&1
         """
 
