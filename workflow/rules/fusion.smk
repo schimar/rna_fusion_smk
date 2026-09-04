@@ -1,4 +1,19 @@
 
+import glob
+
+
+def _arriba_db_file(kind):
+    """Return the first GRCh38 arriba database file of the given kind from the central image."""
+    hits = sorted(
+        glob.glob(f"/opt/conda-env/var/lib/arriba/{kind}_hg38_GRCh38_*.tsv.gz")
+    )
+    if not hits:
+        raise FileNotFoundError(
+            f"arriba {kind} database file for GRCh38 not found in /opt/conda-env/var/lib/arriba"
+        )
+    return hits[0]
+
+
 rule arriba:
     input:
         bam="{runid}/results/bam/{sample}.bam",
@@ -9,18 +24,15 @@ rule arriba:
         discarded="{runid}/results/fusions/{sample}.fusions.discarded.tsv",
         #done="{runid}/results/fusions/{sample}.arriba.done",
     params:
-        genome_build="GRCh38",
+        blacklist=lambda wildcards: _arriba_db_file("blacklist"),
+        known_fusions=lambda wildcards: _arriba_db_file("known_fusions"),
     log:
         "{runid}/results/fusions/{sample}.arriba.log",
     threads: 1
     shell:
         """
-        DB=/opt/conda-env/var/lib/arriba
-        BL=$(ls "$$DB"/blacklist_hg38_GRCh38_*.tsv.gz 2>/dev/null | head -1)
-        KN=$(ls "$$DB"/known_fusions_hg38_GRCh38_*.tsv.gz 2>/dev/null | head -1)
-        [ -n "$$BL" ] && [ -n "$$KN" ] || { echo "arriba DB files not found under $$DB" >&2; exit 1; }
         arriba -x {input.bam} -a {input.genome} -g {input.annotation} \
-            -b "$$BL" -k "$$KN" \
+            -b {params.blacklist} -k {params.known_fusions} \
             -o {output.fusions} -O {output.discarded} -u \
             > {log} 2>&1
         """
