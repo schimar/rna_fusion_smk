@@ -10,14 +10,20 @@ rule arriba:
         #done="{runid}/results/fusions/{sample}.arriba.done",
     params:
         genome_build="GRCh38",
-        default_blacklist=True,
-        default_known_fusions=True,
-        extra="-u",   #alignIntronMax",
     log:
         "{runid}/results/fusions/{sample}.arriba.log",
     threads: 1
-    wrapper:
-        "v1.23.4/bio/arriba"
+    shell:
+        """
+        DB=/opt/conda-env/var/lib/arriba
+        BL=$(ls "$DB"/blacklist_hg38_GRCh38_*.tsv.gz 2>/dev/null | head -1)
+        KN=$(ls "$DB"/known_fusions_hg38_GRCh38_*.tsv.gz 2>/dev/null | head -1)
+        [ -n "$BL" ] && [ -n "$KN" ] || { echo "arriba DB files not found under $DB" >&2; exit 1; }
+        arriba -x {input.bam} -a {input.genome} -g {input.annotation} \
+            -b "$BL" -k "$KN" \
+            -o {output.fusions} -O {output.discarded} -u \
+            > {log} 2>&1
+        """
 
 
 rule arriba_draw_fusions:
