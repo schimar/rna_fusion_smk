@@ -57,7 +57,7 @@ rule clumpify_opt_dup:
         "{runid}/results/quality_control/fastq/{sample}.clumpify_opt.log"
     params:
         extra= "optical",
-        dupedist= 12000,   # for NovaSeq. If using NextSeq, then use 40
+        dupedist= 50,   # 50 for NovaSeqXplus , 12000 for NovaSeq6000. If using NextSeq, then use 40
         subs= 2
     resources:
         mem_gb= 31
