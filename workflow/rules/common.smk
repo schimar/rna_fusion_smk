@@ -14,7 +14,7 @@ bcldir = config['bcldir']
 runid = config.get('runid') or Path(bcldir).name
 analysis_path = config['analysis_path']
 final_dest = config.get('final_dest') or (
-    "/home/schilling_m1/smb/Analyses/00_Tests/vc_rna/" + Path(bcldir).name
+    "/home/schilling_m1/smb/Bioinformatics/schimar/rna_smk/" + Path(bcldir).name
 )
 rgid = config.get('rgid') or Path(bcldir).name
 bed_file = config['bed']

@@ -24,10 +24,11 @@ rule rsync:
     params:
         runid = runid,
         final_dest = final_dest,
-        log = final_dest + "/rsync.log",
+    log:
+        f"{final_dest}/rsync.log",
     shell:"""
         mkdir -p {params.final_dest} &&
-        rsync -rDvz {params.runid}/results/ {params.final_dest}/ --log-file={params.log}
+        rsync -rDvz {params.runid}/results/ {params.final_dest}/ > {log} 2>&1
         """
 
  ##dt=$(date '+%d%m%Y_%H%M')

@@ -52,7 +52,7 @@ rule arriba_draw_fusions:
     output:
         pdf = "{runid}/results/fusions/{sample}_fusions.pdf",
     log:
-        "{runid}/logs/arriba_draw_fusions/{sample}.log",
+        "{runid}/results/fusions/{sample}_drawFusions.log",
     threads: 1
     shell:
         """
