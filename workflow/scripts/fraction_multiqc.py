@@ -33,7 +33,7 @@ content = {
         metric: {
             "title": title,
             "description": description,
-            "format": "{:.2f}",
+            "format": "{:.3f}",
             "suffix": "%",
         },
     },
