@@ -60,6 +60,7 @@ rule arriba_draw_fusions:
             --fusions={input.fusions} \
             --annotation={input.gtf} \
             --output={output.pdf} \
+            --cytobands=/opt/conda-env/var/lib/arriba/cytobands_hg38_GRCh38_v2.5.1.tsv \
             > {log} 2>&1
         """
 
