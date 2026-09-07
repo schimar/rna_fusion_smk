@@ -125,8 +125,9 @@ reference-build logs stay colocated in `resources/`).
   fusions/   {sample}.fusions.tsv | {sample}.fusions.discarded.tsv (+ other arriba artifacts)
   splicing/  {sample}.SE.MATS.JC.txt | {sample}.egfr_v3.out
   quality_control/
-    fastq/   {sample}.bbmerge.hist.txt | {sample}.clump.{opt,pcr}.stats.txt | multiqc_report.html
+    fastq/   {sample}.bbmerge.hist.txt | {sample}.clump.{opt,pcr}.stats.txt
     bam/     {sample}.bcov.tsv | {sample}.n10.tsv
+    multiqc_report.html
 ```
 
 The alignment checkpoint is a **BAM** for now (STAR's native output; a CRAM

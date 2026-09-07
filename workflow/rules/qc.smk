@@ -110,8 +110,6 @@ rule multiqc_bbmerged:
     input:
         fastqc=expand("{runid}/results/quality_control/fastq/{sample}.bbmerge_fastqc.html", runid=runid, sample=idkeys),
         read_distribution=expand("{runid}/results/quality_control/bam/{sample}.read_distribution.txt", runid=runid, sample=idkeys),
-        globin_read_distribution=expand("{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt", runid=runid, sample=idkeys),
-        mane_read_distribution=expand("{runid}/results/quality_control/bam/{sample}.mane.readdistribution.txt", runid=runid, sample=idkeys),
         bam_stat=expand("{runid}/results/quality_control/bam/{sample}.bam_stat.txt", runid=runid, sample=idkeys),
         infer_experiment=expand("{runid}/results/quality_control/bam/{sample}.infer_experiment.txt", runid=runid, sample=idkeys),
         inner_distance=expand("{runid}/results/quality_control/bam/{sample}.inner_distance.txt", runid=runid, sample=idkeys),
@@ -119,7 +117,9 @@ rule multiqc_bbmerged:
         junction_saturation=expand("{runid}/results/quality_control/bam/{sample}.junction_saturation.pdf", runid=runid, sample=idkeys),
         read_duplication=expand("{runid}/results/quality_control/bam/{sample}.read_duplication.pdf", runid=runid, sample=idkeys),
         read_gc=expand("{runid}/results/quality_control/bam/{sample}.read_gc.pdf", runid=runid, sample=idkeys),
-        rrna_custom_content="{runid}/results/quality_control/bam/rrna_contamination_mqc.json",
+        rrna_custom_content="{runid}/results/quality_control/bam/rrna_fraction_mqc.json",
+        globin_custom_content="{runid}/results/quality_control/bam/globin_fraction_mqc.json",
+        mane_custom_content="{runid}/results/quality_control/bam/mane_fraction_mqc.json",
     output:
         "{runid}/results/quality_control/multiqc_report.html"
     params:
@@ -144,30 +144,46 @@ rule rseqc_read_distribution:
         "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
 
 
-rule rseqc_globin_read_distribution:
+rule globin_fraction:
     input:
         bam="{runid}/results/bam/{sample}.bam",
+        idx="{runid}/results/bam/{sample}.bam.bai",
         bed=f"resources/globin_{ref}.bed",
     output:
-        "{runid}/results/quality_control/bam/{sample}.globin.read_distribution.txt",
+        "{runid}/results/quality_control/bam/{sample}.globin_fraction.tsv",
     log:
-        "{runid}/results/quality_control/bam/{sample}.globin.read_distribution.log",
+        "{runid}/results/quality_control/bam/{sample}.globin_fraction.log",
     wildcard_constraints:
         sample=common_constraint,
     shell:
-        "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
-rule rseqc_readdis_mane:
+        """
+        mapped=$(samtools view -c -F 2308 {input.bam})
+        region=$(samtools view -c -F 2308 -L {input.bed} {input.bam})
+        awk -v sample='{wildcards.sample}' -v mapped="$mapped" -v region="$region" \
+            'BEGIN {{ fraction = mapped ? (100 * region / mapped) : 0; print "sample\\tglobin_reads\\tmapped_primary_reads\\tglobin_fraction_percent"; print sample "\\t" region "\\t" mapped "\\t" fraction }}' \
+            > {output} 2> {log}
+        """
+
+
+rule mane_fraction:
     input:
         bam="{runid}/results/bam/{sample}.bam",
+        idx="{runid}/results/bam/{sample}.bam.bai",
         bed=f"resources/mane_{ref}.bed",
     output:
-        "{runid}/results/quality_control/bam/{sample}.mane.readdistribution.txt",
+        "{runid}/results/quality_control/bam/{sample}.mane_fraction.tsv",
     log:
-        "{runid}/results/quality_control/bam/{sample}.mane.readdistribution.log",
+        "{runid}/results/quality_control/bam/{sample}.mane_fraction.log",
     wildcard_constraints:
         sample=common_constraint,
     shell:
-        "read_distribution.py -r {input.bed} -i {input.bam} > {output} 2> {log}"
+        """
+        mapped=$(samtools view -c -F 2308 {input.bam})
+        region=$(samtools view -c -F 2308 -L {input.bed} {input.bam})
+        awk -v sample='{wildcards.sample}' -v mapped="$mapped" -v region="$region" \
+            'BEGIN {{ fraction = mapped ? (100 * region / mapped) : 0; print "sample\\tmane_reads\\tmapped_primary_reads\\tmane_fraction_percent"; print sample "\\t" region "\\t" mapped "\\t" fraction }}' \
+            > {output} 2> {log}
+        """
 
 
 
@@ -196,9 +212,42 @@ rule rrna_multiqc_content:
     input:
         expand("{runid}/results/quality_control/bam/{sample}.rrna_contamination.tsv", runid=runid, sample=idkeys),
     output:
-        "{runid}/results/quality_control/bam/rrna_contamination_mqc.json",
+        "{runid}/results/quality_control/bam/rrna_fraction_mqc.json",
+    params:
+        metric="rrna",
+        column="rrna_fraction_percent",
+        title="rRNA fraction (%)",
+        description="Primary mapped alignments overlapping rRNA loci.",
     script:
-        "../scripts/rrna_multiqc.py"
+        "../scripts/fraction_multiqc.py"
+
+
+rule globin_multiqc_content:
+    input:
+        expand("{runid}/results/quality_control/bam/{sample}.globin_fraction.tsv", runid=runid, sample=idkeys),
+    output:
+        "{runid}/results/quality_control/bam/globin_fraction_mqc.json",
+    params:
+        metric="globin",
+        column="globin_fraction_percent",
+        title="Globin fraction (%)",
+        description="Primary mapped alignments overlapping HBA1/HBA2/HBB loci.",
+    script:
+        "../scripts/fraction_multiqc.py"
+
+
+rule mane_multiqc_content:
+    input:
+        expand("{runid}/results/quality_control/bam/{sample}.mane_fraction.tsv", runid=runid, sample=idkeys),
+    output:
+        "{runid}/results/quality_control/bam/mane_fraction_mqc.json",
+    params:
+        metric="mane",
+        column="mane_fraction_percent",
+        title="MANE fraction (%)",
+        description="Primary mapped alignments overlapping MANE Select transcripts.",
+    script:
+        "../scripts/fraction_multiqc.py"
 
 
 rule rseqc_bam_stat:
