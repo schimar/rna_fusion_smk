@@ -1,6 +1,6 @@
 rule rsync:
     input:
-        multiqc = expand("{runid}/results/quality_control/fastq/multiqc_report.html", runid= runid),
+        multiqc = expand("{runid}/results/quality_control/multiqc_report.html", runid= runid),
         fusions = expand("{runid}/results/fusions/{sample}.fusions.tsv", runid= runid, sample= wts_samples),
         fusions_disc = expand("{runid}/results/fusions/{sample}.fusions.discarded.tsv", runid= runid, sample= wts_samples),
         fusions_pdf  = expand("{runid}/results/fusions/{sample}_fusions.pdf", runid= runid, sample= wts_samples),

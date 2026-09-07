@@ -121,11 +121,11 @@ rule multiqc_bbmerged:
         read_gc=expand("{runid}/results/quality_control/bam/{sample}.read_gc.pdf", runid=runid, sample=idkeys),
         rrna_custom_content="{runid}/results/quality_control/bam/rrna_contamination_mqc.json",
     output:
-        "{runid}/results/quality_control/fastq/multiqc_report.html"
+        "{runid}/results/quality_control/multiqc_report.html"
     params:
         extra="--zip-data-dir"
     log:
-        "{runid}/results/quality_control/fastq/multiqc_bbmerged.log"
+        "{runid}/results/quality_control/multiqc.log"
     wrapper:
         "v2.12.0/bio/multiqc"
 
